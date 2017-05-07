@@ -1,4 +1,4 @@
-package card.manager;
+package card.dao;
 
 import java.io.File;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class CardCache {
 		JAXBContext skillCardContext = JAXBContext.newInstance(SkillCard.class);
 		JAXBContext monsterCardContext = JAXBContext.newInstance(MonsterCard.class);
 		
-		File directory = new File("C:/cards");
+		File directory = new File("C:/battle-card/cards");
 		File[] files = directory.listFiles();
 		for (File file : files) {
 			try {
@@ -47,7 +47,11 @@ public class CardCache {
 		}
 	}
 	
-	public Map<String,BattleCard> getBattleCards() {
+	public BattleCard getCard(String id) {
+		return battleCards.get(id);
+	}
+	
+	public Map<String,BattleCard> getCards() {
 		return battleCards;
 	}
 	

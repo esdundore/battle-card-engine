@@ -2,8 +2,10 @@ package card.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import card.manager.CardCache;
+import card.dao.CardCache;
+import card.dao.DeckCache;
 import card.model.BattleCard;
+import card.model.Deck;
 
 import java.util.Map;
 
@@ -16,6 +18,9 @@ public class AdminRequests {
 	
 	@Autowired
 	CardCache cardCache;
+	
+	@Autowired
+	DeckCache deckCache;
 
     @RequestMapping("/")
     public String index() {
@@ -24,13 +29,24 @@ public class AdminRequests {
     
     @RequestMapping("/cards")
     public Map<String, BattleCard> viewCards() {
-    	return cardCache.getBattleCards();
+    	return cardCache.getCards();
     }
     
     @RequestMapping("/card")
     public BattleCard viewCard(
     		@RequestParam(value="id") String id) {
-    	return cardCache.getBattleCards().get(id);
+    	return cardCache.getCard(id);
+    }
+    
+    @RequestMapping("/decks")
+    public Map<String, Deck> viewDecks() {
+    	return deckCache.getDecks();
+    }
+    
+    @RequestMapping("/deck")
+    public Deck viewDeck(
+    		@RequestParam(value="owner-id") String ownerId) {
+    	return deckCache.getDeck(ownerId);
     }
     
 }
