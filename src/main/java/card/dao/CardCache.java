@@ -9,9 +9,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.springframework.stereotype.Component;
 
-import card.model.BattleCard;
-import card.model.MonsterCard;
-import card.model.SkillCard;
+import card.model.cards.BattleCard;
+import card.model.cards.MonsterCard;
+import card.model.cards.SkillCard;
 
 /**
 * Class run on engine startup to load all battle cards into a cache

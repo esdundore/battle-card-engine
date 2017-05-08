@@ -1,4 +1,4 @@
-package card.model;
+package card.model.game;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

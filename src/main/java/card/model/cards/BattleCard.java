@@ -1,4 +1,4 @@
-package card.model;
+package card.model.cards;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

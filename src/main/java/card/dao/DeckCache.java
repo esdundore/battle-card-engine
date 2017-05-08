@@ -9,7 +9,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.springframework.stereotype.Component;
 
-import card.model.Deck;
+import card.model.game.Deck;
 
 /**
 * Class run on engine startup to load all decks

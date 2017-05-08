@@ -1,8 +1,11 @@
 package card.util;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Random;
+
+import card.model.game.PlayerArea;
 
 public class CardUtil {
 	
@@ -23,13 +26,24 @@ public class CardUtil {
 		} 
 	}
 	
-	public static void drawUntilFull(LinkedList<String> deck, LinkedList<String> hand) {
+	public static void drawUntilFull(PlayerArea playerArea) {
+		ArrayList<String> hand = playerArea.getHand();
+		LinkedList<String> deck = playerArea.getDeck().getSkillCards();
+		if(hand.size() >= MAX_HAND_SIZE) {
+			// if full already, discard top card and make 1 GUTS
+			try {
+				playerArea.getDiscard().add(deck.pop());
+			} catch (NoSuchElementException nsee) {
+				// can't draw a card - game lost
+			}
+			playerArea.setGutsPool(playerArea.getGutsPool() + 1);
+		}
 		while(hand.size() < MAX_HAND_SIZE) {
 			draw(deck, hand);
 		}
 	}
 	
-	public static void draw(LinkedList<String> deck, LinkedList<String> hand) {
+	public static void draw(LinkedList<String> deck, ArrayList<String> hand) {
 		String cardDrawn = null;
 		// try to draw a card
 		try {
@@ -37,11 +51,26 @@ public class CardUtil {
 		} catch (NoSuchElementException nsee) {
 			// can't draw a card - game lost
 		}
+		//replace empty slots if there are any
+		for (int i = 0; i < hand.size(); i++) {
+			if (hand.get(i) == null) {
+				hand.set(i, cardDrawn);
+				return;
+			}
+		}
 		hand.add(cardDrawn);
 	}
 	
-	public static void discard(LinkedList<String> hand, int index) {
-		hand.remove(index);
+	public static boolean discard(ArrayList<String> hand, ArrayList<String> discard, int index) {
+		// validate card exists and remove if so
+		if (hand.get(index) != null) {
+			discard.add(hand.get(index));
+			hand.set(index, null);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public static String coinFlip(String player1, String player2) {

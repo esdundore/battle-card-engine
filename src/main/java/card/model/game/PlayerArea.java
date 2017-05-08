@@ -1,7 +1,6 @@
-package card.model;
+package card.model.game;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,7 +10,8 @@ public class PlayerArea {
 
 	int gutsPool = 0;
 	Deck deck;
-	LinkedList<String> hand = new LinkedList<String>();
+	ArrayList<String> hand = new ArrayList<String>();
+	ArrayList<String> discard = new ArrayList<String>();
 	ArrayList<Monster> monsters;
 	
 	public int getGutsPool() {
@@ -28,12 +28,19 @@ public class PlayerArea {
 	public void setDeck(Deck deck) {
 		this.deck = deck;
 	}
-	public LinkedList<String> getHand() {
+	public ArrayList<String> getHand() {
 		return hand;
 	}
 	@XmlElement
-	public void setHand(LinkedList<String> hand) {
+	public void setHand(ArrayList<String> hand) {
 		this.hand = hand;
+	}
+	public ArrayList<String> getDiscard() {
+		return discard;
+	}
+	@XmlElement
+	public void setDiscard(ArrayList<String> discard) {
+		this.discard = discard;
 	}
 	public ArrayList<Monster> getMonsters() {
 		return monsters;

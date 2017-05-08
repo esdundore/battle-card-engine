@@ -1,20 +1,27 @@
-package card.model;
+package card.model.game;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import card.model.cards.SkillCard;
+import card.model.requests.AttackRequest;
+import card.model.requests.DefendRequest;
 
 @XmlRootElement
 public class GameState {
 
 	String sessionId;
-	PlayerArea player1;
-	PlayerArea player2;
+	int turnCount = 0;
+	Map<String, PlayerArea> players;
 	Date currentTime = new Date();
 	SkillCard environmentCard;
 	String phase;
 	String currentPlayer;
+	AttackRequest attackRequest;
+	DefendRequest defendRequest;
 	
 	public String getSessionId() {
 		return sessionId;
@@ -23,19 +30,19 @@ public class GameState {
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-	public PlayerArea getPlayer1() {
-		return player1;
+	public int getTurnCount() {
+		return turnCount;
 	}
 	@XmlElement
-	public void setPlayer1(PlayerArea player1) {
-		this.player1 = player1;
+	public void setTurnCount(int turnCount) {
+		this.turnCount = turnCount;
 	}
-	public PlayerArea getPlayer2() {
-		return player2;
+	public Map<String, PlayerArea> getPlayers() {
+		return players;
 	}
 	@XmlElement
-	public void setPlayer2(PlayerArea player2) {
-		this.player2 = player2;
+	public void setPlayers(Map<String, PlayerArea> players) {
+		this.players = players;
 	}
 	public Date getCurrentTime() {
 		return currentTime;
@@ -64,6 +71,20 @@ public class GameState {
 	@XmlElement
 	public void setCurrentPlayer(String currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+	public AttackRequest getAttackRequest() {
+		return attackRequest;
+	}
+	@XmlElement
+	public void setAttackRequest(AttackRequest attackRequest) {
+		this.attackRequest = attackRequest;
+	}
+	public DefendRequest getDefendRequest() {
+		return defendRequest;
+	}
+	@XmlElement
+	public void setDefendRequest(DefendRequest defendRequest) {
+		this.defendRequest = defendRequest;
 	}
 	
 }

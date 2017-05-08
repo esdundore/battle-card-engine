@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import card.dao.CardCache;
 import card.dao.DeckCache;
-import card.model.BattleCard;
-import card.model.Deck;
+import card.model.cards.BattleCard;
+import card.model.game.Deck;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-public class AdminRequests {
+public class AdminActions {
 	
 	@Autowired
 	CardCache cardCache;
