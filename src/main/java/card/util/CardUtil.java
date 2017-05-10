@@ -29,7 +29,7 @@ public class CardUtil {
 	public static void drawUntilFull(PlayerArea playerArea) {
 		ArrayList<String> hand = playerArea.getHand();
 		LinkedList<String> deck = playerArea.getDeck().getSkillCards();
-		if(hand.size() >= MAX_HAND_SIZE) {
+		if(sizeMinusNulls(hand) >= MAX_HAND_SIZE) {
 			// if full already, discard top card and make 1 GUTS
 			try {
 				playerArea.getDiscard().add(deck.pop());
@@ -38,9 +38,19 @@ public class CardUtil {
 			}
 			playerArea.setGutsPool(playerArea.getGutsPool() + 1);
 		}
-		while(hand.size() < MAX_HAND_SIZE) {
+		while(sizeMinusNulls(hand) < MAX_HAND_SIZE) {
 			draw(deck, hand);
 		}
+	}
+	
+	public static int sizeMinusNulls(ArrayList<String> hand) {
+		int sizeMinusNulls = 0;
+		for (String card : hand) {
+			if (card != null) {
+				sizeMinusNulls++;
+			}
+		}
+		return sizeMinusNulls;
 	}
 	
 	public static void draw(LinkedList<String> deck, ArrayList<String> hand) {

@@ -1,9 +1,7 @@
 package card.manager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +10,15 @@ import org.springframework.stereotype.Component;
 import card.dao.CardCache;
 import card.dao.DeckCache;
 import card.model.cards.MonsterCard;
-import card.model.cards.SkillCard;
 import card.model.game.Deck;
 import card.model.game.GameState;
 import card.model.game.Monster;
 import card.model.game.PlayerArea;
 import card.model.requests.AttackRequest;
 import card.model.requests.DefendRequest;
+import card.model.requests.DefendTarget;
 import card.model.requests.GutsRequest;
 import card.model.requests.PlayersRequest;
-import card.util.CardScripts;
 import card.util.CardUtil;
 
 @Component("gameManager")
@@ -41,12 +38,7 @@ public class GameManager {
 	public final String GUTS_PHASE = "guts";
 	public final String ATTACK_PHASE = "attack";
 	public final String DEFEND_PHASE = "defend";
-	
-	public final String ANY_USER = "Any";
-	
-	public final List<String> ATTACK_TYPES = Arrays.asList("POW", "INT", "SPE", "ENV");
-	public final List<String> DEFEND_TYPES = Arrays.asList("BLK", "DGE");
-	
+
 	public GameState startup(PlayersRequest playersRequest) {
 		// get player ids
 		String player1 = playersRequest.getPlayer1();
@@ -132,6 +124,17 @@ public class GameManager {
 		// resolve attack
 		attackResolver.resolveAttack(gameState);
 		
+		AttackRequest attackRequest = gameState.getAttackRequest();
+		PlayerArea playerArea = gameState.getPlayers().get(opponent);
+		PlayerArea opponentArea = gameState.getPlayers().get(player);
+		// discard attack and defense cards
+		for (int cardIndex : attackRequest.getCardsPlayed()) {
+			CardUtil.discard(opponentArea.getHand(), opponentArea.getDiscard(), cardIndex);
+		}
+		for (DefendTarget defendTarget : defendRequest.getCardAndTargets()) {
+			CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), defendTarget.getCard());
+		}
+
 		// switch to next player and change phase
 		gameState.setCurrentPlayer(opponent);
 		gameState.setPhase(DEFEND_PHASE);
@@ -148,12 +151,6 @@ public class GameManager {
 		return gameState;
 	}
 	
-	
-	
-	
-	
-	
-	// ---------------------------------------------------------------------------- //
 	public void startupMonsters(PlayerArea playerArea) {
 		ArrayList<Monster> monsters = new ArrayList<Monster>();
 		for (String monsterName : playerArea.getDeck().getMonsterCards()) {
@@ -165,58 +162,17 @@ public class GameManager {
 		playerArea.setMonsters(monsters);
 	}
 	
+	public GameState getGameView (PlayersRequest playersRequest) {
+		// TODO : make a game view object based on the things player 1 needs to see
+		return getGameState(playersRequest.getPlayer1(), playersRequest.getPlayer2());
+	}
+	
 	public GameState getGameState(String player1, String player2) {
 		GameState gameState = gameStates.get(player1 + player2);
 		if (gameState == null) {
 			gameState = gameStates.get(player2 + player1);
 		}
 		return gameState;
-	}
-	
-	public boolean isValidPlayerPhase(GameState gameState, String player, String phase) {
-		// not this players turn
-		if (!gameState.getCurrentPlayer().equals(player)) {
-			return false;
-		}
-		// not the guts phase
-		if (!gameState.getPhase().equals(phase)) {
-			return false;
-		}
-		return true;
-	}
-	
-	public boolean isValidAttack(AttackRequest attackRequest, PlayerArea playerArea, String player) {
-		Monster user = playerArea.getMonsters().get(attackRequest.getUser());
-		// look up skill cards
-		ArrayList<SkillCard> skillCards = new ArrayList<SkillCard>();
-		int gutsCost = 0;
-		for (int cardPlayed : attackRequest.getCardsPlayed()) {
-			SkillCard skillCard = (SkillCard) cardCache.getCard(playerArea.getHand().get(cardPlayed));
-			// check that the move is an attack
-			if (!ATTACK_TYPES.contains(skillCard.getType())) {
-				return false;
-			}
-			// check that the user is correct
-			if (!ANY_USER.equals(skillCard.getUserId()) && 
-					!user.getMainLineage().equals(skillCard.getUserId())) {
-				return false;
-			}
-			gutsCost += skillCard.getGutsCost();
-			skillCards.add(skillCard);
-		}
-		// check the player has enough guts
-		if (playerArea.getGutsPool() < gutsCost) {
-			return false;
-		}
-		// check that the cards played together combo
-		if (!CardScripts.canCombo(skillCards)) {
-			return false;
-		}
-		// check that the user can use this move
-		if (!user.isCanAttack()) {
-			return false;
-		}
-		return true;
 	}
 
 }

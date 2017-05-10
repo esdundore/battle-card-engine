@@ -10,7 +10,6 @@ public class SkillCard extends BattleCard {
 	protected String userId;
 	protected String type;
 	protected int damage;
-	protected String scriptId;
 
 	public int getGutsCost() {
 		return gutsCost;
@@ -39,13 +38,6 @@ public class SkillCard extends BattleCard {
 	@XmlElement
 	public void setDamage(int damage) {
 		this.damage = damage;
-	}
-	public String getScriptId() {
-		return scriptId;
-	}
-	@XmlElement
-	public void setScriptId(String scriptId) {
-		this.scriptId = scriptId;
 	}
 	
 }

@@ -94,7 +94,7 @@ public class AttackResolver {
 
 		// user done attacking
 		attackerArea.getMonsters().get(attackRequest.getUser()).setCanAttack(false);
-
+		
 	}
 	
 	public void specialEffects(ArrayList<String> cardName, int tempDamage, Monster target) {

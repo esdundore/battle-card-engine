@@ -64,4 +64,12 @@ public class GameActions {
         return gameManager.endAttack(playersRequest);
     }
     
+    @RequestMapping(value = "/get-game",
+    		method = RequestMethod.POST, 
+    		consumes = MediaType.APPLICATION_XML_VALUE)
+    public GameState getGame(
+    		@RequestBody PlayersRequest playersRequest) {
+        return gameManager.getGameView(playersRequest);
+    }
+    
 }
