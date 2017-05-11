@@ -1,20 +1,20 @@
-package card.model.requests;
+package card.model.view;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class DefendTarget {
+public class DefendViewTarget {
 	
-	int card;
+	String card;
 	int user;
 	int transfer;
 	
-	public int getCard() {
+	public String getCard() {
 		return card;
 	}
 	@XmlElement
-	public void setCard(int card) {
+	public void setCard(String card) {
 		this.card = card;
 	}
 	public int getUser() {

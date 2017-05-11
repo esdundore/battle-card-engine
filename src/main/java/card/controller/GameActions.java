@@ -3,11 +3,11 @@ package card.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import card.manager.GameManager;
-import card.model.game.GameState;
 import card.model.requests.AttackRequest;
 import card.model.requests.DefendRequest;
 import card.model.requests.GutsRequest;
 import card.model.requests.PlayersRequest;
+import card.model.view.GameView;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,48 +26,48 @@ public class GameActions {
 	 */
     @RequestMapping(value = "/start-match",
     		method = RequestMethod.POST, 
-    		consumes = MediaType.APPLICATION_XML_VALUE)
-    public GameState startup(
+    		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public void startup(
     		@RequestBody PlayersRequest playersRequest) {
-        return gameManager.startup(playersRequest);
+        gameManager.startup(playersRequest);
     }
     
     @RequestMapping(value = "/make-guts",
     		method = RequestMethod.POST, 
-    		consumes = MediaType.APPLICATION_XML_VALUE)
-    public GameState makeGuts(
+    		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public void makeGuts(
     		@RequestBody GutsRequest gutsRequest) {
-        return gameManager.makeGuts(gutsRequest);
+        gameManager.makeGuts(gutsRequest);
     }
     
     @RequestMapping(value = "/attack",
     		method = RequestMethod.POST, 
-    		consumes = MediaType.APPLICATION_XML_VALUE)
-    public GameState attack(
+    		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public void attack(
     		@RequestBody AttackRequest attackRequest) {
-        return gameManager.attack(attackRequest);
+        gameManager.attack(attackRequest);
     }
     
     @RequestMapping(value = "/defend",
     		method = RequestMethod.POST, 
-    		consumes = MediaType.APPLICATION_XML_VALUE)
-    public GameState defend(
+    		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public void defend(
     		@RequestBody DefendRequest defendRequest) {
-        return gameManager.defend(defendRequest);
+        gameManager.defend(defendRequest);
     }
     
     @RequestMapping(value = "/end-attack",
     		method = RequestMethod.POST, 
-    		consumes = MediaType.APPLICATION_XML_VALUE)
-    public GameState endPhase(
+    		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public void endPhase(
     		@RequestBody PlayersRequest playersRequest) {
-        return gameManager.endAttack(playersRequest);
+        gameManager.endAttack(playersRequest);
     }
     
     @RequestMapping(value = "/get-game",
     		method = RequestMethod.POST, 
-    		consumes = MediaType.APPLICATION_XML_VALUE)
-    public GameState getGame(
+    		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public GameView getGame(
     		@RequestBody PlayersRequest playersRequest) {
         return gameManager.getGameView(playersRequest);
     }

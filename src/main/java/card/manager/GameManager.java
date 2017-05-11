@@ -19,7 +19,9 @@ import card.model.requests.DefendRequest;
 import card.model.requests.DefendTarget;
 import card.model.requests.GutsRequest;
 import card.model.requests.PlayersRequest;
+import card.model.view.GameView;
 import card.util.CardUtil;
+import card.util.ViewMapper;
 
 @Component("gameManager")
 public class GameManager {
@@ -162,9 +164,10 @@ public class GameManager {
 		playerArea.setMonsters(monsters);
 	}
 	
-	public GameState getGameView (PlayersRequest playersRequest) {
-		// TODO : make a game view object based on the things player 1 needs to see
-		return getGameState(playersRequest.getPlayer1(), playersRequest.getPlayer2());
+	public GameView getGameView (PlayersRequest playersRequest) {
+		String player1 = playersRequest.getPlayer1();
+		String player2 = playersRequest.getPlayer2();
+		return ViewMapper.convertToView(getGameState(player1, player2), player1, player2);
 	}
 	
 	public GameState getGameState(String player1, String player2) {
