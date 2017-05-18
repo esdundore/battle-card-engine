@@ -11,7 +11,7 @@ import card.model.game.Monster;
 public class OpponentView {
 
 	int gutsPool = 0;
-	int handSize;
+	ArrayList<String> hand;
 	ArrayList<Monster> monsters;
 	int deckSize;
 	
@@ -22,12 +22,12 @@ public class OpponentView {
 	public void setGutsPool(int gutsPool) {
 		this.gutsPool = gutsPool;
 	}
-	public int getHandSize() {
-		return handSize;
+	public ArrayList<String> getHand() {
+		return hand;
 	}
 	@XmlElement
-	public void setHandSize(int handSize) {
-		this.handSize = handSize;
+	public void setHand(ArrayList<String> hand) {
+		this.hand = hand;
 	}
 	public ArrayList<Monster> getMonsters() {
 		return monsters;

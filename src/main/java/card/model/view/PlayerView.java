@@ -12,6 +12,7 @@ public class PlayerView {
 
 	int gutsPool = 0;
 	ArrayList<String> hand = new ArrayList<String>();
+	ArrayList<String> discard = new ArrayList<String>();
 	ArrayList<Monster> monsters;
 	int deckSize;
 	
@@ -28,6 +29,13 @@ public class PlayerView {
 	@XmlElement
 	public void setHand(ArrayList<String> hand) {
 		this.hand = hand;
+	}
+	public ArrayList<String> getDiscard() {
+		return discard;
+	}
+	@XmlElement
+	public void setDiscard(ArrayList<String> discard) {
+		this.discard = discard;
 	}
 	public ArrayList<Monster> getMonsters() {
 		return monsters;

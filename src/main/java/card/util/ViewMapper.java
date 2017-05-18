@@ -30,12 +30,18 @@ public class ViewMapper {
 		gameView.getPlayer().setGutsPool(gameState.getPlayers().get(player).getGutsPool());
 		gameView.getPlayer().setHand(gameState.getPlayers().get(player).getHand());
 		gameView.getPlayer().setMonsters(gameState.getPlayers().get(player).getMonsters());
+		gameView.getPlayer().setDiscard(gameState.getPlayers().get(player).getDiscard());
 		
 		// Opponent info mapping
 		gameView.setOpponent(new OpponentView());
 		gameView.getOpponent().setDeckSize(gameState.getPlayers().get(opponent).getDeck().getSkillCards().size());
 		gameView.getOpponent().setGutsPool(gameState.getPlayers().get(opponent).getGutsPool());
-		gameView.getOpponent().setHandSize(gameState.getPlayers().get(opponent).getHand().size());
+		ArrayList<String> hand = new ArrayList<String>();
+		for(int i = 0; i < gameState.getPlayers().get(opponent).getHand().size(); i++) {
+			// Add a dummy card
+			hand.add("Mocchi_Slap");
+		}
+		gameView.getOpponent().setHand(hand);
 		gameView.getOpponent().setMonsters(gameState.getPlayers().get(opponent).getMonsters());
 		
 		// Attack Request mapping

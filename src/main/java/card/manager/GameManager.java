@@ -108,6 +108,7 @@ public class GameManager {
 		GameState gameState = getGameState(player, opponent);
 
 		// add the attack request
+		gameState.setDefendRequest(null);
 		gameState.setAttackRequest(attackRequest);
 		
 		// switch to next player and change phase
