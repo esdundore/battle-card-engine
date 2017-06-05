@@ -35,6 +35,9 @@ public class GameManager {
 	@Autowired
 	AttackResolver attackResolver;
 	
+	@Autowired
+	ValidationManager validationManager;
+	
 	public Map<String, GameState> gameStates = new HashMap<String, GameState>();
 	
 	public final String GUTS_PHASE = "guts";
@@ -82,6 +85,11 @@ public class GameManager {
 		ArrayList<Integer> discards = gutsRequest.getDiscards();
 		GameState gameState = getGameState(player, opponent);
 		
+		// return game state before making changes if not the proper player/phase
+		if (!validationManager.isValidPlayerPhase(gameState, player, GUTS_PHASE)) {
+			return gameState;
+		}
+		
 		PlayerArea playerArea = gameState.getPlayers().get(player);
 		PlayerArea opponentArea = gameState.getPlayers().get(opponent);
 		// discard cards and add guts
@@ -106,6 +114,11 @@ public class GameManager {
 		String player = attackRequest.getPlayer1();
 		String opponent = attackRequest.getPlayer2();
 		GameState gameState = getGameState(player, opponent);
+		
+		// return game state before making changes if not the proper player/phase
+		if (!validationManager.isValidPlayerPhase(gameState, player, ATTACK_PHASE)) {
+			return gameState;
+		}
 
 		// add the attack request
 		gameState.setDefendRequest(null);
@@ -121,6 +134,11 @@ public class GameManager {
 		String player = defendRequest.getPlayer1();
 		String opponent = defendRequest.getPlayer2();
 		GameState gameState = getGameState(player, opponent);
+		
+		// return game state before making changes if not the proper player/phase
+		if (!validationManager.isValidPlayerPhase(gameState, player, DEFEND_PHASE)) {
+			return gameState;
+		}
 
 		// add the defend request
 		gameState.setDefendRequest(defendRequest);
@@ -140,7 +158,7 @@ public class GameManager {
 
 		// switch to next player and change phase
 		gameState.setCurrentPlayer(opponent);
-		gameState.setPhase(DEFEND_PHASE);
+		gameState.setPhase(ATTACK_PHASE);
 		return gameState;
 	}
 	
@@ -148,6 +166,11 @@ public class GameManager {
 		String player = playersRequest.getPlayer1();
 		String opponent = playersRequest.getPlayer2();
 		GameState gameState = getGameState(player, opponent);
+		
+		// return game state before making changes if not the proper player/phase
+		if (!validationManager.isValidPlayerPhase(gameState, player, ATTACK_PHASE)) {
+			return gameState;
+		}
 		
 		// switch to next phase
 		gameState.setPhase(GUTS_PHASE);

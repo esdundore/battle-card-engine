@@ -1,7 +1,6 @@
 package card.model.view;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -13,7 +12,8 @@ public class AttackView extends PlayersRequest {
 	
 	int user;
 	ArrayList<String> cardsPlayed;
-	Map<Integer, Integer> targetsAndDamage;
+	ArrayList<Integer> targets;
+	ArrayList<Integer> damage;
 	
 	public int getUser() {
 		return user;
@@ -29,12 +29,19 @@ public class AttackView extends PlayersRequest {
 	public void setCardsPlayed(ArrayList<String> cardsPlayed) {
 		this.cardsPlayed = cardsPlayed;
 	}
-	public Map<Integer, Integer> getTargetsAndDamage() {
-		return targetsAndDamage;
+	public ArrayList<Integer> getTargets() {
+		return targets;
 	}
 	@XmlElement
-	public void setTargetsAndDamage(Map<Integer, Integer> targetsAndDamage) {
-		this.targetsAndDamage = targetsAndDamage;
+	public void setTargets(ArrayList<Integer> targets) {
+		this.targets = targets;
+	}
+	public ArrayList<Integer> getDamage() {
+		return damage;
+	}
+	@XmlElement
+	public void setDamage(ArrayList<Integer> damage) {
+		this.damage = damage;
 	}
 
 

@@ -9,6 +9,7 @@ C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\vie
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\dao\DeckCache.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\controller\AdminActions.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\game\Monster.java
+C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\requests\PlayableRequest.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\manager\AttackResolver.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\requests\DefendTarget.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\requests\DefendRequest.java
@@ -24,6 +25,8 @@ C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\controlle
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\cards\SkillCard.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\Application.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\manager\ValidationManager.java
+C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\view\PlayableCardView.java
+C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\view\PlayableCard.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\view\PlayerView.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\util\CardUtil.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\game\Deck.java

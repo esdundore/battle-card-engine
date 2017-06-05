@@ -1,6 +1,7 @@
 package card.util;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import card.model.game.GameState;
 import card.model.requests.DefendTarget;
@@ -57,7 +58,14 @@ public class ViewMapper {
 				cardsPlayed.add(gameState.getPlayers().get(attacker).getHand().get(cardPlayedIndex));
 			}
 			gameView.getAttackView().setCardsPlayed(cardsPlayed);
-			gameView.getAttackView().setTargetsAndDamage(gameState.getAttackRequest().getTargetsAndDamage());
+			ArrayList<Integer> targets = new ArrayList<Integer>();
+			ArrayList<Integer> damage = new ArrayList<Integer>();
+			for (Map.Entry<Integer, Integer> targetAndDamage : gameState.getAttackRequest().getTargetsAndDamage().entrySet()) {
+				targets.add(targetAndDamage.getKey());
+				damage.add(targetAndDamage.getValue());
+			}
+			gameView.getAttackView().setTargets(targets);
+			gameView.getAttackView().setDamage(damage);
 		}
 		
 		// Defend Request mapping
