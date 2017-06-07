@@ -53,11 +53,7 @@ public class ViewMapper {
 			gameView.setAttackView(new AttackView());
 			gameView.getAttackView().setPlayer1(attacker);
 			gameView.getAttackView().setPlayer2(defender);
-			ArrayList<String> cardsPlayed = new ArrayList<String>();
-			for (int cardPlayedIndex : gameState.getAttackRequest().getCardsPlayed()) {
-				cardsPlayed.add(gameState.getPlayers().get(attacker).getHand().get(cardPlayedIndex));
-			}
-			gameView.getAttackView().setCardsPlayed(cardsPlayed);
+			gameView.getAttackView().setCardsPlayed(gameState.getAttackRequest().getCardNames());
 			ArrayList<Integer> targets = new ArrayList<Integer>();
 			ArrayList<Integer> damage = new ArrayList<Integer>();
 			for (Map.Entry<Integer, Integer> targetAndDamage : gameState.getAttackRequest().getTargetsAndDamage().entrySet()) {
@@ -79,7 +75,7 @@ public class ViewMapper {
 			ArrayList<DefendViewTarget> defendViewTargets = new ArrayList<DefendViewTarget>();
 			for (DefendTarget defendTarget : gameState.getDefendRequest().getCardAndTargets()) {
 				DefendViewTarget defendViewTarget = new DefendViewTarget();
-				defendViewTarget.setCard(gameState.getPlayers().get(defender).getHand().get(defendTarget.getCard()));
+				defendViewTarget.setCard(defendTarget.getCardName());
 				defendViewTarget.setTransfer(defendTarget.getTransfer());
 				defendViewTarget.setUser(defendTarget.getUser());
 				defendViewTargets.add(defendViewTarget);

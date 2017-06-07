@@ -120,6 +120,13 @@ public class GameManager {
 			return gameState;
 		}
 
+		// set the card names of the attack request
+		ArrayList<String> cardNames = new ArrayList<String>();
+		for (int card : attackRequest.getCardsPlayed()) {
+			cardNames.add(gameState.getPlayers().get(player).getHand().get(card));
+		}
+		attackRequest.setCardNames(cardNames);
+		
 		// add the attack request
 		gameState.setDefendRequest(null);
 		gameState.setAttackRequest(attackRequest);
@@ -140,6 +147,12 @@ public class GameManager {
 			return gameState;
 		}
 
+		// set the card names of the defend request
+		for (DefendTarget defendTarget : defendRequest.getCardAndTargets()) {
+			String cardName = gameState.getPlayers().get(player).getHand().get(defendTarget.getCard());
+			defendTarget.setCardName(cardName);
+		}
+		
 		// add the defend request
 		gameState.setDefendRequest(defendRequest);
 		// resolve attack

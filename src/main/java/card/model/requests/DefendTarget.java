@@ -6,10 +6,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class DefendTarget {
 	
+	String cardName;
 	int card;
 	int user;
 	int transfer;
 	
+	public String getCardName() {
+		return cardName;
+	}
+	@XmlElement
+	public void setCardName(String cardName) {
+		this.cardName = cardName;
+	}
 	public int getCard() {
 		return card;
 	}

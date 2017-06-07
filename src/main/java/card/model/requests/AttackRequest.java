@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class AttackRequest extends PlayersRequest {
 	
 	int user;
+	ArrayList<String> cardNames;
 	ArrayList<Integer> cardsPlayed;
 	Map<Integer, Integer> targetsAndDamage;
 	
@@ -19,6 +20,13 @@ public class AttackRequest extends PlayersRequest {
 	@XmlElement
 	public void setUser(int user) {
 		this.user = user;
+	}
+	public ArrayList<String> getCardNames() {
+		return cardNames;
+	}
+	@XmlElement
+	public void setCardNames(ArrayList<String> cardNames) {
+		this.cardNames = cardNames;
 	}
 	public ArrayList<Integer> getCardsPlayed() {
 		return cardsPlayed;
