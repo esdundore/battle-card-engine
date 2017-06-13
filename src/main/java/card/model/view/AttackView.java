@@ -12,6 +12,7 @@ public class AttackView extends PlayersRequest {
 	
 	int user;
 	ArrayList<String> cardsPlayed;
+	ArrayList<Integer> handIndexes;
 	ArrayList<Integer> targets;
 	ArrayList<Integer> damage;
 	
@@ -28,6 +29,13 @@ public class AttackView extends PlayersRequest {
 	@XmlElement
 	public void setCardsPlayed(ArrayList<String> cardsPlayed) {
 		this.cardsPlayed = cardsPlayed;
+	}
+	public ArrayList<Integer> getHandIndexes() {
+		return handIndexes;
+	}
+	@XmlElement
+	public void setHandIndexes(ArrayList<Integer> handIndexes) {
+		this.handIndexes = handIndexes;
 	}
 	public ArrayList<Integer> getTargets() {
 		return targets;

@@ -159,8 +159,8 @@ public class GameManager {
 		attackResolver.resolveAttack(gameState);
 		
 		AttackRequest attackRequest = gameState.getAttackRequest();
-		PlayerArea playerArea = gameState.getPlayers().get(opponent);
-		PlayerArea opponentArea = gameState.getPlayers().get(player);
+		PlayerArea playerArea = gameState.getPlayers().get(player);
+		PlayerArea opponentArea = gameState.getPlayers().get(opponent);
 		// discard attack and defense cards
 		for (int cardIndex : attackRequest.getCardsPlayed()) {
 			CardUtil.discard(opponentArea.getHand(), opponentArea.getDiscard(), cardIndex);

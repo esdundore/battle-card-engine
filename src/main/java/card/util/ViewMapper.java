@@ -40,7 +40,12 @@ public class ViewMapper {
 		ArrayList<String> hand = new ArrayList<String>();
 		for(int i = 0; i < gameState.getPlayers().get(opponent).getHand().size(); i++) {
 			// Add a dummy card
-			hand.add("Mocchi_Slap");
+			if (gameState.getPlayers().get(opponent).getHand().get(i) != null) {
+				hand.add("Breeder_Help");
+			}
+			else {
+				hand.add(null);
+			}
 		}
 		gameView.getOpponent().setHand(hand);
 		gameView.getOpponent().setMonsters(gameState.getPlayers().get(opponent).getMonsters());
@@ -54,6 +59,7 @@ public class ViewMapper {
 			gameView.getAttackView().setPlayer1(attacker);
 			gameView.getAttackView().setPlayer2(defender);
 			gameView.getAttackView().setCardsPlayed(gameState.getAttackRequest().getCardNames());
+			gameView.getAttackView().setHandIndexes(gameState.getAttackRequest().getCardsPlayed());
 			ArrayList<Integer> targets = new ArrayList<Integer>();
 			ArrayList<Integer> damage = new ArrayList<Integer>();
 			for (Map.Entry<Integer, Integer> targetAndDamage : gameState.getAttackRequest().getTargetsAndDamage().entrySet()) {
@@ -76,6 +82,7 @@ public class ViewMapper {
 			for (DefendTarget defendTarget : gameState.getDefendRequest().getCardAndTargets()) {
 				DefendViewTarget defendViewTarget = new DefendViewTarget();
 				defendViewTarget.setCard(defendTarget.getCardName());
+				defendViewTarget.setHandIndex(defendTarget.getCard());
 				defendViewTarget.setTransfer(defendTarget.getTransfer());
 				defendViewTarget.setUser(defendTarget.getUser());
 				defendViewTargets.add(defendViewTarget);

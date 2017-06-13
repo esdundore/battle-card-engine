@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DefendViewTarget {
 	
 	String card;
+	int handIndex;
 	int user;
 	int transfer;
 	
@@ -16,6 +17,13 @@ public class DefendViewTarget {
 	@XmlElement
 	public void setCard(String card) {
 		this.card = card;
+	}
+	public int getHandIndex() {
+		return handIndex;
+	}
+	@XmlElement
+	public void setHandIndex(int handIndex) {
+		this.handIndex = handIndex;
 	}
 	public int getUser() {
 		return user;

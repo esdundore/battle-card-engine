@@ -215,7 +215,7 @@ public class ValidationManager {
 	}
 	
 	public static boolean canCombo(ArrayList<SkillCard> skillCards) {
-		return false;
+		return true;
 	}
 	
 }
