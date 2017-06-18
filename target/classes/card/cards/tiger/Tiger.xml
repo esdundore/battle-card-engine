@@ -1,7 +1,0 @@
-<monsterCard>
-    <id>Tiger</id>
-	<type>G</type>
-	<maxLife>6</maxLife>
-	<mainLineage>Tiger</mainLineage>
-	<subLineage>Tiger</subLineage>
-</monsterCard>

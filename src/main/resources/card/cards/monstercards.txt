@@ -1,0 +1,45 @@
+Tiger,Tiger,Tiger,GRD,6
+Gali,Gali,Gali,AIR,7
+Golem,Golem,Golem,GRD,9
+Suezo,Suezo,Suezo,GRD,7
+Pixie,Pixie,Pixie,AIR,6
+Dino,Dino,Dino,GRD,8
+Naga,Naga,Naga,GRD,8
+Hare,Hare,Hare,GRD,6
+Mocchi,Mocchi,Mocchi,GRD,7
+Phoenix,Phoenix,Phoenix,AIR,4
+Jell,Jell,Jell,GRD,7
+Monol,Monol,Monol,AIR,8
+Ghost,Ghost,Ghost,AIR,5
+Henger,Henger,Henger,GRD,6
+Mew,Mew,Mew,GRD,6
+Plant,Plant,Plant,GRD,10
+Worm,Worm,Worm,GRD,9
+Dragon,Dragon,Dragon,GRD,8
+Durahan,Durahan,Duraha,GRD,7
+Zilla,Zilla,Zilla,GRD,10
+Allure,Pixie,Naga,AIR,7
+Angel,Pixie,Gali,AIR,7
+Anki,Dino,Golem,GRD,7
+Bazula,Naga,Gali,GRD,7
+Big Blue,Golem,Tiger,GRD,7
+Black Henger,Henger,Monol,GRD,7
+Corone,Worm,Hare,GRD,8
+Fairy Hare,Hare,Pixie,GRD,5
+Gentle Mocchi,Mocchi,Mocchi,GRD,7
+Hare Hound,Tiger,Hare,GRD,6
+Horn,Suezo,Tiger,GRD,6
+Knight Mocchi,Mocchi,Durahan,GRD,8
+Magna,Golem,Worm,GRD,7
+Melon Suezo,Suezo,Dino,GRD,6
+Mum Mew,Mew,Pixie,GRD,6
+Night Flyer,Pixie,Worm,AIR,7
+Purple Jell,Jell,Naga,GRD,8
+Shell Dino,Dino,Worm,GRD,8
+Soboros,Monol,Worm,AIR,9
+Stone Dragon,Dragon,Golem,GRD,8
+Suezo Mask,Gali,Suezo,AIR,7
+Usaba,Plant,Suezo,GRD,9
+Vesuvius,Durahan,Dragon,GRD,7
+Moo,Dragon,Dragon,GRD,8
+Gray Wolf,Tiger,Tiger,Ground,6

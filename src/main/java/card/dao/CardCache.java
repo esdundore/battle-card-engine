@@ -1,13 +1,10 @@
 package card.dao;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -23,34 +20,62 @@ import card.model.cards.SkillCard;
 public class CardCache {
 	
 	private Map<String,BattleCard> battleCards = new HashMap<String,BattleCard>();
-
+	
 	CardCache() throws Exception {
-		JAXBContext battleCardContext = JAXBContext.newInstance(BattleCard.class);
-		JAXBContext skillCardContext = JAXBContext.newInstance(SkillCard.class);
-		JAXBContext monsterCardContext = JAXBContext.newInstance(MonsterCard.class);
-		
-		File[] directories = ResourceUtils.getFile("classpath:card/cards").listFiles(File::isDirectory);
-		ArrayList<File> files = new ArrayList<File>();
-		for (File directory : directories) {
-			files.addAll(new ArrayList<File>(Arrays.asList(directory.listFiles())));
-		}
-		for (File file : files) {
-			try {
-				Unmarshaller jaxbUnmarshaller = skillCardContext.createUnmarshaller();
-				SkillCard skillCard = (SkillCard) jaxbUnmarshaller.unmarshal(file);
+		String currentLine;
+		BufferedReader bufferedSkillReader = null;
+		BufferedReader bufferedMonsterReader = null;
+		try {
+			// load skill cards to cache
+			File skillFile = ResourceUtils.getFile("classpath:card/cards/skillcards.txt");
+			bufferedSkillReader = new BufferedReader(new FileReader(skillFile));
+			while ((currentLine = bufferedSkillReader.readLine()) != null) {
+				String[] split = currentLine.split(",");
+				String monsterName = split[0];
+				String cardName = split[1];
+				String cardType = split[2];
+				int gutsCost = Integer.parseInt(split[3]);
+				int damage = Integer.parseInt(split[4]);
+			
+				SkillCard skillCard = new SkillCard();
+				skillCard.setId(monsterName + "_" + cardName);
+				skillCard.setUserId(monsterName);
+				skillCard.setType(cardType);
+				skillCard.setGutsCost(gutsCost);
+				skillCard.setDamage(damage);
+			
 				battleCards.put(skillCard.getId(), skillCard);
-			} catch (Exception e1) {
-				try {
-					Unmarshaller jaxbUnmarshaller = monsterCardContext.createUnmarshaller();
-					MonsterCard monsterCard = (MonsterCard) jaxbUnmarshaller.unmarshal(file);
-					battleCards.put(monsterCard.getId(), monsterCard);
-				} catch (Exception e2) {
-					Unmarshaller jaxbUnmarshaller = battleCardContext.createUnmarshaller();
-					BattleCard battleCard = (BattleCard) jaxbUnmarshaller.unmarshal(file);
-					battleCards.put(battleCard.getId(), battleCard);
-				}
+			}
+		
+			// load monster cards to cache
+			File monsterFile = ResourceUtils.getFile("classpath:card/cards/monstercards.txt");
+			bufferedMonsterReader = new BufferedReader(new FileReader(monsterFile));
+			while ((currentLine = bufferedMonsterReader.readLine()) != null) {
+				String[] split = currentLine.split(",");
+				String monsterName = split[0];
+				String mainLineage = split[1];
+				String subLineage = split[2];
+				String monsterType = split[3];
+				int maxLife = Integer.parseInt(split[4]);
+			
+				MonsterCard monsterCard = new MonsterCard();
+				monsterCard.setId(monsterName);
+				monsterCard.setMainLineage(mainLineage);
+				monsterCard.setSubLineage(subLineage);
+				monsterCard.setType(monsterType);
+				monsterCard.setMaxLife(maxLife);
+				
+				battleCards.put(monsterCard.getId(), monsterCard);
+			}
+		} finally {
+			if (bufferedSkillReader != null) {
+				bufferedSkillReader.close();
+			}
+			if (bufferedMonsterReader != null) {
+				bufferedMonsterReader.close();
 			}
 		}
+		
 	}
 	
 	public BattleCard getCard(String id) {
