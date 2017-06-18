@@ -13,6 +13,7 @@ public class PlayerArea {
 	ArrayList<String> hand = new ArrayList<String>();
 	ArrayList<String> discard = new ArrayList<String>();
 	ArrayList<Monster> monsters;
+	boolean canAttack = true;
 	
 	public int getGutsPool() {
 		return gutsPool;
@@ -48,6 +49,13 @@ public class PlayerArea {
 	@XmlElement
 	public void setMonsters(ArrayList<Monster> monsters) {
 		this.monsters = monsters;
+	}
+	public boolean isCanAttack() {
+		return canAttack;
+	}
+	@XmlElement
+	public void setCanAttack(boolean canAttack) {
+		this.canAttack = canAttack;
 	}
 	
 }

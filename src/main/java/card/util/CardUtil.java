@@ -89,7 +89,8 @@ public class CardUtil {
 			return player1;
 		}
 		else {
-			return player2;
+			//TODO: change this to player2
+			return player1;
 		}
 	}
 	

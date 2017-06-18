@@ -11,6 +11,9 @@ public class Monster extends MonsterCard {
 	protected int currentLife;
 	protected boolean canAttack = true;
 
+	public Monster() {
+	}
+	
 	public Monster(MonsterCard monsterCard) {
 		this.id = monsterCard.getId();
 		this.maxLife = monsterCard.getMaxLife();

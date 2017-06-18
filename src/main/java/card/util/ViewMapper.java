@@ -1,6 +1,7 @@
 package card.util;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import card.model.game.GameState;
 import card.model.requests.DefendTarget;
@@ -39,7 +40,12 @@ public class ViewMapper {
 		ArrayList<String> hand = new ArrayList<String>();
 		for(int i = 0; i < gameState.getPlayers().get(opponent).getHand().size(); i++) {
 			// Add a dummy card
-			hand.add("Mocchi_Slap");
+			if (gameState.getPlayers().get(opponent).getHand().get(i) != null) {
+				hand.add("Breeder_Help");
+			}
+			else {
+				hand.add(null);
+			}
 		}
 		gameView.getOpponent().setHand(hand);
 		gameView.getOpponent().setMonsters(gameState.getPlayers().get(opponent).getMonsters());
@@ -52,12 +58,16 @@ public class ViewMapper {
 			gameView.setAttackView(new AttackView());
 			gameView.getAttackView().setPlayer1(attacker);
 			gameView.getAttackView().setPlayer2(defender);
-			ArrayList<String> cardsPlayed = new ArrayList<String>();
-			for (int cardPlayedIndex : gameState.getAttackRequest().getCardsPlayed()) {
-				cardsPlayed.add(gameState.getPlayers().get(attacker).getHand().get(cardPlayedIndex));
+			gameView.getAttackView().setCardsPlayed(gameState.getAttackRequest().getCardNames());
+			gameView.getAttackView().setHandIndexes(gameState.getAttackRequest().getCardsPlayed());
+			ArrayList<Integer> targets = new ArrayList<Integer>();
+			ArrayList<Integer> damage = new ArrayList<Integer>();
+			for (Map.Entry<Integer, Integer> targetAndDamage : gameState.getAttackRequest().getTargetsAndDamage().entrySet()) {
+				targets.add(targetAndDamage.getKey());
+				damage.add(targetAndDamage.getValue());
 			}
-			gameView.getAttackView().setCardsPlayed(cardsPlayed);
-			gameView.getAttackView().setTargetsAndDamage(gameState.getAttackRequest().getTargetsAndDamage());
+			gameView.getAttackView().setTargets(targets);
+			gameView.getAttackView().setDamage(damage);
 		}
 		
 		// Defend Request mapping
@@ -71,7 +81,8 @@ public class ViewMapper {
 			ArrayList<DefendViewTarget> defendViewTargets = new ArrayList<DefendViewTarget>();
 			for (DefendTarget defendTarget : gameState.getDefendRequest().getCardAndTargets()) {
 				DefendViewTarget defendViewTarget = new DefendViewTarget();
-				defendViewTarget.setCard(gameState.getPlayers().get(defender).getHand().get(defendTarget.getCard()));
+				defendViewTarget.setCard(defendTarget.getCardName());
+				defendViewTarget.setHandIndex(defendTarget.getCard());
 				defendViewTarget.setTransfer(defendTarget.getTransfer());
 				defendViewTarget.setUser(defendTarget.getUser());
 				defendViewTargets.add(defendViewTarget);
