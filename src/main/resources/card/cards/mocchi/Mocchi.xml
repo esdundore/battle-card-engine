@@ -1,0 +1,7 @@
+<monsterCard>
+    <id>Mocchi</id>
+	<type>G</type>
+	<maxLife>7</maxLife>
+	<mainLineage>Mocchi</mainLineage>
+	<subLineage>Mocchi</subLineage>
+</monsterCard>

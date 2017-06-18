@@ -3,7 +3,7 @@ package card.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import card.manager.GameManager;
-import card.model.requests.AttackRequest;
+import card.model.requests.AttackRequestNoMap;
 import card.model.requests.DefendRequest;
 import card.model.requests.GutsRequest;
 import card.model.requests.PlayersRequest;
@@ -44,7 +44,7 @@ public class GameActions {
     		method = RequestMethod.POST, 
     		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public void attack(
-    		@RequestBody AttackRequest attackRequest) {
+    		@RequestBody AttackRequestNoMap attackRequest) {
         gameManager.attack(attackRequest);
     }
     

@@ -15,6 +15,7 @@ import card.model.game.GameState;
 import card.model.game.Monster;
 import card.model.game.PlayerArea;
 import card.model.requests.AttackRequest;
+import card.model.requests.AttackRequestNoMap;
 import card.model.requests.DefendRequest;
 import card.model.requests.DefendTarget;
 import card.model.requests.GutsRequest;
@@ -110,7 +111,19 @@ public class GameManager {
 		return gameState;
 	}
 	
-	public GameState attack(AttackRequest attackRequest) {
+	public GameState attack(AttackRequestNoMap attackRequestNoMap) {
+		// convert the non map request type
+		AttackRequest attackRequest = new AttackRequest();
+		attackRequest.setPlayer1(attackRequestNoMap.getPlayer1());
+		attackRequest.setPlayer2(attackRequestNoMap.getPlayer2());
+		attackRequest.setUser(attackRequestNoMap.getUser());
+		attackRequest.setCardsPlayed(attackRequestNoMap.getCardsPlayed());
+		Map<Integer, Integer> targetsAndDamage = new HashMap<Integer, Integer>();
+		for (int i = 0; i < attackRequestNoMap.getTargets().size(); i++) {
+			targetsAndDamage.put(attackRequestNoMap.getTargets().get(i), attackRequestNoMap.getDamages().get(i));
+		}
+		attackRequest.setTargetsAndDamage(targetsAndDamage);
+				
 		String player = attackRequest.getPlayer1();
 		String opponent = attackRequest.getPlayer2();
 		GameState gameState = getGameState(player, opponent);
@@ -130,6 +143,7 @@ public class GameManager {
 		// add the attack request
 		gameState.setDefendRequest(null);
 		gameState.setAttackRequest(attackRequest);
+		gameState.setAttackId(gameState.getAttackId() + 1);
 		
 		// switch to next player and change phase
 		gameState.setCurrentPlayer(opponent);
@@ -155,6 +169,8 @@ public class GameManager {
 		
 		// add the defend request
 		gameState.setDefendRequest(defendRequest);
+		gameState.setDefendId(gameState.getDefendId() + 1);
+		
 		// resolve attack
 		attackResolver.resolveAttack(gameState);
 		

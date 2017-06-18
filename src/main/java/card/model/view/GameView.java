@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class GameView {
 
+	int attackId;
+	int defendId;
 	Date currentTime = new Date();
 	String phase;
 	String currentPlayer;
@@ -17,6 +19,18 @@ public class GameView {
 	PlayerView player;
 	OpponentView opponent;
 
+	public int getAttackId() {
+		return attackId;
+	}
+	public void setAttackId(int attackId) {
+		this.attackId = attackId;
+	}
+	public int getDefendId() {
+		return defendId;
+	}
+	public void setDefendId(int defendId) {
+		this.defendId = defendId;
+	}
 	public Date getCurrentTime() {
 		return currentTime;
 	}

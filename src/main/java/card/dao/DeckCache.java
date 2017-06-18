@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
 import card.model.game.Deck;
 
@@ -22,7 +23,7 @@ public class DeckCache {
 	DeckCache() throws Exception {
 		JAXBContext deckContext = JAXBContext.newInstance(Deck.class);
 		
-		File directory = new File("C:/battle-card/decks");
+		File directory = ResourceUtils.getFile("classpath:card/decks");
 		File[] files = directory.listFiles();
 		for (File file : files) {
 			Unmarshaller jaxbUnmarshaller = deckContext.createUnmarshaller();

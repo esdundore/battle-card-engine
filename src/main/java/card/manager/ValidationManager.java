@@ -164,7 +164,7 @@ public class ValidationManager {
 		}
 		
 		// check that the card can combo
-		if (!canCombo(skillCards)) {
+		if (skillCards.size() > 1 && !canCombo(skillCards)) {
 			return false;
 		}
 		
@@ -215,7 +215,7 @@ public class ValidationManager {
 	}
 	
 	public static boolean canCombo(ArrayList<SkillCard> skillCards) {
-		return true;
+		return false;
 	}
 	
 }

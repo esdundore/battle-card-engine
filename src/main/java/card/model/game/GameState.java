@@ -14,6 +14,8 @@ import card.model.requests.DefendRequest;
 public class GameState {
 
 	String sessionId;
+	int attackId = 0;
+	int defendId = 0;
 	int turnCount = 0;
 	Map<String, PlayerArea> players;
 	Date currentTime = new Date();
@@ -29,6 +31,18 @@ public class GameState {
 	@XmlElement
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
+	}
+	public int getAttackId() {
+		return attackId;
+	}
+	public void setAttackId(int attackId) {
+		this.attackId = attackId;
+	}
+	public int getDefendId() {
+		return defendId;
+	}
+	public void setDefendId(int defendId) {
+		this.defendId = defendId;
 	}
 	public int getTurnCount() {
 		return turnCount;

@@ -1,6 +1,8 @@
 package card.dao;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
 import card.model.cards.BattleCard;
 import card.model.cards.MonsterCard;
@@ -26,8 +29,11 @@ public class CardCache {
 		JAXBContext skillCardContext = JAXBContext.newInstance(SkillCard.class);
 		JAXBContext monsterCardContext = JAXBContext.newInstance(MonsterCard.class);
 		
-		File directory = new File("C:/battle-card/cards");
-		File[] files = directory.listFiles();
+		File[] directories = ResourceUtils.getFile("classpath:card/cards").listFiles(File::isDirectory);
+		ArrayList<File> files = new ArrayList<File>();
+		for (File directory : directories) {
+			files.addAll(new ArrayList<File>(Arrays.asList(directory.listFiles())));
+		}
 		for (File file : files) {
 			try {
 				Unmarshaller jaxbUnmarshaller = skillCardContext.createUnmarshaller();

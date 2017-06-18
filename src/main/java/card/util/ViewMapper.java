@@ -17,6 +17,8 @@ public class ViewMapper {
 	public static GameView convertToView(GameState gameState, String player, String opponent) {
 		// Basic info mapping
 		GameView gameView = new GameView();
+		gameView.setAttackId(gameState.getAttackId());
+		gameView.setDefendId(gameState.getDefendId());
 		gameView.setCurrentPlayer(gameState.getCurrentPlayer());
 		gameView.setCurrentTime(gameState.getCurrentTime());
 		gameView.setPhase(gameState.getPhase());
