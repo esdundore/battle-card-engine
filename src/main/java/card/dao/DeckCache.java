@@ -1,14 +1,15 @@
 package card.dao;
 
-import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 import card.model.game.Deck;
 
@@ -22,14 +23,18 @@ public class DeckCache {
 
 	DeckCache() throws Exception {
 		JAXBContext deckContext = JAXBContext.newInstance(Deck.class);
+		Unmarshaller jaxbUnmarshaller = deckContext.createUnmarshaller();
 		
-		//File directory = ResourceUtils.getFile("classpath:card/decks");
-		//File[] files = directory.listFiles();
-		//for (File file : files) {
-		//	Unmarshaller jaxbUnmarshaller = deckContext.createUnmarshaller();
-		//	Deck deck= (Deck) jaxbUnmarshaller.unmarshal(file);
-		//	decks.put(deck.getOwnerId(), deck);
-		//}
+		ClassPathResource player1PathResource = new ClassPathResource("card/decks/player1.xml");
+        InputStream player1Stream = player1PathResource.getInputStream();
+		Deck player1Deck = (Deck) jaxbUnmarshaller.unmarshal(new InputStreamReader(player1Stream));
+		
+		ClassPathResource player2PathResource = new ClassPathResource("card/decks/player2.xml");
+        InputStream player2Stream = player2PathResource.getInputStream();
+		Deck player2Deck = (Deck) jaxbUnmarshaller.unmarshal(new InputStreamReader(player2Stream));
+		
+		decks.put(player1Deck.getOwnerId(), player1Deck);
+		decks.put(player2Deck.getOwnerId(), player2Deck);
 	}
 	
 	public Deck getDeck(String id) {
