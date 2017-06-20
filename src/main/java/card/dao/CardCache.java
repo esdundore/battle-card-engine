@@ -1,13 +1,13 @@
 package card.dao;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 import card.model.cards.BattleCard;
 import card.model.cards.MonsterCard;
@@ -27,8 +27,10 @@ public class CardCache {
 		BufferedReader bufferedMonsterReader = null;
 		try {
 			// load skill cards to cache
-			File skillFile = ResourceUtils.getFile("classpath:card/cards/skillcards.txt");
-			bufferedSkillReader = new BufferedReader(new FileReader(skillFile));
+			System.out.println("ClassPathLoader");
+			ClassPathResource skillPathResource = new ClassPathResource("card/cards/skillcards.txt");
+	        InputStream skillStream = skillPathResource.getInputStream();
+			bufferedSkillReader = new BufferedReader(new InputStreamReader(skillStream));
 			while ((currentLine = bufferedSkillReader.readLine()) != null) {
 				String[] split = currentLine.split(",");
 				String monsterName = split[0];
@@ -48,8 +50,9 @@ public class CardCache {
 			}
 		
 			// load monster cards to cache
-			File monsterFile = ResourceUtils.getFile("classpath:card/cards/monstercards.txt");
-			bufferedMonsterReader = new BufferedReader(new FileReader(monsterFile));
+			ClassPathResource monsterPathResource = new ClassPathResource("card/cards/monstercards.txt");
+	        InputStream monsterStream = monsterPathResource.getInputStream();
+			bufferedMonsterReader = new BufferedReader(new InputStreamReader(monsterStream));
 			while ((currentLine = bufferedMonsterReader.readLine()) != null) {
 				String[] split = currentLine.split(",");
 				String monsterName = split[0];

@@ -23,13 +23,13 @@ public class DeckCache {
 	DeckCache() throws Exception {
 		JAXBContext deckContext = JAXBContext.newInstance(Deck.class);
 		
-		File directory = ResourceUtils.getFile("classpath:card/decks");
-		File[] files = directory.listFiles();
-		for (File file : files) {
-			Unmarshaller jaxbUnmarshaller = deckContext.createUnmarshaller();
-			Deck deck= (Deck) jaxbUnmarshaller.unmarshal(file);
-			decks.put(deck.getOwnerId(), deck);
-		}
+		//File directory = ResourceUtils.getFile("classpath:card/decks");
+		//File[] files = directory.listFiles();
+		//for (File file : files) {
+		//	Unmarshaller jaxbUnmarshaller = deckContext.createUnmarshaller();
+		//	Deck deck= (Deck) jaxbUnmarshaller.unmarshal(file);
+		//	decks.put(deck.getOwnerId(), deck);
+		//}
 	}
 	
 	public Deck getDeck(String id) {
