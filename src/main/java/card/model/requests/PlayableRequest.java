@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PlayableRequest extends PlayersRequest {
 	
 	ArrayList<Integer> playedCardIndexes;
+	Integer userId;
 
 	public ArrayList<Integer> getPlayedCardIndexes() {
 		return playedCardIndexes;
@@ -16,6 +17,12 @@ public class PlayableRequest extends PlayersRequest {
 	@XmlElement
 	public void setPlayedCardIndexes(ArrayList<Integer> playedCardIndexes) {
 		this.playedCardIndexes = playedCardIndexes;
+	}
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 }

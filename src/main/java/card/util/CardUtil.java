@@ -26,16 +26,12 @@ public class CardUtil {
 		} 
 	}
 	
-	public static void drawUntilFull(PlayerArea playerArea) {
+	public static void drawUntilFull(PlayerArea playerArea) throws NoSuchElementException {
 		ArrayList<String> hand = playerArea.getHand();
 		LinkedList<String> deck = playerArea.getDeck().getSkillCards();
 		if(sizeMinusNulls(hand) >= MAX_HAND_SIZE) {
 			// if full already, discard top card and make 1 GUTS
-			try {
-				playerArea.getDiscard().add(deck.pop());
-			} catch (NoSuchElementException nsee) {
-				// can't draw a card - game lost
-			}
+			playerArea.getDiscard().add(deck.pop());
 			playerArea.setGutsPool(playerArea.getGutsPool() + 1);
 		}
 		while(sizeMinusNulls(hand) < MAX_HAND_SIZE) {
@@ -43,24 +39,9 @@ public class CardUtil {
 		}
 	}
 	
-	public static int sizeMinusNulls(ArrayList<String> hand) {
-		int sizeMinusNulls = 0;
-		for (String card : hand) {
-			if (card != null) {
-				sizeMinusNulls++;
-			}
-		}
-		return sizeMinusNulls;
-	}
-	
-	public static void draw(LinkedList<String> deck, ArrayList<String> hand) {
-		String cardDrawn = null;
+	public static void draw(LinkedList<String> deck, ArrayList<String> hand) throws NoSuchElementException {
 		// try to draw a card
-		try {
-			cardDrawn = deck.pop();
-		} catch (NoSuchElementException nsee) {
-			// can't draw a card - game lost
-		}
+		String cardDrawn = deck.pop();
 		//replace empty slots if there are any
 		for (int i = 0; i < hand.size(); i++) {
 			if (hand.get(i) == null) {
@@ -94,4 +75,13 @@ public class CardUtil {
 		}
 	}
 	
+	public static int sizeMinusNulls (ArrayList<String> hand) {
+		int sizeMinusNulls = 0;
+		for (String card : hand) {
+			if (card != null) {
+				sizeMinusNulls++;
+			}
+		}
+		return sizeMinusNulls;
+	}
 }

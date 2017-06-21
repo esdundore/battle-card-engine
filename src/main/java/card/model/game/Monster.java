@@ -28,7 +28,7 @@ public class Monster extends MonsterCard {
 	}
 	@XmlElement
 	public void setCurrentLife(int currentLife) {
-		this.currentLife = currentLife;
+		this.currentLife = currentLife >= 0 ? currentLife : 0;
 	}
 	public boolean isCanAttack() {
 		return canAttack;

@@ -20,7 +20,7 @@ public class PlayerArea {
 	}
 	@XmlElement
 	public void setGutsPool(int gutsPool) {
-		this.gutsPool = gutsPool;
+		this.gutsPool = gutsPool >= 0 ? gutsPool : 0;
 	}
 	public Deck getDeck() {
 		return deck;

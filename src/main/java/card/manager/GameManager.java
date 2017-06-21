@@ -3,6 +3,7 @@ package card.manager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -101,7 +102,11 @@ public class GameManager {
 		}
 		// let the next player draw
 		if (gameState.getTurnCount() > 0) {
-			CardUtil.drawUntilFull(opponentArea);
+			try {
+				CardUtil.drawUntilFull(opponentArea);
+			} catch (NoSuchElementException nsee) {
+				// TODO: can't draw a card - game lost
+			}
 		}
 		
 		// switch to next player and change phase
@@ -184,6 +189,8 @@ public class GameManager {
 		for (DefendTarget defendTarget : defendRequest.getCardAndTargets()) {
 			CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), defendTarget.getCard());
 		}
+		
+		// TODO: check if all monsters are dead - for both players
 
 		// switch to next player and change phase
 		gameState.setCurrentPlayer(opponent);

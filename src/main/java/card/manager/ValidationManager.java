@@ -35,6 +35,7 @@ public class ValidationManager {
 		String opponent = playableRequest.getPlayer2();
 		GameState gameState = gameManager.getGameState(player, opponent);
 		ArrayList<Integer> playedCards = playableRequest.getPlayedCardIndexes();
+		Integer userId = playableRequest.getUserId();
 		
 		// not the player's turn
 		if (!gameState.getCurrentPlayer().equals(player)) {
@@ -45,6 +46,7 @@ public class ValidationManager {
 		ArrayList<String> hand = gameState.getPlayers().get(player).getHand();
 		ArrayList<Monster> monsters = gameState.getPlayers().get(player).getMonsters();
 		ArrayList<Monster> opponentMonsters = gameState.getPlayers().get(opponent).getMonsters();
+		int guts = gameState.getPlayers().get(player).getGutsPool();
 		boolean breederAttack = gameState.getPlayers().get(player).isCanAttack();
 		
 		if(playedCards == null) playedCards = new ArrayList<Integer>();
@@ -61,19 +63,26 @@ public class ValidationManager {
 						playableCards.add(playableCard);
 					}
 				}
-				else if (gameManager.ATTACK_PHASE.equals(gameState.getPhase())) {
+				else {
 					SkillCard skillCard = (SkillCard) cardCache.getCard(hand.get(i));
-					playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, true));
-					playableCard.setTargets(findTargets(skillCard, opponentMonsters));
-					if (isPlayableAttack(gameState, player, playableCard, skillCard, playedCards)) {
-						playableCards.add(playableCard);
+					ArrayList<SkillCard> playedSkillCards = new ArrayList<SkillCard>();
+					for (int cardIndex : playedCards) {
+						SkillCard otherCard = (SkillCard) cardCache.getCard(gameState.getPlayers().get(player).getHand().get(cardIndex));
+						playedSkillCards.add(otherCard);
 					}
-				}
-				else if (gameManager.DEFEND_PHASE.equals(gameState.getPhase())) {
-					SkillCard skillCard = (SkillCard) cardCache.getCard(hand.get(i));
-					playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, false));
-					if (isPlayableDefense(gameState, player, playableCard, skillCard, playedCards)) {
-						playableCards.add(playableCard);
+					playedSkillCards.add(skillCard);
+					if (gameManager.ATTACK_PHASE.equals(gameState.getPhase())) {
+						playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, true, userId));
+						playableCard.setTargets(findCommonTargets(playedSkillCards, opponentMonsters));
+						if (isPlayableAttack(guts, playableCard, skillCard, playedSkillCards)) {
+							playableCards.add(playableCard);
+						}
+					}
+					else if (gameManager.DEFEND_PHASE.equals(gameState.getPhase())) {
+						playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, false, null));
+						if (isPlayableDefense(guts, playableCard, skillCard, playedSkillCards)) {
+							playableCards.add(playableCard);
+						}
 					}
 				}
 			}
@@ -86,7 +95,7 @@ public class ValidationManager {
 	}
 	
 	
-	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, boolean breederAttack, boolean isAttack) {
+	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, boolean breederAttack, boolean isAttack, Integer user) {
 		ArrayList<Integer> users = new ArrayList<Integer>();
 		
 		// make a temporary monster list and add a monster to represent the breeder
@@ -113,11 +122,28 @@ public class ValidationManager {
 				}
 			}
 		}
+		if (user != null) {
+			users.retainAll(new ArrayList<Integer>(user));
+		}
 
 		return users;
 	}
 	
-	public ArrayList<Integer> findTargets(SkillCard skillCard, ArrayList<Monster> monsters) {
+	public ArrayList<Integer> findCommonTargets (ArrayList<SkillCard> skillCards, ArrayList<Monster> monster) {
+		ArrayList<Integer> commonTargets = new ArrayList<Integer>();
+		for (SkillCard skillCard : skillCards) {
+			ArrayList<Integer> targets = findTargets(skillCard, monster);
+			if (commonTargets.isEmpty()) {
+				commonTargets.addAll(targets);
+			}
+			else {
+				commonTargets.retainAll(targets);
+			}
+		}
+		return commonTargets;
+	}
+	
+	public ArrayList<Integer> findTargets (SkillCard skillCard, ArrayList<Monster> monsters) {
 		ArrayList<Integer> targets = new ArrayList<Integer>();
 		
 		// can only attack living targets
@@ -130,8 +156,7 @@ public class ValidationManager {
 		return targets;
 	}
 	
-	public boolean isPlayableAttack(GameState gameState, String player, PlayableCard playableCard, SkillCard skillCard, ArrayList<Integer> playedCards) {
-		int guts = gameState.getPlayers().get(player).getGutsPool();
+	public boolean isPlayableAttack(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards) {
 		
 		// check that the move is an attack
 		if (!ATTACK_TYPES.contains(skillCard.getType())) {
@@ -139,7 +164,7 @@ public class ValidationManager {
 		}
 		
 		// check that the card has users
-		if (playableCard.getUsers() == null || playableCard.getTargets() == null) {
+		if (playableCard.getUsers() == null) {
 			return false;
 		}
 		
@@ -148,31 +173,24 @@ public class ValidationManager {
 			return false;
 		}
 		
-		ArrayList<SkillCard> skillCards = new ArrayList<SkillCard>();
-		int totalGutsCost = 0;
-		for (int cardIndex : playedCards) {
-			SkillCard otherCard = (SkillCard) cardCache.getCard(gameState.getPlayers().get(player).getHand().get(cardIndex));
-			totalGutsCost += otherCard.getGutsCost();
-			skillCards.add(otherCard);
-		}
-		totalGutsCost += skillCard.getGutsCost();
-		skillCards.add(skillCard);
-		
 		// check the player has enough guts
+		int totalGutsCost = 0;
+		for (SkillCard otherCard : playedCards) {
+			totalGutsCost += otherCard.getGutsCost();
+		}
 		if (guts < totalGutsCost) {
 			return false;
 		}
 		
 		// check that the card can combo
-		if (skillCards.size() > 1 && !canCombo(skillCards)) {
+		if (playedCards.size() > 1 && !canCombo(playedCards)) {
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public boolean isPlayableDefense(GameState gameState, String player, PlayableCard playableCard, SkillCard skillCard, ArrayList<Integer> playedCards) {
-		int guts = gameState.getPlayers().get(player).getGutsPool();
+	public boolean isPlayableDefense(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards) {
 		
 		// check that the move is a defense
 		if (!DEFEND_TYPES.contains(skillCard.getType())) {
@@ -184,17 +202,11 @@ public class ValidationManager {
 			return false;
 		}
 		
-		ArrayList<SkillCard> skillCards = new ArrayList<SkillCard>();
-		int totalGutsCost = 0;
-		for (int cardIndex : playedCards) {
-			SkillCard otherCard = (SkillCard) cardCache.getCard(gameState.getPlayers().get(player).getHand().get(cardIndex));
-			totalGutsCost += otherCard.getGutsCost();
-			skillCards.add(otherCard);
-		}
-		totalGutsCost += skillCard.getGutsCost();
-		skillCards.add(skillCard);
-		
 		// check the player has enough guts
+		int totalGutsCost = 0;
+		for (SkillCard otherCard : playedCards) {
+			totalGutsCost += otherCard.getGutsCost();
+		}
 		if (guts < totalGutsCost) {
 			return false;
 		}
