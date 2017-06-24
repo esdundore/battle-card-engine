@@ -109,7 +109,7 @@ Jell,Stab,POW,1,2
 Mew,Rushing Punch,POW,2,2
 Mew,Doll,SPE,0,0
 Mew,Miaw,INT,3,1
-Mew,Head Butt,POW,1,3
+Mew,Headbutt,POW,1,3
 Mew,Punch,POW,1,2
 Mew,Scaredy Cat,DGE,1,0
 Mew,Twiddling,POW,4,3
@@ -127,7 +127,7 @@ Mocchi,Hide,BLK,1,0
 Mocchi,Thrust,POW,2,2
 Mocchi,Round,BLK,0,0
 Mocchi,Motch Ray,INT,4,6
-Mocchi,Head Butt,POW,2,3
+Mocchi,Headbutt,POW,2,3
 Mocchi,Roll Attack,POW,1,2
 Mocchi,Slap,POW,0,1
 Monol,Shock Breath,BLK,2,0

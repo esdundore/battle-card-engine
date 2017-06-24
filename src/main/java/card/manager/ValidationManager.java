@@ -51,7 +51,6 @@ public class ValidationManager {
 		ArrayList<String> hand = gameState.getPlayers().get(player).getHand();
 		ArrayList<Monster> monsters = gameState.getPlayers().get(player).getMonsters();
 		ArrayList<Monster> opponentMonsters = gameState.getPlayers().get(opponent).getMonsters();
-		ArrayList<String> attackCards = gameState.getAttackRequest().getCardNames();
 		int guts = gameState.getPlayers().get(player).getGutsPool();
 		boolean breederAttack = gameState.getPlayers().get(player).isCanAttack();
 		
@@ -85,6 +84,7 @@ public class ValidationManager {
 						}
 					}
 					else if (gameManager.DEFEND_PHASE.equals(gameState.getPhase())) {
+						ArrayList<String> attackCards = gameState.getAttackRequest().getCardNames();
 						playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, false, null));
 						if (isPlayableDefense(guts, playableCard, skillCard, playedSkillCards, attackCards)) {
 							playableCards.add(playableCard);
@@ -122,6 +122,8 @@ public class ValidationManager {
 		}
 		
 		for (int i = 0; i < lineages.size(); i++) {
+			System.out.println(lineages.get(i));
+			System.out.println(skillCard.getUserId());
 			if (lineages.get(i).equals(skillCard.getUserId()) || ANY_USER.equals(skillCard.getUserId())) {
 				if (!isAttack || tempMonsters.get(i).isCanAttack()) {
 					users.add(i);

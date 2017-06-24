@@ -18,6 +18,7 @@ C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\vie
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\controller\ValidationActions.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\view\GameView.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\util\ViewMapper.java
+C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\util\CardNameConstants.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\manager\GameManager.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\model\game\GameState.java
 C:\Users\Eric\Documents\Projects\battle-card-engine\src\main\java\card\dao\CardCache.java
