@@ -1,6 +1,7 @@
 package card.manager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import card.model.game.PlayerArea;
 import card.model.requests.AttackRequest;
 import card.model.requests.DefendRequest;
 import card.model.requests.DefendTarget;
+import card.util.CardNameConstants;
 
 @Component("attackResolver")
 public class AttackResolver {
@@ -64,6 +66,7 @@ public class AttackResolver {
 		defenderArea.setGutsPool(defenderArea.getGutsPool() - defenseGutsCost);
 		
 		// apply damage - for each target
+		int totalDamage = 0;
 		for (Map.Entry<Integer, Integer> targetAndDamage : attackRequest.getTargetsAndDamage().entrySet()) {
 			int targetIndex = targetAndDamage.getKey();
 			
@@ -76,7 +79,7 @@ public class AttackResolver {
 				if (defendTarget.getUser() == targetIndex) {
 					SkillCard defenseCard = defenseCardMap.get(defendTarget.getCard());
 					if (TYPE_DODGE.equals(defenseCard.getType())) {
-						tempDamage = dodgeDamage(defenseCard.getId(), tempDamage);
+						tempDamage = dodgeDamage(attackCardNames, defenseCard.getId(), tempDamage);
 					}
 					else if (TYPE_BLOCK.equals(defenseCard.getType())) {
 						tempDamage = blockDamage(defenseCard.getId(), tempDamage);
@@ -84,29 +87,55 @@ public class AttackResolver {
 				}
 			}
 			Monster target = defenderArea.getMonsters().get(targetAndDamage.getKey());
+			specialTargetEffects(attackCardNames, tempDamage, target);
 			target.setCurrentLife(target.getCurrentLife() - tempDamage);	
-			specialEffects(attackCardNames, tempDamage, target);
-			
+			totalDamage += tempDamage;
 			if (target.getCurrentLife() <= 0) {
 				// dead
 			}
 		}
+		
+		// apply after effects
+		Monster user = attackerArea.getMonsters().get(attackRequest.getUser());
+		specialAfterEffects(attackCardNames, totalDamage, user, defenderArea);
 
 		// user done attacking
-		attackerArea.getMonsters().get(attackRequest.getUser()).setCanAttack(false);
+		user.setCanAttack(false);
 		
 	}
 	
-	public void specialEffects(ArrayList<String> cardName, int tempDamage, Monster target) {
-		
-	}
-	
-	public int dodgeDamage(String cardName, int damage) {
+	public int dodgeDamage(ArrayList<String> attackCardNames, String dodgeCardName, int damage) {
+		// 1/2 damage 
+		if (!Collections.disjoint(attackCardNames,CardNameConstants.HALF_DODGE)) {
+			return damage / 2;
+		}
 		return 0;
 	}
 	
-	public int blockDamage(String cardName, int damage) {
-		return 0;
+	public int blockDamage(String blockCardName, int damage) {
+		int damageBlocked = CardNameConstants.BLOCK_AMOUNT.getOrDefault(blockCardName, 0);
+		int newDamage = damage - damageBlocked;
+		return newDamage > 0 ? newDamage : 0;
 	}
 	
+	
+	public void specialTargetEffects(ArrayList<String> cardNames, int tempDamage, Monster target) {
+		if (tempDamage > 0) {
+			// stun target
+		}
+	}
+	
+	public void specialAfterEffects(ArrayList<String> cardNames, int damage, Monster user, PlayerArea defender) {
+		if (damage > 0) {
+			for (String cardName : cardNames) {
+				//recoil
+				int recoilDamage = CardNameConstants.RECOIL_DAMAGE.getOrDefault(cardName, 0);
+				user.setCurrentLife(user.getCurrentLife() - recoilDamage);
+				// guts damage
+				int gutsDamage = CardNameConstants.GUTS_DAMAGE.getOrDefault(cardName, 0);
+				defender.setGutsPool(defender.getGutsPool() - gutsDamage);
+			}
+		}
+	}
+
 }

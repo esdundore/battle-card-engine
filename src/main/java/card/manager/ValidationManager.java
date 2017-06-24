@@ -2,6 +2,7 @@ package card.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import card.model.game.Monster;
 import card.model.requests.PlayableRequest;
 import card.model.view.PlayableCard;
 import card.model.view.PlayableCardView;
+import card.util.CardNameConstants;
 
 @Component("validationManager")
 public class ValidationManager {
@@ -29,6 +31,9 @@ public class ValidationManager {
 	
 	public final List<String> ATTACK_TYPES = Arrays.asList("POW", "INT", "SPE", "ENV");
 	public final List<String> DEFEND_TYPES = Arrays.asList("BLK", "DGE");
+	
+	public final String DODGE = "DGE";
+	public final String BLOCK = "BLK";
 	
 	public PlayableCardView findPlayableCards(PlayableRequest playableRequest) {
 		String player = playableRequest.getPlayer1();
@@ -46,6 +51,7 @@ public class ValidationManager {
 		ArrayList<String> hand = gameState.getPlayers().get(player).getHand();
 		ArrayList<Monster> monsters = gameState.getPlayers().get(player).getMonsters();
 		ArrayList<Monster> opponentMonsters = gameState.getPlayers().get(opponent).getMonsters();
+		ArrayList<String> attackCards = gameState.getAttackRequest().getCardNames();
 		int guts = gameState.getPlayers().get(player).getGutsPool();
 		boolean breederAttack = gameState.getPlayers().get(player).isCanAttack();
 		
@@ -80,7 +86,7 @@ public class ValidationManager {
 					}
 					else if (gameManager.DEFEND_PHASE.equals(gameState.getPhase())) {
 						playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, false, null));
-						if (isPlayableDefense(guts, playableCard, skillCard, playedSkillCards)) {
+						if (isPlayableDefense(guts, playableCard, skillCard, playedSkillCards, attackCards)) {
 							playableCards.add(playableCard);
 						}
 					}
@@ -190,7 +196,7 @@ public class ValidationManager {
 		return true;
 	}
 	
-	public boolean isPlayableDefense(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards) {
+	public boolean isPlayableDefense(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards, ArrayList<String> attackCards) {
 		
 		// check that the move is a defense
 		if (!DEFEND_TYPES.contains(skillCard.getType())) {
@@ -208,6 +214,10 @@ public class ValidationManager {
 			totalGutsCost += otherCard.getGutsCost();
 		}
 		if (guts < totalGutsCost) {
+			return false;
+		}
+		
+		if (!Collections.disjoint(CardNameConstants.CANT_DODGE, attackCards) && DODGE.equals(skillCard.getType())) {
 			return false;
 		}
 		
