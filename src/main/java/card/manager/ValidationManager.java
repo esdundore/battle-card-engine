@@ -61,8 +61,10 @@ public class ValidationManager {
 		
 		// find the attackRequest cards
 		ArrayList<SkillCard> attackCards = new ArrayList<SkillCard>();
-		for (String attackCardName : gameState.getAttackRequest().getCardNames()) {
-			attackCards.add((SkillCard) cardCache.getCard(attackCardName));
+		if (gameState.getAttackRequest() != null) {
+			for (String attackCardName : gameState.getAttackRequest().getCardNames()) {
+				attackCards.add((SkillCard) cardCache.getCard(attackCardName));
+			}
 		}
 		
 		if(playedCards == null) playedCards = new ArrayList<Integer>();
