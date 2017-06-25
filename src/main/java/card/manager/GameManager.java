@@ -208,6 +208,16 @@ public class GameManager {
 			return gameState;
 		}
 		
+		// remove statuses from player monsters
+		for (Monster monster : gameState.getPlayers().get(player).getMonsters()) {
+			monster.getStatus().clear();
+		}
+		
+		// set opponent monsters to canAttack
+		for (Monster monster : gameState.getPlayers().get(opponent).getMonsters()) {
+			monster.setCanAttack(true);
+		}
+		
 		// switch to next phase
 		gameState.setPhase(GUTS_PHASE);
 		return gameState;

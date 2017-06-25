@@ -42,14 +42,22 @@ public class AttackResolver {
 		HashMap<Integer, SkillCard> attackCardMap = new HashMap<Integer, SkillCard>();
 		ArrayList<String> attackCardNames = new ArrayList<String>();
 		int attackGutsCost = 0;
+		int tigerComboCards = 0;
 		int fullDamage = 0;
+		// calculate damage
 		for (int attackCardIndex : attackCardIndexes) {
 			SkillCard attackCard = (SkillCard) cardCache.getCard(attackerArea.getHand().get(attackCardIndex));
 			attackCardMap.put(attackCardIndex, attackCard);
 			attackCardNames.add(attackCard.getId());
 			attackGutsCost += attackCard.getGutsCost();
 			fullDamage += attackCard.getDamage();
+			if (CardNameConstants.TIGER_COMBO.contains(attackCard.getId())) {
+				tigerComboCards++;
+				if (tigerComboCards==2) fullDamage += 1;
+				if (tigerComboCards==3) fullDamage += 3;
+			}
 		}
+		
 		
 		// get defense cards
 		HashMap<Integer, SkillCard> defenseCardMap = new HashMap<Integer, SkillCard>();
@@ -65,11 +73,23 @@ public class AttackResolver {
 		attackerArea.setGutsPool(attackerArea.getGutsPool() - attackGutsCost);
 		defenderArea.setGutsPool(defenderArea.getGutsPool() - defenseGutsCost);
 		
+		// check if aoe
+		for (String cardName : attackCardNames) {
+			if (CardNameConstants.AOE_DAMAGE.contains(cardName)) {
+				attackRequest.getTargetsAndDamage().clear();
+				ArrayList<Monster> targets = gameState.getPlayers().get(defender).getMonsters();
+				for (int i = 0; i < targets.size(); i++) {
+					attackRequest.getTargetsAndDamage().put(i, 0);
+				}
+			}
+		}
+		
 		// apply damage - for each target
 		int totalDamage = 0;
 		for (Map.Entry<Integer, Integer> targetAndDamage : attackRequest.getTargetsAndDamage().entrySet()) {
 			int targetIndex = targetAndDamage.getKey();
 			
+			boolean isHit = true;
 			int tempDamage = new Integer(fullDamage);
 			if (targetAndDamage.getValue() != 0) {
 				tempDamage = targetAndDamage.getValue();
@@ -80,6 +100,7 @@ public class AttackResolver {
 					SkillCard defenseCard = defenseCardMap.get(defendTarget.getCard());
 					if (TYPE_DODGE.equals(defenseCard.getType())) {
 						tempDamage = dodgeDamage(attackCardNames, defenseCard.getId(), tempDamage);
+						isHit = false;
 					}
 					else if (TYPE_BLOCK.equals(defenseCard.getType())) {
 						tempDamage = blockDamage(defenseCard.getId(), tempDamage);
@@ -87,7 +108,9 @@ public class AttackResolver {
 				}
 			}
 			Monster target = defenderArea.getMonsters().get(targetAndDamage.getKey());
-			specialTargetEffects(attackCardNames, tempDamage, target);
+			if (isHit) {
+				specialTargetEffects(attackCardNames, target);
+			}
 			target.setCurrentLife(target.getCurrentLife() - tempDamage);	
 			totalDamage += tempDamage;
 			if (target.getCurrentLife() <= 0) {
@@ -119,9 +142,13 @@ public class AttackResolver {
 	}
 	
 	
-	public void specialTargetEffects(ArrayList<String> cardNames, int tempDamage, Monster target) {
-		if (tempDamage > 0) {
-			// stun target
+	public void specialTargetEffects(ArrayList<String> cardNames, Monster target) {
+		for (String cardName : cardNames) {
+			if (CardNameConstants.STUN.contains(cardName)) {
+				ArrayList<String> status = target.getStatus();
+				status.add(Monster.STUNNED);
+				target.setStatus(status);
+			}
 		}
 	}
 	
