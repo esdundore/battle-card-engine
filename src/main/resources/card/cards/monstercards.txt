@@ -42,4 +42,4 @@ Suezo Mask,Gali,Suezo,AIR,7
 Usaba,Plant,Suezo,GRD,9
 Vesuvius,Durahan,Dragon,GRD,7
 Moo,Dragon,Dragon,GRD,8
-Gray Wolf,Tiger,Tiger,Ground,6
+Gray Wolf,Tiger,Tiger,GRD,6
