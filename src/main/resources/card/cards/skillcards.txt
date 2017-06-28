@@ -161,7 +161,7 @@ Phoenix,Insight,DGE,0,0
 Phoenix,Perceive,DGE,0,0
 Phoenix,Fire Wave,INT,6,4
 Phoenix,Fire River,INT,4,3
-Phoenix,Mysterious Power,SPE,1,0
+Phoenix,Mystery Power,SPE,1,0
 Phoenix,Hide Head,BLK,1,0
 Phoenix,Flame Beam,INT,5,8
 Phoenix,Fire Beam,INT,2,3
@@ -173,12 +173,12 @@ Pixie,Thunder,INT,0,1
 Pixie,Bolt,INT,1,2
 Pixie,Charge,POW,2,4
 Pixie,Recover,SPE,2,0
-Pixie,Stop,DGE,0,0
+Pixie,Step,DGE,0,0
 Pixie,Soar,DGE,1,0
 Pixie,Lightning,INT,4,4
 Pixie,Kick,POW,1,2
 Pixie,Scratch,POW,0,1
-Plant,Power of the Sun,SPE,0,0
+Plant,Power of Sun,SPE,0,0
 Plant,Life Steal,INT,6,3
 Plant,Rootone,SPE,2,0
 Plant,Toxic Pollen,INT,4,2
