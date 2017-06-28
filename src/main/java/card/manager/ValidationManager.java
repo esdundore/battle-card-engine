@@ -133,10 +133,8 @@ public class ValidationManager {
 		}
 		
 		for (int i = 0; i < lineages.size(); i++) {
-			System.out.println(lineages.get(i));
-			System.out.println(skillCard.getUserId());
 			if (lineages.get(i).equals(skillCard.getUserId()) || ANY_USER.equals(skillCard.getUserId())) {
-				if (!isAttack || (tempMonsters.get(i).isCanAttack() && !tempMonsters.get(i).getStatus().contains(Monster.STUNNED))) {
+				if (!isAttack || (tempMonsters.get(i).canAttack())) {
 					users.add(i);
 				}
 			}

@@ -15,8 +15,11 @@ public class Monster extends MonsterCard {
 	protected ArrayList<String> status = new ArrayList<String>();
 	
 	public static final String STUNNED = "STUNNED";
-	public static final String X2POWER = "X2POWER";
 	public static final String AERIAL = "AERIAL";
+	public static final String GROUNDED = "GROUNDED";
+	
+	public static final String TYPE_AIR = "AIR";
+	public static final String TYPE_GROUND = "GRD";
 
 	public Monster() {
 	}
@@ -47,8 +50,29 @@ public class Monster extends MonsterCard {
 	public ArrayList<String> getStatus() {
 		return status;
 	}
+	@XmlElement
 	public void setStatus(ArrayList<String> status) {
 		this.status = status;
+	}
+	
+	public boolean isAerial() {
+		if (status.contains(AERIAL)) {
+			return true;
+		}
+		else if (!status.contains(GROUNDED) && TYPE_AIR.equals(getType())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public boolean canAttack() {
+		if (!status.contains(STUNNED) && isCanAttack()) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 }
