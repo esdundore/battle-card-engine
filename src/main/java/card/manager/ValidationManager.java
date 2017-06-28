@@ -148,13 +148,13 @@ public class ValidationManager {
 		return users;
 	}
 	
-	public ArrayList<Integer> findCommonTargets (SkillCard skillCard, ArrayList<SkillCard> skillCards, ArrayList<Monster> monster) {
+	public ArrayList<Integer> findCommonTargets (SkillCard skillCard, ArrayList<SkillCard> skillCards, ArrayList<Monster> monsters) {
 		ArrayList<SkillCard> allSkillCards = new ArrayList<SkillCard>();
 		allSkillCards.add(skillCard);
 		allSkillCards.addAll(skillCards);
 		ArrayList<Integer> commonTargets = new ArrayList<Integer>();
 		for (SkillCard anySkillCard : allSkillCards) {
-			commonTargets.addAll(findTargets(anySkillCard, monster));
+			commonTargets.addAll(findTargets(anySkillCard, monsters));
 		}
 		commonTargets = (ArrayList<Integer>) commonTargets.stream().distinct().collect(Collectors.toList());
 		return commonTargets;
@@ -164,7 +164,7 @@ public class ValidationManager {
 		ArrayList<Integer> targets = new ArrayList<Integer>();
 		
 		if(SPECIAL.equals(skillCard.getType())) {
-			return null;
+			return targets;
 		}
 		
 		// can only attack living targets
