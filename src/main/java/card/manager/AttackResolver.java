@@ -1,7 +1,6 @@
 package card.manager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,16 +15,12 @@ import card.model.game.PlayerArea;
 import card.model.requests.AttackRequest;
 import card.model.requests.DefendRequest;
 import card.model.requests.DefendTarget;
-import card.util.CardNameConstants;
 
 @Component("attackResolver")
 public class AttackResolver {
 
 	@Autowired
 	CardCache cardCache;
-	
-	public final String TYPE_DODGE = "DGE";
-	public final String TYPE_BLOCK = "BLK";
 	
 	public void resolveAttack(GameState gameState) {
 		AttackRequest attackRequest = gameState.getAttackRequest();
@@ -39,25 +34,31 @@ public class AttackResolver {
 		
 		// get attack cards
 		ArrayList<Integer> attackCardIndexes = attackRequest.getCardsPlayed();
-		HashMap<Integer, SkillCard> attackCardMap = new HashMap<Integer, SkillCard>();
-		ArrayList<String> attackCardNames = new ArrayList<String>();
+		ArrayList<SkillCard> attackCards = new ArrayList<SkillCard>();
+		
 		int attackGutsCost = 0;
 		int tigerComboCards = 0;
 		int fullDamage = 0;
-		// calculate damage
+		
+		// calculate damage and targets
 		for (int attackCardIndex : attackCardIndexes) {
 			SkillCard attackCard = (SkillCard) cardCache.getCard(attackerArea.getHand().get(attackCardIndex));
-			attackCardMap.put(attackCardIndex, attackCard);
-			attackCardNames.add(attackCard.getId());
+			attackCards.add(attackCard);
 			attackGutsCost += attackCard.getGutsCost();
 			fullDamage += attackCard.getDamage();
-			if (CardNameConstants.TIGER_COMBO.contains(attackCard.getId())) {
+			if (attackCard.keyComboTiger()) {
 				tigerComboCards++;
 				if (tigerComboCards==2) fullDamage += 1;
 				if (tigerComboCards==3) fullDamage += 3;
+			} 
+			if (attackCard.targetAOE()) {
+				attackRequest.getTargetsAndDamage().clear();
+				ArrayList<Monster> targets = gameState.getPlayers().get(defender).getMonsters();
+				for (int i = 0; i < targets.size(); i++) {
+					attackRequest.getTargetsAndDamage().put(i, 0);
+				}
 			}
 		}
-		
 		
 		// get defense cards
 		HashMap<Integer, SkillCard> defenseCardMap = new HashMap<Integer, SkillCard>();
@@ -73,17 +74,6 @@ public class AttackResolver {
 		attackerArea.setGutsPool(attackerArea.getGutsPool() - attackGutsCost);
 		defenderArea.setGutsPool(defenderArea.getGutsPool() - defenseGutsCost);
 		
-		// check if aoe
-		for (String cardName : attackCardNames) {
-			if (CardNameConstants.AOE_DAMAGE.contains(cardName)) {
-				attackRequest.getTargetsAndDamage().clear();
-				ArrayList<Monster> targets = gameState.getPlayers().get(defender).getMonsters();
-				for (int i = 0; i < targets.size(); i++) {
-					attackRequest.getTargetsAndDamage().put(i, 0);
-				}
-			}
-		}
-		
 		// apply damage - for each target
 		int totalDamage = 0;
 		for (Map.Entry<Integer, Integer> targetAndDamage : attackRequest.getTargetsAndDamage().entrySet()) {
@@ -98,18 +88,18 @@ public class AttackResolver {
 			for (DefendTarget defendTarget : defendRequest.getCardAndTargets()) {
 				if (defendTarget.getUser() == targetIndex) {
 					SkillCard defenseCard = defenseCardMap.get(defendTarget.getCard());
-					if (TYPE_DODGE.equals(defenseCard.getType())) {
-						tempDamage = dodgeDamage(attackCardNames, defenseCard.getId(), tempDamage);
+					if (defenseCard.typeDGE()) {
+						tempDamage = dodgeDamage(attackCards, defenseCard, tempDamage);
 						isHit = false;
 					}
-					else if (TYPE_BLOCK.equals(defenseCard.getType())) {
-						tempDamage = blockDamage(defenseCard.getId(), tempDamage);
+					else if (defenseCard.typeBLK()) {
+						tempDamage = blockDamage(defenseCard, tempDamage);
 					}
 				}
 			}
 			Monster target = defenderArea.getMonsters().get(targetAndDamage.getKey());
 			if (isHit) {
-				specialTargetEffects(attackCardNames, target);
+				specialTargetEffects(attackCards, target);
 			}
 			target.setCurrentLife(target.getCurrentLife() - tempDamage);	
 			totalDamage += tempDamage;
@@ -120,47 +110,46 @@ public class AttackResolver {
 		
 		// apply after effects
 		Monster user = attackerArea.getMonsters().get(attackRequest.getUser());
-		specialAfterEffects(attackCardNames, totalDamage, user, defenderArea);
+		specialAfterEffects(attackCards, totalDamage, user, defenderArea);
 
 		// user done attacking
 		user.setCanAttack(false);
 		
 	}
 	
-	public int dodgeDamage(ArrayList<String> attackCardNames, String dodgeCardName, int damage) {
-		// 1/2 damage 
-		if (!Collections.disjoint(attackCardNames,CardNameConstants.HALF_DODGE)) {
-			return damage / 2;
+	public int dodgeDamage(ArrayList<SkillCard> attackCards, SkillCard dodgeCard, int damage) {
+		for (SkillCard attackCard : attackCards) {
+			// half dodge effect
+			if (attackCard.keyHalfDodge()) {
+				return damage / 2;
+			}
 		}
 		return 0;
 	}
 	
-	public int blockDamage(String blockCardName, int damage) {
-		int damageBlocked = CardNameConstants.BLOCK_AMOUNT.getOrDefault(blockCardName, 0);
-		int newDamage = damage - damageBlocked;
+	public int blockDamage(SkillCard blockCard, int damage) {
+		// block amount
+		int newDamage = damage - blockCard.findBlockAmount();
 		return newDamage > 0 ? newDamage : 0;
 	}
 	
 	
-	public void specialTargetEffects(ArrayList<String> cardNames, Monster target) {
-		for (String cardName : cardNames) {
-			if (CardNameConstants.STUN.contains(cardName)) {
-				ArrayList<String> status = target.getStatus();
-				status.add(Monster.STUNNED);
-				target.setStatus(status);
+	public void specialTargetEffects(ArrayList<SkillCard> attackCards, Monster target) {
+		for (SkillCard attackCard : attackCards) {
+			// stun effect
+			if (attackCard.keyStun()) {
+				target.setStunned();
 			}
 		}
 	}
 	
-	public void specialAfterEffects(ArrayList<String> cardNames, int damage, Monster user, PlayerArea defender) {
+	public void specialAfterEffects(ArrayList<SkillCard> attackCards, int damage, Monster user, PlayerArea defender) {
 		if (damage > 0) {
-			for (String cardName : cardNames) {
-				//recoil
-				int recoilDamage = CardNameConstants.RECOIL_DAMAGE.getOrDefault(cardName, 0);
-				user.setCurrentLife(user.getCurrentLife() - recoilDamage);
+			for (SkillCard attackCard : attackCards) {
+				// recoil
+				user.setCurrentLife(user.getCurrentLife() - attackCard.findHitRecoilDamage());
 				// guts damage
-				int gutsDamage = CardNameConstants.GUTS_DAMAGE.getOrDefault(cardName, 0);
-				defender.setGutsPool(defender.getGutsPool() - gutsDamage);
+				defender.setGutsPool(defender.getGutsPool() - attackCard.findGUTSDamage());
 			}
 		}
 	}

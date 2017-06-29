@@ -3,6 +3,7 @@ package card.dao;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,24 +28,31 @@ public class CardCache {
 		BufferedReader bufferedMonsterReader = null;
 		try {
 			// load skill cards to cache
-			System.out.println("ClassPathLoader");
 			ClassPathResource skillPathResource = new ClassPathResource("card/cards/skillcards.txt");
 	        InputStream skillStream = skillPathResource.getInputStream();
 			bufferedSkillReader = new BufferedReader(new InputStreamReader(skillStream));
 			while ((currentLine = bufferedSkillReader.readLine()) != null) {
 				String[] split = currentLine.split(",");
-				String monsterName = split[0];
-				String cardName = split[1];
-				String cardType = split[2];
-				int gutsCost = Integer.parseInt(split[3]);
-				int damage = Integer.parseInt(split[4]);
-			
+				int i = 0;
+				String monsterName = split[i++];
+				String cardName = split[i++];
+				String cardType = split[i++];
+				int gutsCost = Integer.parseInt(split[i++]);
+				int damage = Integer.parseInt(split[i++]);
+				String targeting = split[i++];
+				ArrayList<String> keywords = new ArrayList<String>();
+				while (i < split.length) {
+					keywords.add(split[i++]);
+				}
+				
 				SkillCard skillCard = new SkillCard();
 				skillCard.setId(monsterName + "_" + cardName);
 				skillCard.setUserId(monsterName);
 				skillCard.setType(cardType);
 				skillCard.setGutsCost(gutsCost);
 				skillCard.setDamage(damage);
+				skillCard.setTargeting(targeting);
+				skillCard.setKeywords(keywords);
 			
 				battleCards.put(skillCard.getId(), skillCard);
 			}

@@ -16,7 +16,7 @@ Mew,Mew,Mew,GRD,6
 Plant,Plant,Plant,GRD,10
 Worm,Worm,Worm,GRD,9
 Dragon,Dragon,Dragon,GRD,8
-Durahan,Durahan,Duraha,GRD,7
+Durahan,Durahan,Durahan,GRD,7
 Zilla,Zilla,Zilla,GRD,10
 Allure,Pixie,Naga,AIR,7
 Angel,Pixie,Gali,AIR,7

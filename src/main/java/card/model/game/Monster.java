@@ -13,13 +13,6 @@ public class Monster extends MonsterCard {
 	protected int currentLife;
 	protected boolean canAttack = true;
 	protected ArrayList<String> status = new ArrayList<String>();
-	
-	public static final String STUNNED = "STUNNED";
-	public static final String AERIAL = "AERIAL";
-	public static final String GROUNDED = "GROUNDED";
-	
-	public static final String TYPE_AIR = "AIR";
-	public static final String TYPE_GROUND = "GRD";
 
 	public Monster() {
 	}
@@ -55,11 +48,31 @@ public class Monster extends MonsterCard {
 		this.status = status;
 	}
 	
-	public boolean isAerial() {
-		if (status.contains(AERIAL)) {
+	// ----- STATUS EFFECTS ----- //
+	
+	public static final String STUNNED = "STUNNED";
+	public static final String AERIAL = "AERIAL";
+	public static final String GROUNDED = "GROUNDED";
+	
+	public static final String TYPE_AIR = "AIR";
+	public static final String TYPE_GRD = "GRD";
+	
+	public boolean typeAIR() {
+		if (getStatus().contains(AERIAL)) {
 			return true;
 		}
-		else if (!status.contains(GROUNDED) && TYPE_AIR.equals(getType())) {
+		else if (!getStatus().contains(GROUNDED) && TYPE_AIR.equals(getType())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public boolean typeGRD() {
+		if (getStatus().contains(GROUNDED)) {
+			return true;
+		}
+		else if (!getStatus().contains(AERIAL) && TYPE_GRD.equals(getType())) {
 			return true;
 		}
 		else {
@@ -67,12 +80,16 @@ public class Monster extends MonsterCard {
 		}
 	}
 	public boolean canAttack() {
-		if (!status.contains(STUNNED) && isCanAttack()) {
+		if (!getStatus().contains(STUNNED) && isCanAttack()) {
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
+	
+	public void setStunned() {
+		getStatus().add(STUNNED);
 	}
 	
 }

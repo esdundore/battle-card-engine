@@ -1,8 +1,6 @@
 package card.manager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +14,6 @@ import card.model.game.Monster;
 import card.model.requests.PlayableRequest;
 import card.model.view.PlayableCard;
 import card.model.view.PlayableCardView;
-import card.util.CardNameConstants;
 
 @Component("validationManager")
 public class ValidationManager {
@@ -26,19 +23,6 @@ public class ValidationManager {
 	
 	@Autowired
 	GameManager gameManager;
-	
-	public final static String ANY_USER = "Any";
-	public final static String BREEDER_USER = "Breeder";
-	
-	public final static List<String> ATTACK_TYPES = Arrays.asList("POW", "INT", "SPE", "ENV");
-	public final static List<String> DEFEND_TYPES = Arrays.asList("BLK", "DGE");
-	
-	public final static String POWER = "POW";
-	public final static String INTELLIGENCE = "INT";
-	public final static String SPECIAL = "SPE";
-	public final static String ENVIRONMENT = "ENV";
-	public final static String DODGE = "DGE";
-	public final static String BLOCK = "BLK";
 	
 	public PlayableCardView findPlayableCards(PlayableRequest playableRequest) {
 		String player = playableRequest.getPlayer1();
@@ -90,7 +74,7 @@ public class ValidationManager {
 					}
 					if (gameManager.ATTACK_PHASE.equals(gameState.getPhase())) {
 						playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, true, userId));
-						playableCard.setTargets(findCommonTargets(skillCard, playedSkillCards, opponentMonsters));
+						playableCard.setTargets(findCommonTargets(skillCard, playedSkillCards, monsters, opponentMonsters));
 						if (isPlayableAttack(guts, playableCard, skillCard, playedSkillCards)) {
 							playableCards.add(playableCard);
 						}
@@ -112,7 +96,8 @@ public class ValidationManager {
 	}
 	
 	
-	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, boolean breederAttack, boolean isAttack, Integer user) {
+	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, 
+			boolean breederAttack, boolean isAttack, Integer user) {
 		ArrayList<Integer> users = new ArrayList<Integer>();
 		
 		// make a temporary monster list and add a monster to represent the breeder
@@ -121,8 +106,8 @@ public class ValidationManager {
 			tempMonsters.add(monster);
 		}
 		Monster breeder = new Monster();
-		breeder.setMainLineage(BREEDER_USER);
-		breeder.setSubLineage(BREEDER_USER);
+		breeder.setMainLineage(SkillCard.BREEDER_USER);
+		breeder.setSubLineage(SkillCard.BREEDER_USER);
 		breeder.setCanAttack(breederAttack);
 		tempMonsters.add(breeder);
 		
@@ -132,8 +117,9 @@ public class ValidationManager {
 			lineages.add(lineage);
 		}
 		
+		// compare lineages to the designated card user
 		for (int i = 0; i < lineages.size(); i++) {
-			if (lineages.get(i).equals(skillCard.getUserId()) || ANY_USER.equals(skillCard.getUserId())) {
+			if (lineages.get(i).equals(skillCard.getUserId()) || skillCard.anyUser()) {
 				if (!isAttack || (tempMonsters.get(i).canAttack())) {
 					users.add(i);
 				}
@@ -146,29 +132,37 @@ public class ValidationManager {
 		return users;
 	}
 	
-	public ArrayList<Integer> findCommonTargets (SkillCard skillCard, ArrayList<SkillCard> skillCards, ArrayList<Monster> monsters) {
+	public ArrayList<Integer> findCommonTargets (SkillCard skillCard, ArrayList<SkillCard> skillCards, 
+			ArrayList<Monster> monsters, ArrayList<Monster> opponentMonsters) {
 		ArrayList<SkillCard> allSkillCards = new ArrayList<SkillCard>();
 		allSkillCards.add(skillCard);
 		allSkillCards.addAll(skillCards);
 		ArrayList<Integer> commonTargets = new ArrayList<Integer>();
 		for (SkillCard anySkillCard : allSkillCards) {
-			commonTargets.addAll(findTargets(anySkillCard, monsters));
+			commonTargets.addAll(findTargets(anySkillCard, monsters, opponentMonsters));
 		}
 		commonTargets = (ArrayList<Integer>) commonTargets.stream().distinct().collect(Collectors.toList());
 		return commonTargets;
 	}
 	
-	public ArrayList<Integer> findTargets (SkillCard skillCard, ArrayList<Monster> monsters) {
+	public ArrayList<Integer> findTargets (SkillCard skillCard, 
+			ArrayList<Monster> monsters, ArrayList<Monster> opponentMonsters) {
 		ArrayList<Integer> targets = new ArrayList<Integer>();
 		
-		if(SPECIAL.equals(skillCard.getType())) {
-			return targets;
+		// target enemy monsters
+		if (skillCard.targetEnemy() || skillCard.targetMulti() || skillCard.targetAOE()) {
+			for (int i = 0; i < opponentMonsters.size(); i++) {
+				if (opponentMonsters.get(i).getCurrentLife() > 0) {
+					targets.add(i);
+				}
+			}
 		}
-		
-		// can only attack living targets
-		for (int i = 0; i < monsters.size(); i++) {
-			if (monsters.get(i).getCurrentLife() > 0) {
-				targets.add(i);
+		// target friendly monsters
+		else if (skillCard.targetFriend() || skillCard.targetSelf()) {
+			for (int i = 0; i < monsters.size(); i++) {
+				if (monsters.get(i).getCurrentLife() > 0) {
+					targets.add(i);
+				}
 			}
 		}
 		
@@ -178,12 +172,12 @@ public class ValidationManager {
 	public boolean isPlayableAttack(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards) {
 		
 		// check that the move is an attack
-		if (!ATTACK_TYPES.contains(skillCard.getType())) {
+		if (!skillCard.typeAttack()) {
 			return false;
 		}
 		
 		// check that the card has users
-		if (playableCard.getUsers() == null) {
+		if (playableCard.getUsers().isEmpty()) {
 			return false;
 		}
 		
@@ -208,12 +202,12 @@ public class ValidationManager {
 	public boolean isPlayableDefense(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards, ArrayList<SkillCard> attackCards) {
 		
 		// check that the move is a defense
-		if (!DEFEND_TYPES.contains(skillCard.getType())) {
+		if (!skillCard.typeDefense()) {
 			return false;
 		}
 		
 		// check that the card has users
-		if (playableCard.getUsers() == null) {
+		if (playableCard.getUsers().isEmpty()) {
 			return false;
 		}
 		
@@ -228,20 +222,20 @@ public class ValidationManager {
 		}
 		
 		// cannot dodge the attack
-		List<String> attackCardNames = attackCards.stream()
-				.map(SkillCard::getId)
-				.collect(Collectors.toCollection(ArrayList::new));
-		if (!Collections.disjoint(CardNameConstants.CANT_DODGE, attackCardNames) 
-				&& DODGE.equals(skillCard.getType())) {
-			return false;
+		for (SkillCard attackCard : attackCards) {
+			if (attackCard.keyUndodgable() && skillCard.typeDGE()) {
+				return false;
+			}
 		}
 		
 		// can use defense card only after certain attack type
 		List<String> attackCardTypes = attackCards.stream()
 				.map(SkillCard::getType)
 				.collect(Collectors.toCollection(ArrayList::new));
-		if (!attackCardTypes.contains(POWER)
-				&& CardNameConstants.USE_AFTER_POW.contains(skillCard.getId())) {
+		if (!attackCardTypes.contains(SkillCard.TYPE_POW) && skillCard.keyOnPOW()) {
+			return false;
+		}
+		if (!attackCardTypes.contains(SkillCard.TYPE_INT) && skillCard.keyOnINT()) {
 			return false;
 		}
 		
@@ -263,19 +257,19 @@ public class ValidationManager {
 	public static boolean canCombo(SkillCard skillCard, ArrayList<SkillCard> skillCards) {
 		if (skillCards.isEmpty()) {
 			// cannot use these cards first
-			if (!CardNameConstants.USE_AFTER_POW.contains(skillCard.getId())) {
+			if (!skillCard.targetCombo()) {
 				return true;
 			}
 		}
 		else {
 			for (SkillCard otherCard : skillCards) {
-				if (CardNameConstants.TIGER_COMBO.contains(skillCard.getId()) 
-						&& CardNameConstants.TIGER_COMBO.contains(otherCard.getId()) 
+				// Tiger Combo
+				if (skillCard.keyComboTiger() && otherCard.keyComboTiger()
 						&& !skillCard.equals(otherCard.getId())) {
 					return true;
 				}
-				else if (CardNameConstants.USE_AFTER_POW.contains(skillCard.getId()) 
-						&& POWER.equals(otherCard.getType())) {
+				// POW Combo
+				else if (skillCard.keyOnPOW() && otherCard.typePOW()) {
 					return true;
 				}
 			}
