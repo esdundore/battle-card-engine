@@ -170,7 +170,7 @@ Mocchi,Press,POW,3,5,ENEMY,HIT_RECOIL:1
 Mocchi,Licking,INT,2,2,ENEMY,GUTS_DMG:1
 Mocchi,Round,BLK,0,0,SELF,BLOCK:3
 Mocchi,Hide,BLK,1,0,FRIEND,HIDE
-Mocchi,Head Butt,POW,2,3,ENEMY,
+Mocchi,Headbutt,POW,2,3,ENEMY,
 Mocchi,Motch Ray,INT,4,6,ENEMY,
 Mocchi,Roll Attack,POW,1,2,ENEMY,
 Mocchi,Slap,POW,0,1,ENEMY,

@@ -1,0 +1,42 @@
+<deck>
+	<ownerId>player1</ownerId>
+	<monsterCards>Mocchi</monsterCards>
+	<monsterCards>Tiger</monsterCards>
+	<monsterCards>Dino</monsterCards>
+	<skillCards>Mocchi_Licking</skillCards>
+	<skillCards>Mocchi_Press</skillCards>
+	<skillCards>Mocchi_1-2 Thrust</skillCards>
+	<skillCards>Mocchi_Roll</skillCards>
+	<skillCards>Mocchi_Petal Wind</skillCards>
+	<!-- <skillCards>Mocchi_Hide</skillCards> -->
+	<skillCards>Mocchi_Thrust</skillCards>
+	<skillCards>Mocchi_Round</skillCards>
+	<skillCards>Mocchi_Slap</skillCards>
+	<skillCards>Mocchi_Roll Attack</skillCards>
+	<skillCards>Mocchi_Motch Ray</skillCards>
+	<skillCards>Mocchi_Head Butt</skillCards>
+	<skillCards>Dino_Leap Kick</skillCards>
+	<skillCards>Dino_Fire Dash</skillCards>
+	<skillCards>Dino_Charge</skillCards>
+	<skillCards>Dino_Jump Aside</skillCards>
+	<skillCards>Dino_Throw Away</skillCards>
+	<skillCards>Dino_Dust Kick</skillCards>
+	<!-- <skillCards>Dino_Tail Slap</skillCards> -->
+	<skillCards>Dino_Endure</skillCards>
+	<skillCards>Dino_Punch</skillCards>
+	<skillCards>Dino_Knee Kick</skillCards>
+	<skillCards>Dino_Flame</skillCards>
+	<skillCards>Dino_Bite</skillCards>
+	<skillCards>Tiger_Sonic Move</skillCards>
+	<skillCards>Tiger_Charge</skillCards>
+	<skillCards>Tiger_Back Roll</skillCards>
+	<!-- <skillCards>Tiger_Jump</skillCards> -->
+	<skillCards>Tiger_Ice Bomb</skillCards>
+	<skillCards>Tiger_Right Claw</skillCards>
+	<skillCards>Tiger_Left Claw</skillCards>
+	<skillCards>Tiger_Horn</skillCards>
+	<skillCards>Tiger_Roar</skillCards>
+	<skillCards>Tiger_Stab</skillCards>
+	<skillCards>Tiger_Lightning</skillCards>
+	<skillCards>Tiger_Bolt</skillCards>
+</deck>

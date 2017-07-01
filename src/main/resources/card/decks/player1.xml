@@ -3,40 +3,288 @@
 	<monsterCards>Mocchi</monsterCards>
 	<monsterCards>Tiger</monsterCards>
 	<monsterCards>Dino</monsterCards>
-	<skillCards>Mocchi_Licking</skillCards>
-	<skillCards>Mocchi_Press</skillCards>
+	<skillCards>Any_Blow Away</skillCards>
+	<skillCards>Any_Concentrate</skillCards>
+	<skillCards>Any_Critical</skillCards>
+	<skillCards>Any_Dodge</skillCards>
+	<skillCards>Any_Good Luck</skillCards>
+	<skillCards>Any_Grand End</skillCards>
+	<skillCards>Any_Grit</skillCards>
+	<skillCards>Any_Jump In</skillCards>
+	<skillCards>Any_Last Man</skillCards>
+	<skillCards>Any_Persistance</skillCards>
+	<skillCards>Any_PO</skillCards>
+	<skillCards>Any_Retreat</skillCards>
+	<skillCards>Any_Will Power</skillCards>
+	<skillCards>Breeder_Arid Land</skillCards>
+	<skillCards>Breeder_Awe</skillCards>
+	<skillCards>Breeder_Bad Weather</skillCards>
+	<skillCards>Breeder_Busy Time</skillCards>
+	<skillCards>Breeder_Close Up</skillCards>
+	<skillCards>Breeder_Complicated</skillCards>
+	<skillCards>Breeder_Confusion</skillCards>
+	<skillCards>Breeder_Cool Judge</skillCards>
+	<skillCards>Breeder_Encourage</skillCards>
+	<skillCards>Breeder_Ensnare</skillCards>
+	<skillCards>Breeder_Excited</skillCards>
+	<skillCards>Breeder_Fainted</skillCards>
+	<skillCards>Breeder_Fake Cry</skillCards>
+	<skillCards>Breeder_Help</skillCards>
+	<skillCards>Breeder_Hot Battle</skillCards>
+	<skillCards>Breeder_Last Trump</skillCards>
+	<skillCards>Breeder_Lock Tight</skillCards>
+	<skillCards>Breeder_Long Battle</skillCards>
+	<skillCards>Breeder_Mango</skillCards>
+	<skillCards>Breeder_Nice Fight</skillCards>
+	<skillCards>Breeder_Nuts Oil</skillCards>
+	<skillCards>Breeder_Powder</skillCards>
+	<skillCards>Breeder_Pray</skillCards>
+	<skillCards>Breeder_Pride</skillCards>
+	<skillCards>Breeder_Reborn</skillCards>
+	<skillCards>Breeder_Refresh</skillCards>
+	<skillCards>Breeder_Spark</skillCards>
+	<skillCards>Breeder_Support</skillCards>
+	<skillCards>Breeder_Twinkling</skillCards>
+	<skillCards>Breeder_Warp</skillCards>
+	<skillCards>Breeder_Wild Rush</skillCards>
+	<skillCards>Dino_Bite</skillCards>
+	<skillCards>Dino_Charge</skillCards>
+	<skillCards>Dino_Dust Kick</skillCards>
+	<skillCards>Dino_Endure</skillCards>
+	<skillCards>Dino_Fire Dash</skillCards>
+	<skillCards>Dino_Flame</skillCards>
+	<skillCards>Dino_Jump Aside</skillCards>
+	<skillCards>Dino_Knee Kick</skillCards>
+	<skillCards>Dino_Leap Kick</skillCards>
+	<skillCards>Dino_Punch</skillCards>
+	<skillCards>Dino_Tail Slap</skillCards>
+	<skillCards>Dino_Throw Away</skillCards>
+	<skillCards>Dragon_Bite</skillCards>
+	<skillCards>Dragon_Combination</skillCards>
+	<skillCards>Dragon_Dragon Combo</skillCards>
+	<skillCards>Dragon_Dragon Punch</skillCards>
+	<skillCards>Dragon_Fire Breath</skillCards>
+	<skillCards>Dragon_Fly Away</skillCards>
+	<skillCards>Dragon_Iron Scales</skillCards>
+	<skillCards>Dragon_Spinning Claw</skillCards>
+	<skillCards>Dragon_Tail Attack</skillCards>
+	<skillCards>Dragon_Throw Away</skillCards>
+	<skillCards>Dragon_Trample</skillCards>
+	<skillCards>Dragon_Wing Cutter</skillCards>
+	<skillCards>Durahan_Aerial Shot</skillCards>
+	<skillCards>Durahan_Cut-in-Two</skillCards>
+	<skillCards>Durahan_Death Bringer</skillCards>
+	<skillCards>Durahan_Flash Slash</skillCards>
+	<skillCards>Durahan_Meditate</skillCards>
+	<skillCards>Durahan_Million Stabs</skillCards>
+	<skillCards>Durahan_Parry</skillCards>
+	<skillCards>Durahan_Shield</skillCards>
+	<skillCards>Durahan_Silent Stance</skillCards>
+	<skillCards>Durahan_Slash Combo</skillCards>
+	<skillCards>Durahan_Thunder Bolt</skillCards>
+	<skillCards>Durahan_V Slash</skillCards>
+	<skillCards>Gali_Deflect</skillCards>
+	<skillCards>Gali_Evil Blow</skillCards>
+	<skillCards>Gali_Evil Dance</skillCards>
+	<skillCards>Gali_Flame</skillCards>
+	<skillCards>Gali_Flame Wall</skillCards>
+	<skillCards>Gali_Holy Ray</skillCards>
+	<skillCards>Gali_Kick</skillCards>
+	<skillCards>Gali_Lie Down</skillCards>
+	<skillCards>Gali_Scratch</skillCards>
+	<skillCards>Gali_SpinCut</skillCards>
+	<skillCards>Gali_Tactics</skillCards>
+	<skillCards>Gali_Thunder</skillCards>
+	<skillCards>Ghost_Charge</skillCards>
+	<skillCards>Ghost_Combination</skillCards>
+	<skillCards>Ghost_Dove Bomb</skillCards>
+	<skillCards>Ghost_Energy Shot</skillCards>
+	<skillCards>Ghost_Ghost Rush</skillCards>
+	<skillCards>Ghost_Hit Card</skillCards>
+	<skillCards>Ghost_In the Hat</skillCards>
+	<skillCards>Ghost_Necromancy</skillCards>
+	<skillCards>Ghost_Surprise</skillCards>
+	<skillCards>Ghost_Take Over</skillCards>
+	<skillCards>Ghost_Toy Hammer</skillCards>
+	<skillCards>Ghost_Uppercut</skillCards>
+	<skillCards>Golem_Brow Hit</skillCards>
+	<skillCards>Golem_Chop</skillCards>
+	<skillCards>Golem_Clutch</skillCards>
+	<skillCards>Golem_Cyclone</skillCards>
+	<skillCards>Golem_Defense</skillCards>
+	<skillCards>Golem_Kick</skillCards>
+	<skillCards>Golem_Protect</skillCards>
+	<skillCards>Golem_Quake</skillCards>
+	<skillCards>Golem_Recharge</skillCards>
+	<skillCards>Golem_Roller</skillCards>
+	<skillCards>Golem_Throw Away</skillCards>
+	<skillCards>Golem_W Chop</skillCards>
+	<skillCards>Hare_1-2 Punch</skillCards>
+	<skillCards>Hare_Charge</skillCards>
+	<skillCards>Hare_Computing</skillCards>
+	<skillCards>Hare_Footwork</skillCards>
+	<skillCards>Hare_Gas</skillCards>
+	<skillCards>Hare_Headbutt</skillCards>
+	<skillCards>Hare_Loud Voice</skillCards>
+	<skillCards>Hare_Rush Punch</skillCards>
+	<skillCards>Hare_Sobat</skillCards>
+	<skillCards>Hare_Spin Fist</skillCards>
+	<skillCards>Hare_Super Head</skillCards>
+	<skillCards>Hare_Windmill</skillCards>
+	<skillCards>Henger_Burst Cannon</skillCards>
+	<skillCards>Henger_Dodge Program</skillCards>
+	<skillCards>Henger_Final Blade</skillCards>
+	<skillCards>Henger_Fist Missle</skillCards>
+	<skillCards>Henger_Hyperspeed</skillCards>
+	<skillCards>Henger_Kick</skillCards>
+	<skillCards>Henger_Laser</skillCards>
+	<skillCards>Henger_Laser Sword</skillCards>
+	<skillCards>Henger_Punch</skillCards>
+	<skillCards>Henger_Transform</skillCards>
+	<skillCards>Henger_True Vision</skillCards>
+	<skillCards>Henger_Yoyo</skillCards>
+	<skillCards>Jell_Beam Gun</skillCards>
+	<skillCards>Jell_Cannon</skillCards>
+	<skillCards>Jell_Copy Cat</skillCards>
+	<skillCards>Jell_Fist</skillCards>
+	<skillCards>Jell_Fly Swatter</skillCards>
+	<skillCards>Jell_Jell Copter</skillCards>
+	<skillCards>Jell_Pierce</skillCards>
+	<skillCards>Jell_Riddler</skillCards>
+	<skillCards>Jell_Slip Away</skillCards>
+	<skillCards>Jell_Sponge</skillCards>
+	<skillCards>Jell_Stab</skillCards>
+	<skillCards>Jell_Whip</skillCards>
+	<skillCards>Mew_Diving Press</skillCards>
+	<skillCards>Mew_Doll</skillCards>
+	<skillCards>Mew_Headbutt</skillCards>
+	<skillCards>Mew_Hundred Blows</skillCards>
+	<skillCards>Mew_Miaw</skillCards>
+	<skillCards>Mew_Punch</skillCards>
+	<skillCards>Mew_Rushing Punch</skillCards>
+	<skillCards>Mew_Scaredy Cat</skillCards>
+	<skillCards>Mew_Singing Cat</skillCards>
+	<skillCards>Mew_Tolerant Cat</skillCards>
+	<skillCards>Mew_Twiddling</skillCards>
+	<skillCards>Mew_Zap</skillCards>
 	<skillCards>Mocchi_1-2 Thrust</skillCards>
-	<skillCards>Mocchi_Roll</skillCards>
+	<skillCards>Mocchi_Headbutt</skillCards>
+	<skillCards>Mocchi_Hide</skillCards>
+	<skillCards>Mocchi_Licking</skillCards>
+	<skillCards>Mocchi_Motch Ray</skillCards>
 	<skillCards>Mocchi_Petal Wind</skillCards>
-	<!-- <skillCards>Mocchi_Hide</skillCards> -->
-	<skillCards>Mocchi_Thrust</skillCards>
+	<skillCards>Mocchi_Press</skillCards>
+	<skillCards>Mocchi_Roll</skillCards>
+	<skillCards>Mocchi_Roll Attack</skillCards>
 	<skillCards>Mocchi_Round</skillCards>
 	<skillCards>Mocchi_Slap</skillCards>
-	<skillCards>Mocchi_Roll Attack</skillCards>
-	<skillCards>Mocchi_Motch Ray</skillCards>
-	<skillCards>Mocchi_Head Butt</skillCards>
-	<skillCards>Dino_Leap Kick</skillCards>
-	<skillCards>Dino_Fire Dash</skillCards>
-	<skillCards>Dino_Charge</skillCards>
-	<skillCards>Dino_Jump Aside</skillCards>
-	<skillCards>Dino_Throw Away</skillCards>
-	<skillCards>Dino_Dust Kick</skillCards>
-	<!-- <skillCards>Dino_Tail Slap</skillCards> -->
-	<skillCards>Dino_Endure</skillCards>
-	<skillCards>Dino_Punch</skillCards>
-	<skillCards>Dino_Knee Kick</skillCards>
-	<skillCards>Dino_Flame</skillCards>
-	<skillCards>Dino_Bite</skillCards>
-	<skillCards>Tiger_Sonic Move</skillCards>
-	<skillCards>Tiger_Charge</skillCards>
+	<skillCards>Mocchi_Thrust</skillCards>
+	<skillCards>Monol_Beam</skillCards>
+	<skillCards>Monol_Charge</skillCards>
+	<skillCards>Monol_Flattening</skillCards>
+	<skillCards>Monol_Formation</skillCards>
+	<skillCards>Monol_Knock</skillCards>
+	<skillCards>Monol_Screech</skillCards>
+	<skillCards>Monol_Shield</skillCards>
+	<skillCards>Monol_Shock Breath</skillCards>
+	<skillCards>Monol_Sound Wave</skillCards>
+	<skillCards>Monol_Spike Bite</skillCards>
+	<skillCards>Monol_Tentacles</skillCards>
+	<skillCards>Monol_Wall</skillCards>
+	<skillCards>Naga_Belly Blow</skillCards>
+	<skillCards>Naga_Counter</skillCards>
+	<skillCards>Naga_Death Trap</skillCards>
+	<skillCards>Naga_Energy Shot</skillCards>
+	<skillCards>Naga_Evil Shots</skillCards>
+	<skillCards>Naga_Glare</skillCards>
+	<skillCards>Naga_Life Steal</skillCards>
+	<skillCards>Naga_Pierce</skillCards>
+	<skillCards>Naga_Poison Gas</skillCards>
+	<skillCards>Naga_Stab</skillCards>
+	<skillCards>Naga_Thwack</skillCards>
+	<skillCards>Naga_Whirl Blow</skillCards>
+	<skillCards>Phoenix_Beak</skillCards>
+	<skillCards>Phoenix_Claw</skillCards>
+	<skillCards>Phoenix_Fire Beam</skillCards>
+	<skillCards>Phoenix_Fire River</skillCards>
+	<skillCards>Phoenix_Fire Wave</skillCards>
+	<skillCards>Phoenix_Flame Beam</skillCards>
+	<skillCards>Phoenix_Hide Head</skillCards>
+	<skillCards>Phoenix_Hurricane</skillCards>
+	<skillCards>Phoenix_Insight</skillCards>
+	<skillCards>Phoenix_Mystery Power</skillCards>
+	<skillCards>Phoenix_Perceive</skillCards>
+	<skillCards>Phoenix_Typhoon</skillCards>
+	<skillCards>Pixie_Bolt</skillCards>
+	<skillCards>Pixie_Charge</skillCards>
+	<skillCards>Pixie_Enchant</skillCards>
+	<skillCards>Pixie_Kick</skillCards>
+	<skillCards>Pixie_Kiss</skillCards>
+	<skillCards>Pixie_Lightning</skillCards>
+	<skillCards>Pixie_Recover</skillCards>
+	<skillCards>Pixie_Scratch</skillCards>
+	<skillCards>Pixie_Shotgun</skillCards>
+	<skillCards>Pixie_Soar</skillCards>
+	<skillCards>Pixie_Step</skillCards>
+	<skillCards>Pixie_Thunder</skillCards>
+	<skillCards>Plant_Face Drill</skillCards>
+	<skillCards>Plant_Jab</skillCards>
+	<skillCards>Plant_Leaf Zero</skillCards>
+	<skillCards>Plant_Life Steal</skillCards>
+	<skillCards>Plant_Power of Sun</skillCards>
+	<skillCards>Plant_Root Attack</skillCards>
+	<skillCards>Plant_Rootone</skillCards>
+	<skillCards>Plant_Seed Gun</skillCards>
+	<skillCards>Plant_Slap</skillCards>
+	<skillCards>Plant_Take the Hit</skillCards>
+	<skillCards>Plant_Toxic Nectar</skillCards>
+	<skillCards>Plant_Toxic Pollen</skillCards>
+	<skillCards>Suezo_Bite</skillCards>
+	<skillCards>Suezo_Eye Beam</skillCards>
+	<skillCards>Suezo_Kiss</skillCards>
+	<skillCards>Suezo_Lick</skillCards>
+	<skillCards>Suezo_Provoke</skillCards>
+	<skillCards>Suezo_Scouting</skillCards>
+	<skillCards>Suezo_Side Roll</skillCards>
+	<skillCards>Suezo_Spit</skillCards>
+	<skillCards>Suezo_Tail Slap</skillCards>
+	<skillCards>Suezo_Teleport</skillCards>
+	<skillCards>Suezo_Tongue</skillCards>
+	<skillCards>Suezo_Yodel</skillCards>
 	<skillCards>Tiger_Back Roll</skillCards>
-	<!-- <skillCards>Tiger_Jump</skillCards> -->
-	<skillCards>Tiger_Ice Bomb</skillCards>
-	<skillCards>Tiger_Right Claw</skillCards>
-	<skillCards>Tiger_Left Claw</skillCards>
-	<skillCards>Tiger_Horn</skillCards>
-	<skillCards>Tiger_Roar</skillCards>
-	<skillCards>Tiger_Stab</skillCards>
-	<skillCards>Tiger_Lightning</skillCards>
 	<skillCards>Tiger_Bolt</skillCards>
+	<skillCards>Tiger_Charge</skillCards>
+	<skillCards>Tiger_Horn</skillCards>
+	<skillCards>Tiger_Ice Bomb</skillCards>
+	<skillCards>Tiger_Jump</skillCards>
+	<skillCards>Tiger_Left Claw</skillCards>
+	<skillCards>Tiger_Lightning</skillCards>
+	<skillCards>Tiger_Right Claw</skillCards>
+	<skillCards>Tiger_Roar</skillCards>
+	<skillCards>Tiger_Sonic Move</skillCards>
+	<skillCards>Tiger_Stab</skillCards>
+	<skillCards>Worm_Bite</skillCards>
+	<skillCards>Worm_Cocoon</skillCards>
+	<skillCards>Worm_Emerge</skillCards>
+	<skillCards>Worm_Pierce</skillCards>
+	<skillCards>Worm_Pinch Throw</skillCards>
+	<skillCards>Worm_Poison Gas</skillCards>
+	<skillCards>Worm_Roll Assault</skillCards>
+	<skillCards>Worm_Shell</skillCards>
+	<skillCards>Worm_Sidestep</skillCards>
+	<skillCards>Worm_Tail Lash</skillCards>
+	<skillCards>Worm_Tusk Slash</skillCards>
+	<skillCards>Worm_Worm Hole</skillCards>
+	<skillCards>Zilla_Belly Attack</skillCards>
+	<skillCards>Zilla_Blowhole</skillCards>
+	<skillCards>Zilla_Body Press</skillCards>
+	<skillCards>Zilla_Bounce</skillCards>
+	<skillCards>Zilla_Bubbles</skillCards>
+	<skillCards>Zilla_In Your Face</skillCards>
+	<skillCards>Zilla_Nevermind</skillCards>
+	<skillCards>Zilla_Roll Assault</skillCards>
+	<skillCards>Zilla_Scratch</skillCards>
+	<skillCards>Zilla_Sneeze</skillCards>
+	<skillCards>Zilla_Tail Lashes</skillCards>
+	<skillCards>Zilla_Tidal Wave</skillCards>
 </deck>
