@@ -1,284 +1,284 @@
-Any,Retreat,DGE,1,0,SELF,RETREAT
-Any,Grit,BLK,2,0,SELF,GRIT
-Any,Grand End,SPE,0,0,COMBO,GRAND_END
-Any,Last Man,SPE,1,0,SELF,LAST_MAN
-Any,PO,SPE,1,0,SELF,PO
-Any,Will Power,SPE,1,0,COMBO,WILL_POWER
-Any,Dodge,DGE,0,0,SELF,DODGE
-Any,Jump In,BLK,0,0,SELF,JUMP_IN
-Any,Critical,SPE,2,0,COMBO,CRITICAL
-Any,Concentrate,SPE,1,0,COMBO,CONCENTRATE
-Any,Persistance,BLK,1,0,SELF,PERSISTANCE
-Any,Blow Away,SPE,0,0,ENEMY,STUN
-Any,Good Luck,SPE,0,0,SELF,GOOD_LUCK
-Breeder,Encourage,ENV,3,0,SELF,ENCOURAGE
-Breeder,Awe,ENV,3,0,SELF,AWE
-Breeder,Excited,ENV,2,0,SELF,EXCITED
-Breeder,Spark,ENV,2,0,SELF,SPARK
-Breeder,Warp,ENV,3,0,SELF,WARP
-Breeder,Bad Weather,ENV,3,0,SELF,BAD_WEATHER
-Breeder,Arid Land,ENV,4,0,SELF,ARID_LAND
-Breeder,Hot Battle,ENV,2,0,SELF,HOT_BATTLE
-Breeder,Fainted,SPE,5,0,SELF,FAINTED
-Breeder,Twinkling,SPE,4,0,SELF,TWINKLING
-Breeder,Nice Fight,ENV,3,0,SELF,NICE_FIGHT
-Breeder,Lock Tight,ENV,3,0,SELF,LOCK_TIGHT
-Breeder,Ensnare,ENV,3,0,SELF,ENSNARE
-Breeder,Help,POW,1,1,ENEMY,HELP
-Breeder,Wild Rush,SPE,3,0,SELF,WILD_RUSH
-Breeder,Powder,SPE,0,0,FRIEND,POWDER
-Breeder,Refresh,SPE,1,0,SELF,REFRESH
-Breeder,Confusion,ENV,4,0,SELF,CONFUSION
-Breeder,Cool Judge,ENV,1,0,SELF,COOL_JUDGE
-Breeder,Pride,ENV,2,0,SELF,PRIDE
-Breeder,Support,SPE,0,0,COMBO,SUPPORT
-Breeder,Fake Cry,SPE,1,0,SELF,FAKE_CRY
-Breeder,Long Battle,ENV,3,0,SELF,LONG_BATTLE
-Breeder,Close Up,ENV,4,0,SELF,CLOSE_UP
-Breeder,Pray,BLK,0,0,SELF,PRAY
-Breeder,Mango,SPE,0,0,FRIEND,RESTORE:1
-Breeder,Reborn,SPE,2,0,FRIEND,REBORN
-Breeder,Busy Time,SPE,0,0,SELF,BUSY_TIME
-Breeder,Last Trump,SPE,0,0,SELF,LAST_TRUMP
-Breeder,Complicated,SPE,1,0,ENEMY,STUN
-Breeder,Nuts Oil,SPE,2,0,FRIEND,NUTS_OIL
-Dino,Tail Slap,POW,3,5,ENEMY,GRD_TARGET
-Dino,Jump Aside,DGE,2,0,SELF,
-Dino,Charge,POW,2,4,ENEMY,HIT_RECOIL:1
-Dino,Fire Dash,POW,6,11,ENEMY,RECOIL:3
-Dino,Dust Kick,INT,3,3,ENEMY,STUN
-Dino,Throw Away,POW,5,6,ENEMY,STUN
-Dino,Leap Kick,SPE,1,0,COMBO,ON_POW,UNDODGABLE
-Dino,Endure,BLK,1,0,SELF,ON_POW,BLOCK:3
-Dino,Bite,POW,4,6,ENEMY,
-Dino,Flame,INT,3,4,ENEMY,
-Dino,Knee Kick,POW,5,8,ENEMY,
-Dino,Punch,POW,2,3,ENEMY,
-Dragon,Wing Cutter,POW,5,4,AOE,AIR_DMG
-Dragon,Fire Breath,INT,4,3,AOE,GRD_DMG
-Dragon,Fly Away,DGE,2,0,SELF,ON_POW
-Dragon,Dragon Combo,POW,8,14,ENEMY,HALF_DODGE
-Dragon,Tail Attack,POW,4,4,ENEMY,HALF_DODGE
-Dragon,Spinning Claw,POW,5,5,ENEMY,STUN
-Dragon,Combination,POW,4,8,COMBO,COMBO_DRAGON
-Dragon,Throw Away,SPE,0,0,AOE,THROW_AWAY
-Dragon,Iron Scales,BLK,0,0,SELF,ON_POW,BLOCK:3
-Dragon,Bite,POW,4,6,ENEMY,
-Dragon,Dragon Punch,POW,5,8,ENEMY,
-Dragon,Trample,POW,7,12,ENEMY,
-Durahan,Silent Stance,SPE,0,0,SELF,SILENT_STANCE
-Durahan,Aerial Shot,INT,4,5,ENEMY,UNDODGABLE
-Durahan,Million Stabs,POW,3,3,ENEMY,UNDODGABLE
-Durahan,Slash Combo,POW,3,8,ENEMY,THRESHOLD:2
-Durahan,Flash Slash,POW,2,4,ENEMY,GRD_TARGET
-Durahan,Death Bringer,POW,4,8,ENEMY,DGE_RECOIL:3
-Durahan,Meditate,SPE,0,0,SELF,MEDITATE
-Durahan,Shield,BLK,0,0,SELF,ON_INT,BLOCK:3
-Durahan,Parry,BLK,0,0,SELF,ON_POW,BLOCK:3
-Durahan,Cut-in-Two,POW,1,2,ENEMY,
-Durahan,Thunder Bolt,INT,4,7,ENEMY,
-Durahan,V Slash,POW,3,5,ENEMY,
-Gali,Holy Ray,INT,3,2,ENEMY,UNDODGABLE
-Gali,Flame Wall,INT,4,2,AOE,
-Gali,Deflect,BLK,3,0,SELF,ON_INT
-Gali,Lie Down,DGE,3,0,SELF,
-Gali,Evil Dance,POW,7,10,ENEMY,HALF_DODGE
-Gali,Tactics,SPE,3,0,SELF,TACTICS
-Gali,Evil Blow,INT,4,6,ENEMY,
-Gali,Flame,INT,5,8,ENEMY,
-Gali,Kick,POW,2,2,ENEMY,
-Gali,Scratch,POW,1,1,ENEMY,
-Gali,SpinCut,POW,5,8,ENEMY,
-Gali,Thunder,INT,3,4,ENEMY,
-Ghost,Necromancy,INT,3,3,ENEMY,UNDODGABLE
-Ghost,Dove Bomb,INT,3,2,AOE,
-Ghost,Hit Card,INT,0,0,ENEMY,HIT_CARD
-Ghost,Combination,POW,3,4,ENEMY,HALF_DODGE
-Ghost,Charge,POW,2,4,ENEMY,HIT_RECOIL:1
-Ghost,Surprise,INT,2,1,ENEMY,GUTS_DMG:2
-Ghost,In the Hat,BLK,1,0,SELF,BLOCK:99
-Ghost,Ghost Rush,SPE,2,0,SELF,GHOST_RUSH
-Ghost,Take Over,SPE,0,0,FRIEND,TAKE_OVER
-Ghost,Energy Shot,INT,1,2,ENEMY,
-Ghost,Toy Hammer,POW,1,2,ENEMY,
-Ghost,Uppercut,POW,2,3,ENEMY,
-Golem,Recharge,SPE,2,0,SELF,RECHARGE
-Golem,Cyclone,POW,8,4,AOE,
-Golem,Quake,INT,6,3,AOE,ALL,GRD_DMG
-Golem,Clutch,POW,3,3,ENEMY,STUN
-Golem,Throw Away,POW,5,5,ENEMY,STUN
-Golem,Defense,BLK,2,0,SELF,ON_POW,BLOCK:5
-Golem,Protect,BLK,1,0,FRIEND,INTERCEPT
-Golem,Brow Hit,POW,3,5,ENEMY,
-Golem,Chop,POW,5,8,ENEMY,
-Golem,Kick,POW,4,7,ENEMY,
-Golem,Roller,POW,7,12,ENEMY,
-Golem,W Chop,POW,6,10,ENEMY,
-Hare,Gas,INT,3,2,AOE,
-Hare,Footwork,DGE,0,0,SELF,ON_GUTS:1
-Hare,1-2 Punch,POW,3,4,ENEMY,HALF_DODGE
-Hare,Charge,POW,4,8,ENEMY,HIT_RECOIL:2
-Hare,Headbutt,POW,1,4,ENEMY,HIT_RECOIL:2
-Hare,Super Head,POW,3,6,ENEMY,HIT_RECOIL:2
-Hare,Windmill,POW,4,5,ENEMY,STUN
-Hare,Loud Voice,SPE,0,0,SELF,LOUD_VOICE
-Hare,Computing,SPE,0,0,SELF,COMPUTING
-Hare,Rush Punch,POW,6,10,ENEMY,
-Hare,Sobat,POW,2,3,ENEMY,
-Hare,Spin Fist,POW,4,6,ENEMY,
-Henger,Kick,POW,2,2,ENEMY,HENGER_COMBO
-Henger,Final Blade,INT,3,8,ENEMY,THRESHOLD:2
-Henger,True Vision,DGE,0,0,SELF,ON_GUTS:1
-Henger,Hyperspeed,DGE,1,0,SELF,
-Henger,Fist Missle,POW,3,4,ENEMY,HALF_DODGE
-Henger,Laser,INT,4,4,ENEMY,HALF_DODGE
-Henger,Yoyo,POW,3,2,ENEMY,GUTS_DMG:1
-Henger,Laser Sword,POW,5,5,ENEMY,GUTS_DMG:5
-Henger,Transform,SPE,0,0,SELF,TRANSFORM
-Henger,Dodge Program,SPE,1,0,SELF,DODGE_PROGRAM
-Henger,Burst Cannon,INT,5,8,ENEMY,
-Henger,Punch,POW,1,2,ENEMY,
-Jell,Whip,POW,2,3,ENEMY,MULTI_JELL
-Jell,Pierce,POW,1,1,ENEMY,UNBLOCKABLE
-Jell,Jell Copter,INT,5,5,AOE,AIR_DMG
-Jell,Slip Away,DGE,1,0,SELF,ON_INT
-Jell,Beam Gun,INT,4,4,ENEMY,HALF_DODGE
-Jell,Fly Swatter,POW,3,3,ENEMY,STUN
-Jell,Copy Cat,SPE,1,0,COMBO,COPY_CAT
-Jell,Riddler,SPE,0,0,SELF,RIDDLER
-Jell,Sponge,BLK,0,0,SELF,SPONGE
-Jell,Cannon,INT,3,4,ENEMY,
-Jell,Fist,POW,4,6,ENEMY,
-Jell,Stab,POW,1,2,ENEMY,
-Mew,Singing Cat,SPE,0,0,SELF,MULTI_BREEDER
-Mew,Hundred Blows,POW,4,5,ENEMY,UNDODGABLE
-Mew,Zap,INT,4,4,ENEMY,UNDODGABLE
-Mew,Twiddling,POW,4,3,AOE,AIR_DMG
-Mew,Rushing Punch,POW,2,2,ENEMY,AIR_X2
-Mew,Scaredy Cat,DGE,1,0,SELF,ON_GUTS:1
-Mew,Punch,POW,1,2,ENEMY,HALF_DODGE
-Mew,Headbutt,POW,1,3,ENEMY,HIT_RECOIL:1
-Mew,Miaw,INT,3,1,ENEMY,GUTS_DMG:99
-Mew,Doll,SPE,0,0,SELF,DOLL
-Mew,Tolerant Cat,BLK,0,0,SELF,ON_POW,BLOCK:2
-Mew,Diving Press,POW,4,6,ENEMY,
-Mocchi,Thrust,POW,2,2,ENEMY,UNDODGABLE
-Mocchi,Petal Wind,INT,3,2,AOE,
-Mocchi,Roll,DGE,1,0,SELF,
-Mocchi,1-2 Thrust,POW,4,4,ENEMY,HALF_DODGE
-Mocchi,Press,POW,3,5,ENEMY,HIT_RECOIL:1
-Mocchi,Licking,INT,2,2,ENEMY,GUTS_DMG:1
-Mocchi,Round,BLK,0,0,SELF,BLOCK:3
-Mocchi,Hide,BLK,1,0,FRIEND,HIDE
-Mocchi,Head Butt,POW,2,3,ENEMY,
-Mocchi,Motch Ray,INT,4,6,ENEMY,
-Mocchi,Roll Attack,POW,1,2,ENEMY,
-Mocchi,Slap,POW,0,1,ENEMY,
-Monol,Knock,POW,2,2,ENEMY,MULTI_MONOL
-Monol,Screech,INT,3,3,ENEMY,UNDODGABLE
-Monol,Charge,POW,2,4,ENEMY,RECOIL:2
-Monol,Flattening,POW,3,5,ENEMY,RECOIL:2
-Monol,Wall,DGE,3,0,SELF,
-Monol,Tentacles,POW,5,2,ENEMY,GUTS_DMG:99
-Monol,Shock Breath,BLK,2,0,SELF,ON_POW,BLOCK:99
-Monol,Shield,BLK,2,0,FRIEND,INTERCEPT
-Monol,Beam,INT,3,4,ENEMY,
-Monol,Formation,INT,6,8,ENEMY,
-Monol,Sound Wave,INT,2,2,ENEMY,
-Monol,Spike Bite,POW,5,7,ENEMY,
-Naga,Pierce,POW,3,2,ENEMY,UNDODGABLE
-Naga,Belly Blow,POW,2,2,ENEMY,UNBLOCKABLE
-Naga,Counter,BLK,3,0,SELF,ON_POW
-Naga,Evil Shots,INT,6,8,ENEMY,HALF_DODGE
-Naga,Poison Gas,INT,4,4,ENEMY,STUN
-Naga,Glare,SPE,3,0,AOE,GLARE
-Naga,Death Trap,SPE,1,0,SELF,DEATH_TRAP
-Naga,Life Steal,INT,6,4,ENEMY,LIFE_STEAL
-Naga,Evil Shot,INT,4,5,ENEMY,
-Naga,Stab,POW,2,3,ENEMY,
-Naga,Thwack,POW,3,4,ENEMY,
-Naga,Whirl Blow,POW,6,9,ENEMY,
-Phoenix,Fire River,INT,4,3,AOE,GRD_DMG
-Phoenix,Fire Wave,INT,6,4,AOE,GRD_DMG
-Phoenix,Perceive,DGE,0,0,SELF,ON_INT
-Phoenix,Insight,DGE,0,0,SELF,ON_GUTS:1
-Phoenix,Beak,POW,2,2,ENEMY,HALF_DODGE
-Phoenix,Hurricane,INT,3,4,ENEMY,HALF_DODGE
-Phoenix,Typhoon,INT,4,6,ENEMY,HALF_DODGE
-Phoenix,Hide Head,BLK,1,0,SELF,BLOCK:3
-Phoenix,Mystery Power,SPE,1,0,SELF,MYSTERY_POWER
-Phoenix,Claw,POW,2,3,ENEMY,
-Phoenix,Fire Beam,INT,2,3,ENEMY,
-Phoenix,Flame Beam,INT,5,8,ENEMY,
-Pixie,Lightning,INT,4,4,ENEMY,UNDODGABLE
-Pixie,Soar,DGE,1,0,SELF,ON_POW
-Pixie,Step,DGE,0,0,SELF,ON_GUTS:0
-Pixie,Charge,POW,2,4,ENEMY,HIT_RECOIL:1
-Pixie,Kiss,INT,4,1,ENEMY,GUTS_DMG:99
-Pixie,Bolt,INT,1,2,ENEMY,MULTI_PIXIE
-Pixie,Thunder,INT,0,1,ENEMY,MULTI_PIXIE
-Pixie,Enchant,SPE,1,0,SELF,ENCHANT
-Pixie,Recover,SPE,2,0,FRIEND,RESTORE:3
-Pixie,Shotgun,INT,3,3,MULTI,
-Pixie,Kick,POW,1,2,ENEMY,
-Pixie,Scratch,POW,0,1,ENEMY,
-Plant,Rootone,SPE,2,0,SELF,ROOTONE
-Plant,Seed Gun,POW,2,2,ENEMY,MULTI_PLANT
-Plant,Face Drill,POW,3,4,ENEMY,GRD_TARGET
-Plant,Root Attack,POW,2,3,ENEMY,GRD_TARGET
-Plant,Leaf Zero,BLK,0,0,SELF,LEAF_ZERO
-Plant,Toxic Nectar,INT,3,2,ENEMY,GUTS_DMG:3
-Plant,Toxic Pollen,INT,4,2,ENEMY,GUTS_DMG:5
-Plant,Power of Sun,SPE,0,0,COMBO,POWER_OF_SUN
-Plant,Take the Hit,BLK,1,0,SELF,BLOCK:2
-Plant,Life Steal,INT,6,3,ENEMY,LIFE_STEAL
-Plant,Jab,POW,1,2,ENEMY,
-Plant,Slap,POW,0,1,ENEMY,
-Suezo,Teleport,POW,2,2,ENEMY,UNDODGABLE
-Suezo,Side Roll,DGE,1,0,SELF,ON_GUTS:1
-Suezo,Tail Slap,POW,2,2,ENEMY,GUTS_DMG:1
-Suezo,Kiss,INT,3,2,ENEMY,GUTS_DMG:3
-Suezo,Tongue,POW,5,6,ENEMY,GUTS_DMG:3
-Suezo,Lick,INT,4,2,ENEMY,GUTS_DMG:99
-Suezo,Provoke,SPE,0,0,AOE,PROVOKE
-Suezo,Scouting,SPE,1,0,SELF,SCOUTING
-Suezo,Yodel,SPE,4,0,SELF,YODEL
-Suezo,Bite,POW,4,6,ENEMY,
-Suezo,Eye Beam,INT,4,5,ENEMY,
-Suezo,Spit,POW,1,2,ENEMY,
-Tiger,Right Claw,POW,0,1,ENEMY,COMBO_TIGER
-Tiger,Horn,POW,0,1,ENEMY,COMBO_TIGER
-Tiger,Left Claw,POW,0,1,ENEMY,COMBO_TIGER
-Tiger,Jump,DGE,2,0,SELF,ON_POW
-Tiger,Back Roll,DGE,1,0,SELF,
-Tiger,Charge,POW,2,4,ENEMY,HIT_RECOIL:1
-Tiger,Ice Bomb,INT,2,2,ENEMY,STUN
-Tiger,Sonic Move,SPE,0,0,COMBO,ON_POW,UNDODGABLE
-Tiger,Roar,SPE,3,0,AOE,STUN
-Tiger,Bolt,INT,2,3,ENEMY,
-Tiger,Lightning,INT,4,5,ENEMY,
-Tiger,Stab,POW,3,4,ENEMY,
-Worm,Tail Lash,POW,3,3,ENEMY,COMBO_WORM
-Worm,Emerge,SPE,0,0,SELF,EMERGE
-Worm,Bite,POW,3,3,ENEMY,UNBLOCKABLE
-Worm,Poison Gas,INT,5,3,AOE,ALL
-Worm,Tusk Slash,POW,3,3,ENEMY,AIR_X2
-Worm,Sidestep,DGE,2,0,SELF,ON_GUTS:1
-Worm,Pierce,POW,4,4,ENEMY,HALF_DODGE
-Worm,Roll Assault,POW,6,8,ENEMY,HALF_DODGE
-Worm,Pinch Throw,POW,5,5,ENEMY,STUN
-Worm,Shell,BLK,2,0,SELF,ON_POW,BLOCK:2
-Worm,Cocoon,SPE,0,0,SELF,COCOON
-Worm,Worm Hole,POW,7,10,ENEMY,
-Zilla,Tidal Wave,INT,7,4,AOE,ALL,GRD_DMG
-Zilla,Bounce,BLK,4,0,SELF,ON_POW
-Zilla,Body Press,POW,5,8,ENEMY,DGE_RECOIL:2
-Zilla,Roll Assault,POW,6,10,ENEMY,DGE_RECOIL:3
-Zilla,Tail Lashes,POW,4,4,ENEMY,HALF_DODGE
-Zilla,Sneeze,INT,2,1,ENEMY,GUTS_DMG:1
-Zilla,Bubbles,INT,5,1,ENEMY,GUTS_DMG:99
-Zilla,In Your Face,SPE,0,0,AOE,IN_YOUR_FACE
-Zilla,Nevermind,BLK,1,0,SELF,ON_POW,BLOCK:3
-Zilla,Blowhole,BLK,1,0,SELF,BLOW_HOLE
-Zilla,Belly Attack,POW,3,3,ENEMY,
-Zilla,Scratch,POW,2,2,ENEMY,
+Mew,Rushing Punch,POW,2,2,ENEMY,AIR_DOUBLE,0
+Worm,Tusk Slash,POW,3,3,ENEMY,AIR_DOUBLE,0
+Worm,Poison Gas,INT,5,3,ENEMY,ALL,0
+Golem,Quake,INT,6,3,ENEMY,ALL_GRD,0
+Zilla,Tidal Wave,INT,7,4,ENEMY,ALL_GRD,0
+Gali,Flame Wall,INT,4,2,ENEMY,AOE,0
+Ghost,Dove Bomb,INT,3,2,ENEMY,AOE,0
+Golem,Cyclone,POW,8,4,ENEMY,AOE,0
+Hare,Gas,INT,3,2,ENEMY,AOE,0
+Mocchi,Petal Wind,INT,3,2,ENEMY,AOE,0
+Dragon,Wing Cutter,POW,5,4,ENEMY,AOE_AIR,0
+Jell,Jell Copter,INT,5,5,ENEMY,AOE_AIR,0
+Mew,Twiddling,POW,4,3,ENEMY,AOE_AIR,0
+Dragon,Fire Breath,INT,4,3,ENEMY,AOE_GRD,0
+Phoenix,Fire River,INT,4,3,ENEMY,AOE_GRD,0
+Phoenix,Fire Wave,INT,6,4,ENEMY,AOE_GRD,0
+Breeder,Arid Land,ENV,4,0,FRIEND,ARID_LAND,0
+Breeder,Awe,ENV,3,0,FRIEND,AWE,0
+Breeder,Bad Weather,ENV,3,0,FRIEND,BAD_WEATHER,0
+Ghost,In the Hat,BLK,1,0,FRIEND,BLOCK,99
+Mocchi,Round,BLK,0,0,FRIEND,BLOCK,3
+Phoenix,Hide Head,BLK,1,0,FRIEND,BLOCK,3
+Plant,Take the Hit,BLK,1,0,FRIEND,BLOCK,2
+Durahan,Shield,BLK,0,0,FRIEND,BLOCK_INT,3
+Dino,Endure,BLK,1,0,FRIEND,BLOCK_POW,3
+Dragon,Iron Scales,BLK,0,0,FRIEND,BLOCK_POW,3
+Durahan,Parry,BLK,0,0,FRIEND,BLOCK_POW,3
+Golem,Defense,BLK,2,0,FRIEND,BLOCK_POW,5
+Mew,Tolerant Cat,BLK,0,0,FRIEND,BLOCK_POW,2
+Monol,Shock Breath,BLK,2,0,FRIEND,BLOCK_POW,99
+Worm,Shell,BLK,2,0,FRIEND,BLOCK_POW,2
+Zilla,Nevermind,BLK,1,0,FRIEND,BLOCK_POW,3
+Zilla,Blowhole,BLK,1,0,FRIEND,BLOW_HOLE,0
+Zilla,Bounce,BLK,4,0,FRIEND,BOUNCE,0
+Breeder,Busy Time,SPE,0,0,FRIEND,BUSY_TIME,0
+Breeder,Close Up,ENV,4,0,FRIEND,CLOSE_UP,0
+Worm,Cocoon,SPE,0,0,FRIEND,COCOON,0
+Dragon,Combination,POW,4,8,ENEMY,COMBO_DRAGON,0
+Henger,Kick,POW,2,2,ENEMY,COMBO_HENGER,0
+Tiger,Right Claw,POW,0,1,ENEMY,COMBO_TIGER,0
+Tiger,Horn,POW,0,1,ENEMY,COMBO_TIGER,0
+Tiger,Left Claw,POW,0,1,ENEMY,COMBO_TIGER,0
+Worm,Tail Lash,POW,3,3,ENEMY,COMBO_WORM,0
+Hare,Computing,SPE,0,0,FRIEND,COMPUTING,0
+Any,Concentrate,SPE,1,0,ENEMY,CONCENTRATE,0
+Breeder,Confusion,ENV,4,0,FRIEND,CONFUSION,0
+Breeder,Cool Judge,ENV,1,0,FRIEND,COOL_JUDGE,0
+Jell,Copy Cat,SPE,1,0,ENEMY,COPY_CAT,0
+Naga,Counter,BLK,3,0,FRIEND,COUNTER,0
+Any,Critical,SPE,2,0,ENEMY,CRITICAL,0
+Naga,Death Trap,SPE,1,0,FRIEND,DEATH_TRAP,0
+Gali,Deflect,BLK,3,0,FRIEND,DEFLECT,0
+Dino,Jump Aside,DGE,2,0,FRIEND,DGE,0
+Gali,Lie Down,DGE,3,0,FRIEND,DGE,0
+Henger,Hyperspeed,DGE,1,0,FRIEND,DGE,0
+Mocchi,Roll,DGE,1,0,FRIEND,DGE,0
+Monol,Wall,DGE,3,0,FRIEND,DGE,0
+Tiger,Back Roll,DGE,1,0,FRIEND,DGE,0
+Hare,Footwork,DGE,0,0,FRIEND,DGE_GUTS,1
+Henger,True Vision,DGE,0,0,FRIEND,DGE_GUTS,1
+Mew,Scaredy Cat,DGE,1,0,FRIEND,DGE_GUTS,1
+Phoenix,Insight,DGE,0,0,FRIEND,DGE_GUTS,1
+Pixie,Step,DGE,0,0,FRIEND,DGE_GUTS,0
+Suezo,Side Roll,DGE,1,0,FRIEND,DGE_GUTS,1
+Worm,Sidestep,DGE,2,0,FRIEND,DGE_GUTS,1
+Jell,Slip Away,DGE,1,0,FRIEND,DGE_INT,0
+Phoenix,Perceive,DGE,0,0,FRIEND,DGE_INT,0
+Any,Dodge,DGE,0,0,FRIEND,DODGE,0
+Henger,Dodge Program,SPE,1,0,FRIEND,DODGE_PROGRAM,0
+Mew,Doll,SPE,0,0,FRIEND,DOLL,0
+Worm,Emerge,SPE,0,0,FRIEND,EMERGE,0
+Pixie,Enchant,SPE,1,0,FRIEND,ENCHANT,0
+Breeder,Encourage,ENV,3,0,FRIEND,ENCOURAGE,0
+Breeder,Ensnare,ENV,3,0,FRIEND,ENSNARE,0
+Breeder,Excited,ENV,2,0,FRIEND,EXCITED,0
+Breeder,Fainted,SPE,5,0,FRIEND,FAINTED,0
+Breeder,Fake Cry,SPE,1,0,FRIEND,FAKE_CRY,0
+Dragon,Fly Away,DGE,2,0,FRIEND,FLY_AWAY,0
+Ghost,Ghost Rush,SPE,2,0,FRIEND,GHOST_RUSH,0
+Naga,Glare,SPE,3,0,ENEMY,GLARE,0
+Any,Good Luck,SPE,0,0,FRIEND,GOOD_LUCK,0
+Any,Grand End,SPE,0,0,ENEMY,GRAND_END,0
+Any,Grit,BLK,2,0,FRIEND,GRIT,0
+Ghost,Surprise,INT,2,1,ENEMY,GUTS_DMG,2
+Henger,Yoyo,POW,3,2,ENEMY,GUTS_DMG,1
+Henger,Laser Sword,POW,5,5,ENEMY,GUTS_DMG,5
+Mew,Miaw,INT,3,1,ENEMY,GUTS_DMG,99
+Mocchi,Licking,INT,2,2,ENEMY,GUTS_DMG,1
+Monol,Tentacles,POW,5,2,ENEMY,GUTS_DMG,99
+Pixie,Kiss,INT,4,1,ENEMY,GUTS_DMG,99
+Plant,Toxic Nectar,INT,3,2,ENEMY,GUTS_DMG,3
+Plant,Toxic Pollen,INT,4,2,ENEMY,GUTS_DMG,5
+Suezo,Tail Slap,POW,2,2,ENEMY,GUTS_DMG,1
+Suezo,Kiss,INT,3,2,ENEMY,GUTS_DMG,3
+Suezo,Tongue,POW,5,6,ENEMY,GUTS_DMG,3
+Suezo,Lick,INT,4,2,ENEMY,GUTS_DMG,99
+Zilla,Sneeze,INT,2,1,ENEMY,GUTS_DMG,1
+Zilla,Bubbles,INT,5,1,ENEMY,GUTS_DMG,99
+Dragon,Dragon Combo,POW,8,14,ENEMY,HALF_DODGE,0
+Dragon,Tail Attack,POW,4,4,ENEMY,HALF_DODGE,0
+Gali,Evil Dance,POW,7,10,ENEMY,HALF_DODGE,0
+Ghost,Combination,POW,3,4,ENEMY,HALF_DODGE,0
+Hare,1-2 Punch,POW,3,4,ENEMY,HALF_DODGE,0
+Henger,Fist Missle,POW,3,4,ENEMY,HALF_DODGE,0
+Henger,Laser,INT,4,4,ENEMY,HALF_DODGE,0
+Jell,Beam Gun,INT,4,4,ENEMY,HALF_DODGE,0
+Mew,Punch,POW,1,2,ENEMY,HALF_DODGE,0
+Mocchi,1-2 Thrust,POW,4,4,ENEMY,HALF_DODGE,0
+Naga,Evil Shots,INT,6,8,ENEMY,HALF_DODGE,0
+Phoenix,Beak,POW,2,2,ENEMY,HALF_DODGE,0
+Phoenix,Hurricane,INT,3,4,ENEMY,HALF_DODGE,0
+Phoenix,Typhoon,INT,4,6,ENEMY,HALF_DODGE,0
+Worm,Pierce,POW,4,4,ENEMY,HALF_DODGE,0
+Worm,Roll Assault,POW,6,8,ENEMY,HALF_DODGE,0
+Zilla,Tail Lashes,POW,4,4,ENEMY,HALF_DODGE,0
+Breeder,Help,POW,1,1,ENEMY,HELP,0
+Mocchi,Hide,BLK,1,0,FRIEND,HIDE,0
+Ghost,Hit Card,INT,0,0,ENEMY,HIT_CARD,0
+Breeder,Hot Battle,ENV,2,0,FRIEND,HOT_BATTLE,0
+Zilla,In Your Face,SPE,0,0,ENEMY,IN_YOUR_FACE,0
+Golem,Protect,BLK,1,0,FRIEND,INTERCEPT,0
+Monol,Shield,BLK,2,0,FRIEND,INTERCEPT,0
+Tiger,Jump,DGE,2,0,FRIEND,JUMP,0
+Any,Jump In,BLK,0,0,FRIEND,JUMP_IN,0
+Any,Last Man,SPE,1,0,FRIEND,LAST_MAN,0
+Breeder,Last Trump,SPE,0,0,FRIEND,LAST_TRUMP,0
+Plant,Leaf Zero,BLK,0,0,FRIEND,LEAF_ZERO,0
+Durahan,Slash Combo,POW,3,8,ENEMY,LIFE,2
+Henger,Final Blade,INT,3,8,ENEMY,LIFE,2
+Naga,Life Steal,INT,6,4,ENEMY,LIFE_STEAL,0
+Plant,Life Steal,INT,6,3,ENEMY,LIFE_STEAL,0
+Breeder,Lock Tight,ENV,3,0,FRIEND,LOCK_TIGHT,0
+Breeder,Long Battle,ENV,3,0,FRIEND,LONG_BATTLE,0
+Hare,Loud Voice,SPE,0,0,FRIEND,LOUD_VOICE,0
+Durahan,Meditate,SPE,0,0,FRIEND,MEDITATE,0
+Mew,Singing Cat,SPE,0,0,FRIEND,MULTI_BREEDER,0
+Jell,Whip,POW,2,3,ENEMY,MULTI_JELL,0
+Monol,Knock,POW,2,2,ENEMY,MULTI_MONOL,0
+Pixie,Bolt,INT,1,2,ENEMY,MULTI_PIXIE,0
+Pixie,Thunder,INT,0,1,ENEMY,MULTI_PIXIE,0
+Plant,Seed Gun,POW,2,2,ENEMY,MULTI_PLANT,0
+Phoenix,Mystery Power,SPE,1,0,FRIEND,MYSTERY_POWER,0
+Breeder,Nice Fight,ENV,3,0,FRIEND,NICE_FIGHT,0
+Breeder,Nuts Oil,SPE,2,0,FRIEND,NUTS_OIL,0
+Any,Persistance,BLK,1,0,FRIEND,PERSISTANCE,0
+Any,PO,SPE,1,0,FRIEND,PO,0
+Breeder,Powder,SPE,0,0,FRIEND,POWDER,0
+Plant,Power of Sun,SPE,0,0,ENEMY,POWER_OF_SUN,0
+Breeder,Pray,BLK,0,0,FRIEND,PRAY,0
+Breeder,Pride,ENV,2,0,FRIEND,PRIDE,0
+Suezo,Provoke,SPE,0,0,ENEMY,PROVOKE,0
+Breeder,Reborn,SPE,2,0,FRIEND,REBORN,0
+Golem,Recharge,SPE,2,0,FRIEND,RECHARGE,0
+Monol,Charge,POW,2,4,ENEMY,RECOIL,2
+Monol,Flattening,POW,3,5,ENEMY,RECOIL,2
+Durahan,Death Bringer,POW,4,8,ENEMY,RECOIL_DGE,3
+Zilla,Body Press,POW,5,8,ENEMY,RECOIL_DGE,2
+Zilla,Roll Assault,POW,6,10,ENEMY,RECOIL_DGE,3
+Dino,Charge,POW,2,4,ENEMY,RECOIL_HIT,1
+Dino,Fire Dash,POW,6,11,ENEMY,RECOIL_HIT,3
+Ghost,Charge,POW,2,4,ENEMY,RECOIL_HIT,1
+Hare,Charge,POW,4,8,ENEMY,RECOIL_HIT,2
+Hare,Headbutt,POW,1,4,ENEMY,RECOIL_HIT,2
+Hare,Super Head,POW,3,6,ENEMY,RECOIL_HIT,2
+Mew,Headbutt,POW,1,3,ENEMY,RECOIL_HIT,1
+Mocchi,Press,POW,3,5,ENEMY,RECOIL_HIT,1
+Pixie,Charge,POW,2,4,ENEMY,RECOIL_HIT,1
+Tiger,Charge,POW,2,4,ENEMY,RECOIL_HIT,1
+Breeder,Refresh,SPE,1,0,FRIEND,REFRESH,0
+Breeder,Mango,SPE,0,0,FRIEND,RESTORE,1
+Pixie,Recover,SPE,2,0,FRIEND,RESTORE,3
+Any,Retreat,DGE,1,0,FRIEND,RETREAT,0
+Jell,Riddler,SPE,0,0,FRIEND,RIDDLER,0
+Tiger,Roar,SPE,3,0,ENEMY,ROAR,0
+Plant,Rootone,SPE,2,0,FRIEND,ROOTONE,0
+Suezo,Scouting,SPE,1,0,FRIEND,SCOUTING,0
+Pixie,Shotgun,INT,3,3,ENEMY,SHOTGUN,0
+Durahan,Silent Stance,SPE,0,0,FRIEND,SILENT_STANCE,0
+Pixie,Soar,DGE,1,0,FRIEND,SOAR,0
+Breeder,Spark,ENV,2,0,FRIEND,SPARK,0
+Jell,Sponge,BLK,0,0,FRIEND,SPONGE,0
+Any,Blow Away,SPE,0,0,ENEMY,STUN,0
+Breeder,Complicated,SPE,1,0,ENEMY,STUN,0
+Dino,Dust Kick,INT,3,3,ENEMY,STUN,0
+Dino,Throw Away,POW,5,6,ENEMY,STUN,0
+Dragon,Spinning Claw,POW,5,5,ENEMY,STUN,0
+Golem,Clutch,POW,3,3,ENEMY,STUN,0
+Golem,Throw Away,POW,5,5,ENEMY,STUN,0
+Hare,Windmill,POW,4,5,ENEMY,STUN,0
+Jell,Fly Swatter,POW,3,3,ENEMY,STUN,0
+Naga,Poison Gas,INT,4,4,ENEMY,STUN,0
+Tiger,Ice Bomb,INT,2,2,ENEMY,STUN,0
+Worm,Pinch Throw,POW,5,5,ENEMY,STUN,0
+Breeder,Support,SPE,0,0,ENEMY,SUPPORT,0
+Gali,Tactics,SPE,3,0,FRIEND,TACTICS,0
+Ghost,Take Over,SPE,0,0,FRIEND,TAKE_OVER,0
+Dino,Tail Slap,POW,3,5,ENEMY,TARGET_GRD,0
+Durahan,Flash Slash,POW,2,4,ENEMY,TARGET_GRD,0
+Plant,Face Drill,POW,3,4,ENEMY,TARGET_GRD,0
+Plant,Root Attack,POW,2,3,ENEMY,TARGET_GRD,0
+Dragon,Throw Away,SPE,0,0,ENEMY,THROW_AWAY,0
+Henger,Transform,SPE,0,0,FRIEND,TRANSFORM,0
+Breeder,Twinkling,SPE,4,0,FRIEND,TWINKLING,0
+Jell,Pierce,POW,1,1,ENEMY,UNBLOCKABLE,0
+Naga,Belly Blow,POW,2,2,ENEMY,UNBLOCKABLE,0
+Worm,Bite,POW,3,3,ENEMY,UNBLOCKABLE,0
+Dino,Leap Kick,SPE,1,0,ENEMY,UNDODGABLE,0
+Durahan,Aerial Shot,INT,4,5,ENEMY,UNDODGABLE,0
+Durahan,Million Stabs,POW,3,3,ENEMY,UNDODGABLE,0
+Gali,Holy Ray,INT,3,2,ENEMY,UNDODGABLE,0
+Ghost,Necromancy,INT,3,3,ENEMY,UNDODGABLE,0
+Mew,Hundred Blows,POW,4,5,ENEMY,UNDODGABLE,0
+Mew,Zap,INT,4,4,ENEMY,UNDODGABLE,0
+Mocchi,Thrust,POW,2,2,ENEMY,UNDODGABLE,0
+Monol,Screech,INT,3,3,ENEMY,UNDODGABLE,0
+Naga,Pierce,POW,3,2,ENEMY,UNDODGABLE,0
+Pixie,Lightning,INT,4,4,ENEMY,UNDODGABLE,0
+Suezo,Teleport,POW,2,2,ENEMY,UNDODGABLE,0
+Tiger,Sonic Move,SPE,0,0,ENEMY,UNDODGABLE,0
+Breeder,Warp,ENV,3,0,FRIEND,WARP,0
+Breeder,Wild Rush,SPE,3,0,FRIEND,WILD_RUSH,0
+Any,Will Power,SPE,1,0,ENEMY,WILL_POWER,0
+Suezo,Yodel,SPE,4,0,FRIEND,YODEL,0
+Dino,Bite,POW,4,6,ENEMY,NORMAL,0
+Dino,Flame,INT,3,4,ENEMY,NORMAL,0
+Dino,Knee Kick,POW,5,8,ENEMY,NORMAL,0
+Dino,Punch,POW,2,3,ENEMY,NORMAL,0
+Dragon,Bite,POW,4,6,ENEMY,NORMAL,0
+Dragon,Dragon Punch,POW,5,8,ENEMY,NORMAL,0
+Dragon,Trample,POW,7,12,ENEMY,NORMAL,0
+Durahan,Cut-in-Two,POW,1,2,ENEMY,NORMAL,0
+Durahan,Thunder Bolt,INT,4,7,ENEMY,NORMAL,0
+Durahan,V Slash,POW,3,5,ENEMY,NORMAL,0
+Gali,Evil Blow,INT,4,6,ENEMY,NORMAL,0
+Gali,Flame,INT,5,8,ENEMY,NORMAL,0
+Gali,Kick,POW,2,2,ENEMY,NORMAL,0
+Gali,Scratch,POW,1,1,ENEMY,NORMAL,0
+Gali,SpinCut,POW,5,8,ENEMY,NORMAL,0
+Gali,Thunder,INT,3,4,ENEMY,NORMAL,0
+Ghost,Energy Shot,INT,1,2,ENEMY,NORMAL,0
+Ghost,Toy Hammer,POW,1,2,ENEMY,NORMAL,0
+Ghost,Uppercut,POW,2,3,ENEMY,NORMAL,0
+Golem,Brow Hit,POW,3,5,ENEMY,NORMAL,0
+Golem,Chop,POW,5,8,ENEMY,NORMAL,0
+Golem,Kick,POW,4,7,ENEMY,NORMAL,0
+Golem,Roller,POW,7,12,ENEMY,NORMAL,0
+Golem,W Chop,POW,6,10,ENEMY,NORMAL,0
+Hare,Rush Punch,POW,6,10,ENEMY,NORMAL,0
+Hare,Sobat,POW,2,3,ENEMY,NORMAL,0
+Hare,Spin Fist,POW,4,6,ENEMY,NORMAL,0
+Henger,Burst Cannon,INT,5,8,ENEMY,NORMAL,0
+Henger,Punch,POW,1,2,ENEMY,NORMAL,0
+Jell,Cannon,INT,3,4,ENEMY,NORMAL,0
+Jell,Fist,POW,4,6,ENEMY,NORMAL,0
+Jell,Stab,POW,1,2,ENEMY,NORMAL,0
+Mew,Diving Press,POW,4,6,ENEMY,NORMAL,0
+Mocchi,Headbutt,POW,2,3,ENEMY,NORMAL,0
+Mocchi,Motch Ray,INT,4,6,ENEMY,NORMAL,0
+Mocchi,Roll Attack,POW,1,2,ENEMY,NORMAL,0
+Mocchi,Slap,POW,0,1,ENEMY,NORMAL,0
+Monol,Beam,INT,3,4,ENEMY,NORMAL,0
+Monol,Formation,INT,6,8,ENEMY,NORMAL,0
+Monol,Sound Wave,INT,2,2,ENEMY,NORMAL,0
+Monol,Spike Bite,POW,5,7,ENEMY,NORMAL,0
+Naga,Evil Shot,INT,4,5,ENEMY,NORMAL,0
+Naga,Stab,POW,2,3,ENEMY,NORMAL,0
+Naga,Thwack,POW,3,4,ENEMY,NORMAL,0
+Naga,Whirl Blow,POW,6,9,ENEMY,NORMAL,0
+Phoenix,Claw,POW,2,3,ENEMY,NORMAL,0
+Phoenix,Fire Beam,INT,2,3,ENEMY,NORMAL,0
+Phoenix,Flame Beam,INT,5,8,ENEMY,NORMAL,0
+Pixie,Kick,POW,1,2,ENEMY,NORMAL,0
+Pixie,Scratch,POW,0,1,ENEMY,NORMAL,0
+Plant,Jab,POW,1,2,ENEMY,NORMAL,0
+Plant,Slap,POW,0,1,ENEMY,NORMAL,0
+Suezo,Bite,POW,4,6,ENEMY,NORMAL,0
+Suezo,Eye Beam,INT,4,5,ENEMY,NORMAL,0
+Suezo,Spit,POW,1,2,ENEMY,NORMAL,0
+Tiger,Bolt,INT,2,3,ENEMY,NORMAL,0
+Tiger,Lightning,INT,4,5,ENEMY,NORMAL,0
+Tiger,Stab,POW,3,4,ENEMY,NORMAL,0
+Worm,Worm Hole,POW,7,10,ENEMY,NORMAL,0
+Zilla,Belly Attack,POW,3,3,ENEMY,NORMAL,0
+Zilla,Scratch,POW,2,2,ENEMY,NORMAL,0

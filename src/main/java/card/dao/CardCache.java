@@ -3,7 +3,6 @@ package card.dao;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,11 +39,9 @@ public class CardCache {
 				int gutsCost = Integer.parseInt(split[i++]);
 				int damage = Integer.parseInt(split[i++]);
 				String targeting = split[i++];
-				ArrayList<String> keywords = new ArrayList<String>();
-				while (i < split.length) {
-					keywords.add(split[i++]);
-				}
-				
+				String keyword = split[i++];
+				int keyValue = Integer.parseInt(split[i++]);
+					
 				SkillCard skillCard = new SkillCard();
 				skillCard.setId(monsterName + "_" + cardName);
 				skillCard.setUserId(monsterName);
@@ -52,7 +49,8 @@ public class CardCache {
 				skillCard.setGutsCost(gutsCost);
 				skillCard.setDamage(damage);
 				skillCard.setTargeting(targeting);
-				skillCard.setKeywords(keywords);
+				skillCard.setKeyword(keyword);
+				skillCard.setKeyValue(keyValue);
 			
 				battleCards.put(skillCard.getId(), skillCard);
 			}

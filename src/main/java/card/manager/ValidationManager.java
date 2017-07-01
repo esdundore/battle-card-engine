@@ -106,8 +106,8 @@ public class ValidationManager {
 			tempMonsters.add(monster);
 		}
 		Monster breeder = new Monster();
-		breeder.setMainLineage(SkillCard.BREEDER_USER);
-		breeder.setSubLineage(SkillCard.BREEDER_USER);
+		breeder.setMainLineage("Breeder");
+		breeder.setSubLineage("Breeder");
 		breeder.setCanAttack(breederAttack);
 		tempMonsters.add(breeder);
 		
@@ -150,7 +150,7 @@ public class ValidationManager {
 		ArrayList<Integer> targets = new ArrayList<Integer>();
 		
 		// target enemy monsters
-		if (skillCard.targetEnemy() || skillCard.targetMulti() || skillCard.targetAOE()) {
+		if (skillCard.targetEnemy()) {
 			for (int i = 0; i < opponentMonsters.size(); i++) {
 				if (opponentMonsters.get(i).getCurrentLife() > 0) {
 					targets.add(i);
@@ -158,7 +158,7 @@ public class ValidationManager {
 			}
 		}
 		// target friendly monsters
-		else if (skillCard.targetFriend() || skillCard.targetSelf()) {
+		else if (skillCard.targetFriend()) {
 			for (int i = 0; i < monsters.size(); i++) {
 				if (monsters.get(i).getCurrentLife() > 0) {
 					targets.add(i);
@@ -223,7 +223,7 @@ public class ValidationManager {
 		
 		// cannot dodge the attack
 		for (SkillCard attackCard : attackCards) {
-			if (attackCard.keyUndodgable() && skillCard.typeDGE()) {
+			if (attackCard.keywordUndodgable() && skillCard.typeDGE()) {
 				return false;
 			}
 		}
@@ -232,10 +232,10 @@ public class ValidationManager {
 		List<String> attackCardTypes = attackCards.stream()
 				.map(SkillCard::getType)
 				.collect(Collectors.toCollection(ArrayList::new));
-		if (!attackCardTypes.contains(SkillCard.TYPE_POW) && skillCard.keyOnPOW()) {
+		if (!attackCardTypes.contains("POW") && skillCard.keywordDodgePOW()) {
 			return false;
 		}
-		if (!attackCardTypes.contains(SkillCard.TYPE_INT) && skillCard.keyOnINT()) {
+		if (!attackCardTypes.contains("INT") && skillCard.keywordDodgeINT()) {
 			return false;
 		}
 		
@@ -257,21 +257,21 @@ public class ValidationManager {
 	public static boolean canCombo(SkillCard skillCard, ArrayList<SkillCard> skillCards) {
 		if (skillCards.isEmpty()) {
 			// cannot use these cards first
-			if (!skillCard.targetCombo()) {
+			if (!skillCard.isCombo()) {
 				return true;
 			}
 		}
 		else {
 			for (SkillCard otherCard : skillCards) {
 				// Tiger Combo
-				if (skillCard.keyComboTiger() && otherCard.keyComboTiger()
+				if (skillCard.keywordComboTiger() && otherCard.keywordComboTiger()
 						&& !skillCard.equals(otherCard.getId())) {
 					return true;
 				}
 				// POW Combo
-				else if (skillCard.keyOnPOW() && otherCard.typePOW()) {
-					return true;
-				}
+				//else if (skillCard.keywordPOW() && otherCard.typePOW()) {
+				//	return true;
+				//}
 			}
 		}
 		return false;
