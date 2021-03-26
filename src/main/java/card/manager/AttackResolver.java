@@ -87,7 +87,7 @@ public class AttackResolver {
 		for (Map.Entry<Integer, Integer> targetAndDamage : attackRequest.getTargetsAndDamage().entrySet()) {
 			int targetIndex = targetAndDamage.getKey();
 			
-			int tempDamage = new Integer(fullDamage);
+			int tempDamage = fullDamage;
 			if (targetAndDamage.getValue() != 0) {
 				tempDamage = targetAndDamage.getValue();
 			}
@@ -118,9 +118,6 @@ public class AttackResolver {
 			}
 			target.setCurrentLife(target.getCurrentLife() - tempDamage);	
 			totalDamage += tempDamage;
-			if (target.getCurrentLife() <= 0) {
-				// dead
-			}
 		}
 		
 		// apply after effects

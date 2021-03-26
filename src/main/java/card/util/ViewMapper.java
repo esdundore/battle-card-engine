@@ -20,6 +20,7 @@ public class ViewMapper {
 		gameView.setAttackId(gameState.getAttackId());
 		gameView.setDefendId(gameState.getDefendId());
 		gameView.setCurrentPlayer(gameState.getCurrentPlayer());
+		gameView.setWinner(gameState.getWinner());
 		gameView.setCurrentTime(gameState.getCurrentTime());
 		gameView.setPhase(gameState.getPhase());
 		

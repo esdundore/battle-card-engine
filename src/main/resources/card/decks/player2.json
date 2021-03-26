@@ -1,0 +1,45 @@
+{
+   "Deck": {
+      "ownerId": "player2",
+      "monsterCards": [
+         "Mocchi",
+         "Tiger",
+         "Dino"
+      ],
+      "skillCards": [
+         "Mocchi_Licking",
+         "Mocchi_Press",
+         "Mocchi_1-2 Thrust",
+         "Mocchi_Roll",
+         "Mocchi_Petal Wind",
+         "Mocchi_Thrust",
+         "Mocchi_Round",
+         "Mocchi_Slap",
+         "Mocchi_Roll Attack",
+         "Mocchi_Motch Ray",
+         "Mocchi_Headbutt",
+         "Dino_Leap Kick",
+         "Dino_Fire Dash",
+         "Dino_Charge",
+         "Dino_Jump Aside",
+         "Dino_Throw Away",
+         "Dino_Dust Kick",
+         "Dino_Endure",
+         "Dino_Punch",
+         "Dino_Knee Kick",
+         "Dino_Flame",
+         "Dino_Bite",
+         "Tiger_Sonic Move",
+         "Tiger_Charge",
+         "Tiger_Back Roll",
+         "Tiger_Ice Bomb",
+         "Tiger_Right Claw",
+         "Tiger_Left Claw",
+         "Tiger_Horn",
+         "Tiger_Roar",
+         "Tiger_Stab",
+         "Tiger_Lightning",
+         "Tiger_Bolt"
+      ]
+   }
+}

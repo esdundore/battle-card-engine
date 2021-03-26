@@ -105,7 +105,7 @@ public class GameManager {
 			try {
 				CardUtil.drawUntilFull(opponentArea);
 			} catch (NoSuchElementException nsee) {
-				// TODO: can't draw a card - game lost
+				gameState.setWinner(opponent);
 			}
 		}
 		
@@ -179,6 +179,13 @@ public class GameManager {
 		// resolve attack
 		attackResolver.resolveAttack(gameState);
 		
+		if (gameState.getPlayers().get(player).allMonstersDead()) {
+			gameState.setWinner(opponent);
+		}
+		else if (gameState.getPlayers().get(opponent).allMonstersDead()) {
+			gameState.setWinner(player);
+		}
+		
 		AttackRequest attackRequest = gameState.getAttackRequest();
 		PlayerArea playerArea = gameState.getPlayers().get(player);
 		PlayerArea opponentArea = gameState.getPlayers().get(opponent);
@@ -189,8 +196,6 @@ public class GameManager {
 		for (DefendTarget defendTarget : defendRequest.getCardAndTargets()) {
 			CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), defendTarget.getCard());
 		}
-		
-		// TODO: check if all monsters are dead - for both players
 
 		// switch to next player and change phase
 		gameState.setCurrentPlayer(opponent);
@@ -234,7 +239,14 @@ public class GameManager {
 		playerArea.setMonsters(monsters);
 	}
 	
-	public GameView getGameView (PlayersRequest playersRequest) {
+	//TODO: to remove
+	public GameState getGameAdminView(PlayersRequest playersRequest) {
+		String player1 = playersRequest.getPlayer1();
+		String player2 = playersRequest.getPlayer2();
+		return getGameState(player1, player2);
+	}
+	
+	public GameView getGameView(PlayersRequest playersRequest) {
 		String player1 = playersRequest.getPlayer1();
 		String player2 = playersRequest.getPlayer2();
 		return ViewMapper.convertToView(getGameState(player1, player2), player1, player2);

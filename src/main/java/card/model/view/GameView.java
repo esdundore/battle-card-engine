@@ -13,6 +13,7 @@ public class GameView {
 	Date currentTime = new Date();
 	String phase;
 	String currentPlayer;
+	String winner;
 	AttackView attackView;
 	DefendView defendView;
 	String environmentCard;
@@ -51,6 +52,12 @@ public class GameView {
 	@XmlElement
 	public void setCurrentPlayer(String currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+	public String getWinner() {
+		return winner;
+	}
+	public void setWinner(String winner) {
+		this.winner = winner;
 	}
 	public AttackView getAttackView() {
 		return attackView;

@@ -22,6 +22,7 @@ public class GameState {
 	SkillCard environmentCard;
 	String phase;
 	String currentPlayer;
+	String winner;
 	AttackRequest attackRequest;
 	DefendRequest defendRequest;
 	
@@ -85,6 +86,12 @@ public class GameState {
 	@XmlElement
 	public void setCurrentPlayer(String currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+	public String getWinner() {
+		return winner;
+	}
+	public void setWinner(String winner) {
+		this.winner = winner;
 	}
 	public AttackRequest getAttackRequest() {
 		return attackRequest;

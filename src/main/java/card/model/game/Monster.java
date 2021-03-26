@@ -80,7 +80,7 @@ public class Monster extends MonsterCard {
 		}
 	}
 	public boolean canAttack() {
-		if (!getStatus().contains(STUNNED) && isCanAttack()) {
+		if (!getStatus().contains(STUNNED) && isCanAttack() && getCurrentLife() > 0) {
 			return true;
 		}
 		else {

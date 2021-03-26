@@ -46,6 +46,14 @@ public class PlayerArea {
 	public ArrayList<Monster> getMonsters() {
 		return monsters;
 	}
+	public boolean allMonstersDead() {
+		for (Monster monster : monsters) {
+			if (monster.getCurrentLife() > 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 	@XmlElement
 	public void setMonsters(ArrayList<Monster> monsters) {
 		this.monsters = monsters;

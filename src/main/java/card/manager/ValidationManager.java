@@ -31,8 +31,8 @@ public class ValidationManager {
 		ArrayList<Integer> playedCards = playableRequest.getPlayedCardIndexes();
 		Integer userId = playableRequest.getUserId();
 		
-		// not the player's turn
-		if (!gameState.getCurrentPlayer().equals(player)) {
+		// not the player's turn or game over
+		if (!gameState.getCurrentPlayer().equals(player) || gameState.getWinner() != null) {
 			return null;
 		}
 		
@@ -265,7 +265,7 @@ public class ValidationManager {
 			for (SkillCard otherCard : skillCards) {
 				// Tiger Combo
 				if (skillCard.keywordComboTiger() && otherCard.keywordComboTiger()
-						&& !skillCard.equals(otherCard.getId())) {
+						&& !skillCard.getId().equals(otherCard.getId())) {
 					return true;
 				}
 				// POW Combo
