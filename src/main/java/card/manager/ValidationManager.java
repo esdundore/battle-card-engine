@@ -132,7 +132,7 @@ public class ValidationManager {
 		return users;
 	}
 	
-	public ArrayList<Integer> findCommonTargets (SkillCard skillCard, ArrayList<SkillCard> skillCards, 
+	public ArrayList<Integer> findCommonTargets(SkillCard skillCard, ArrayList<SkillCard> skillCards, 
 			ArrayList<Monster> monsters, ArrayList<Monster> opponentMonsters) {
 		ArrayList<SkillCard> allSkillCards = new ArrayList<SkillCard>();
 		allSkillCards.add(skillCard);

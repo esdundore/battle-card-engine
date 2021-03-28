@@ -105,7 +105,8 @@ public class GameManager {
 			try {
 				CardUtil.drawUntilFull(opponentArea);
 			} catch (NoSuchElementException nsee) {
-				gameState.setWinner(opponent);
+				// if your opponent can't draw, you win
+				gameState.setWinner(player);
 			}
 		}
 		
