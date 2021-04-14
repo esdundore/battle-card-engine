@@ -2,54 +2,43 @@ package card.model.view;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import card.model.game.GameState;
 
-@XmlRootElement
 public class GameView {
 
-	int attackId;
-	int defendId;
-	Date currentTime = new Date();
-	String phase;
-	String currentPlayer;
-	String winner;
-	AttackView attackView;
-	DefendView defendView;
-	String environmentCard;
-	PlayerView player;
-	OpponentView opponent;
+	public Date currentTime;
+	public String currentPlayer;
+	public String winner;
+	public String phase;
+	public String environmentCard;
+	public PlayerAreaView playerArea;
+	public OpponentAreaView opponentArea;
+	public SkillAreaView skillArea;
 
-	public int getAttackId() {
-		return attackId;
+	public GameView() { }
+	public GameView(GameState gameState, String player, String opponent) {
+		// Basic info mapping
+		currentPlayer = gameState.getCurrentPlayer();
+		winner = gameState.getWinner();
+		phase = gameState.getPhase().name();
+		currentTime = gameState.getCurrentTime();
+		environmentCard = gameState.getEnvironmentCard() == null ? null : gameState.getEnvironmentCard().getId();
+		
+		// Player info mapping
+		this.playerArea = new PlayerAreaView(gameState.getPlayerArea().get(player));
+		
+		// Opponent info mapping
+		this.opponentArea = new OpponentAreaView(gameState.getPlayerArea().get(opponent));
+		
+		// Attack Model mapping
+		if(gameState.getSkillArea() != null) {
+			skillArea = new SkillAreaView(gameState.getSkillArea());
+		}
 	}
-	public void setAttackId(int attackId) {
-		this.attackId = attackId;
-	}
-	public int getDefendId() {
-		return defendId;
-	}
-	public void setDefendId(int defendId) {
-		this.defendId = defendId;
-	}
-	public Date getCurrentTime() {
-		return currentTime;
-	}
-	@XmlElement
-	public void setCurrentTime(Date currentTime) {
-		this.currentTime = currentTime;
-	}
-	public String getPhase() {
-		return phase;
-	}
-	@XmlElement
-	public void setPhase(String phase) {
-		this.phase = phase;
-	}
+	
 	public String getCurrentPlayer() {
 		return currentPlayer;
 	}
-	@XmlElement
 	public void setCurrentPlayer(String currentPlayer) {
 		this.currentPlayer = currentPlayer;
 	}
@@ -59,40 +48,35 @@ public class GameView {
 	public void setWinner(String winner) {
 		this.winner = winner;
 	}
-	public AttackView getAttackView() {
-		return attackView;
+	public String getPhase() {
+		return phase;
 	}
-	@XmlElement
-	public void setAttackView(AttackView attackView) {
-		this.attackView = attackView;
-	}
-	public DefendView getDefendView() {
-		return defendView;
-	}
-	@XmlElement
-	public void setDefendView(DefendView defendView) {
-		this.defendView = defendView;
+	public void setPhase(String phase) {
+		this.phase = phase;
 	}
 	public String getEnvironmentCard() {
 		return environmentCard;
 	}
-	@XmlElement
 	public void setEnvironmentCard(String environmentCard) {
 		this.environmentCard = environmentCard;
 	}
-	public PlayerView getPlayer() {
-		return player;
+	public PlayerAreaView getPlayerArea() {
+		return playerArea;
 	}
-	@XmlElement
-	public void setPlayer(PlayerView player) {
-		this.player = player;
+	public void setPlayerArea(PlayerAreaView playerArea) {
+		this.playerArea = playerArea;
 	}
-	public OpponentView getOpponent() {
-		return opponent;
+	public OpponentAreaView getOpponentArea() {
+		return opponentArea;
 	}
-	@XmlElement
-	public void setOpponent(OpponentView opponent) {
-		this.opponent = opponent;
+	public void setOpponentArea(OpponentAreaView opponentArea) {
+		this.opponentArea = opponentArea;
+	}
+	public SkillAreaView getSkillArea() {
+		return skillArea;
+	}
+	public void setSkillArea(SkillAreaView skillArea) {
+		this.skillArea = skillArea;
 	}
 	
 }

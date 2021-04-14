@@ -1,43 +1,47 @@
 package card.model.cards;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import card.enums.MonsterType;
 
-@XmlRootElement
 public class MonsterCard extends BattleCard {
-
-	protected String type;
-	protected int maxLife;
-	protected String mainLineage;
-	protected String subLineage;
 	
-	public String getType() {
-		return type;
+	public MonsterType monsterType;
+	public String mainLineage;
+	public String subLineage;
+	public Integer maxLife;
+	
+	public MonsterCard copy() {
+		MonsterCard monsterCard = new MonsterCard();
+		monsterCard.setId(new String(id));
+		monsterCard.setMonsterType(monsterType);
+		monsterCard.setMainLineage(new String(mainLineage));
+		monsterCard.setSubLineage(new String(subLineage));
+		monsterCard.setMaxLife(maxLife);
+		return monsterCard;
 	}
-	@XmlElement
-	public void setType(String type) {
-		this.type = type;
+
+	public MonsterType getMonsterType() {
+		return monsterType;
 	}
-	public int getMaxLife() {
-		return maxLife;
-	}
-	@XmlElement
-	public void setMaxLife(int maxLife) {
-		this.maxLife = maxLife;
+	public void setMonsterType(MonsterType monsterType) {
+		this.monsterType = monsterType;
 	}
 	public String getMainLineage() {
 		return mainLineage;
 	}
-	@XmlElement
 	public void setMainLineage(String mainLineage) {
 		this.mainLineage = mainLineage;
 	}
 	public String getSubLineage() {
 		return subLineage;
 	}
-	@XmlElement
 	public void setSubLineage(String subLineage) {
 		this.subLineage = subLineage;
 	}
-	
+	public Integer getMaxLife() {
+		return maxLife;
+	}
+	public void setMaxLife(Integer maxLife) {
+		this.maxLife = maxLife;
+	}
+
 }

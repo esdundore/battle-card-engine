@@ -1,38 +1,33 @@
 package card.manager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import card.dao.CardCache;
-import card.dao.DeckCache;
-import card.model.cards.MonsterCard;
-import card.model.game.Deck;
+import card.dao.GameCache;
+import card.enums.GamePhase;
+import card.enums.MonsterStatus;
+import card.model.cards.SkillCard;
+import card.model.game.ActiveSkill;
 import card.model.game.GameState;
 import card.model.game.Monster;
 import card.model.game.PlayerArea;
-import card.model.requests.AttackRequest;
-import card.model.requests.AttackRequestNoMap;
-import card.model.requests.DefendRequest;
-import card.model.requests.DefendTarget;
+import card.model.requests.SkillRequest;
+import card.model.requests.TargetRequest;
+import card.model.view.GameView;
+import card.model.view.PlayableView;
 import card.model.requests.GutsRequest;
 import card.model.requests.PlayersRequest;
-import card.model.view.GameView;
 import card.util.CardUtil;
-import card.util.ViewMapper;
 
 @Component("gameManager")
 public class GameManager {
-
-	@Autowired
-	CardCache cardCache;
 	
 	@Autowired
-	DeckCache deckCache;
+	GameCache gameCache;
 	
 	@Autowired
 	AttackResolver attackResolver;
@@ -40,225 +35,173 @@ public class GameManager {
 	@Autowired
 	ValidationManager validationManager;
 	
-	public Map<String, GameState> gameStates = new HashMap<String, GameState>();
-	
-	public final String GUTS_PHASE = "guts";
-	public final String ATTACK_PHASE = "attack";
-	public final String DEFEND_PHASE = "defend";
-
-	public GameState startup(PlayersRequest playersRequest) {
-		// get player ids
-		String player1 = playersRequest.getPlayer1();
-		String player2 = playersRequest.getPlayer2();
-		// create new game state
-		GameState gameState = new GameState();
-		// set state session
-		gameState.setSessionId(player1 + player2);
-		// initialize player areas
-		gameState.setPlayers(new HashMap<String, PlayerArea>());
-		gameState.getPlayers().put(player1, new PlayerArea());
-		gameState.getPlayers().put(player2, new PlayerArea());
-		PlayerArea player1Area = gameState.getPlayers().get(player1);
-		PlayerArea player2Area = gameState.getPlayers().get(player2);
-		// fetch deck recipes and create a copy
-		player1Area.setDeck(new Deck(deckCache.getDeck(player1)));
-		player2Area.setDeck(new Deck(deckCache.getDeck(player2)));
-		// play monsters
-		startupMonsters(player1Area);
-		startupMonsters(player2Area);
-		// shuffle decks
-		CardUtil.shuffle(player1Area.getDeck().getSkillCards());
-		CardUtil.shuffle(player2Area.getDeck().getSkillCards());
-		// draw hand
-		CardUtil.drawUntilFull(player1Area);
-		CardUtil.drawUntilFull(player2Area);
-		// determine order and go to first guts phase
-		gameState.setCurrentPlayer(CardUtil.coinFlip(player1, player2));
-		gameState.setPhase(GUTS_PHASE);
-		// cache game state
-		gameStates.put(player1 + player2, gameState);
-		// respond with game state
-		return gameState;
+	public GameView findGameView(PlayersRequest playersRequest) {
+		return gameCache.getGameView(playersRequest);
 	}
-
-	public GameState makeGuts(GutsRequest gutsRequest) {
-		String player = gutsRequest.getPlayer1();
-		String opponent = gutsRequest.getPlayer2();
-		ArrayList<Integer> discards = gutsRequest.getDiscards();
-		GameState gameState = getGameState(player, opponent);
-		
-		// return game state before making changes if not the proper player/phase
-		if (!validationManager.isValidPlayerPhase(gameState, player, GUTS_PHASE)) {
-			return gameState;
+	
+	public PlayableView findPlayables(PlayersRequest playersRequest) {
+		return findPlayables(gameCache.getGameState(playersRequest), playersRequest);
+	}
+	
+	public PlayableView findPlayables(GameState gameState, PlayersRequest playersRequest) {
+		if (!validationManager.validGameState(playersRequest, gameState, gameState.getPhase())) {
+			return null;
+		}
+		return validationManager.findPlayables(gameState, playersRequest);
+	}
+	
+	public PlayableView useSkill(SkillRequest skillRequest, GamePhase phase) throws Exception {
+		GameState gameState = gameCache.getGameState(skillRequest);
+		if (!validationManager.validRequest(skillRequest, gameState, phase)) {
+			throw new Exception();
 		}
 		
-		PlayerArea playerArea = gameState.getPlayers().get(player);
-		PlayerArea opponentArea = gameState.getPlayers().get(opponent);
-		// discard cards and add guts
-		for (int discard : discards) {
-			if (CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), discard)) {
-				playerArea.setGutsPool(playerArea.getGutsPool() + 1);
+		PlayerArea playerArea = gameState.getPlayerArea(skillRequest.getPlayer1());
+		// find the skill card from hand index
+		SkillCard card = playerArea.getHand(skillRequest.getHandIndex());
+		// add to the skill area
+		if (GamePhase.ATTACK == phase) {
+			if (gameState.getSkillArea().isResolved()) {
+				gameState.getSkillArea().newAttack(skillRequest, card);
 			}
-		}
-		// let the next player draw
-		if (gameState.getTurnCount() > 0) {
-			try {
-				CardUtil.drawUntilFull(opponentArea);
-			} catch (NoSuchElementException nsee) {
-				// if your opponent can't draw, you win
-				gameState.setWinner(player);
+			else {
+				gameState.getSkillArea().addAttack(skillRequest, card);
 			}
+			attackResolver.calculateDamages(gameState.getSkillArea(), 3);
 		}
-		
-		// switch to next player and change phase
-		gameState.setTurnCount(gameState.getTurnCount() + 1);
-		gameState.setCurrentPlayer(opponent);
-		gameState.setPhase(ATTACK_PHASE);
-		return gameState;
+		if (GamePhase.DEFENSE == phase) {
+			gameState.getSkillArea().addDefense(skillRequest, card);
+		}
+		// subtract guts cost
+		playerArea.setGuts(playerArea.getGuts() - card.getGutsCost());
+
+		// find playable cards and targets
+		return findPlayables(gameState, skillRequest);
 	}
 	
-	public GameState attack(AttackRequestNoMap attackRequestNoMap) {
-		// convert the non map request type
-		AttackRequest attackRequest = new AttackRequest();
-		attackRequest.setPlayer1(attackRequestNoMap.getPlayer1());
-		attackRequest.setPlayer2(attackRequestNoMap.getPlayer2());
-		attackRequest.setUser(attackRequestNoMap.getUser());
-		attackRequest.setCardsPlayed(attackRequestNoMap.getCardsPlayed());
-		Map<Integer, Integer> targetsAndDamage = new HashMap<Integer, Integer>();
-		for (int i = 0; i < attackRequestNoMap.getTargets().size(); i++) {
-			targetsAndDamage.put(attackRequestNoMap.getTargets().get(i), attackRequestNoMap.getDamages().get(i));
-		}
-		attackRequest.setTargetsAndDamage(targetsAndDamage);
-				
-		String player = attackRequest.getPlayer1();
-		String opponent = attackRequest.getPlayer2();
-		GameState gameState = getGameState(player, opponent);
-		
-		// return game state before making changes if not the proper player/phase
-		if (!validationManager.isValidPlayerPhase(gameState, player, ATTACK_PHASE)) {
-			return gameState;
+	public void declareAttackTarget(TargetRequest targetRequest) throws Exception {
+		GameState gameState = gameCache.getGameState(targetRequest);
+		if (!validationManager.validRequest(targetRequest, gameState, GamePhase.ATTACK)) {
+			throw new Exception();
 		}
 
-		// set the card names of the attack request
-		ArrayList<String> cardNames = new ArrayList<String>();
-		for (int card : attackRequest.getCardsPlayed()) {
-			cardNames.add(gameState.getPlayers().get(player).getHand().get(card));
-		}
-		attackRequest.setCardNames(cardNames);
+		// apply target
+		gameState.getSkillArea().addAttackTarget(targetRequest);
 		
-		// add the attack request
-		gameState.setDefendRequest(null);
-		gameState.setAttackRequest(attackRequest);
-		gameState.setAttackId(gameState.getAttackId() + 1);
-		
-		// switch to next player and change phase
-		gameState.setCurrentPlayer(opponent);
-		gameState.setPhase(DEFEND_PHASE);
-		return gameState;
+		// go to next phase
+		gameState.setCurrentPlayer(targetRequest.getPlayer2());
+		gameState.setPhase(GamePhase.DEFENSE);
 	}
 	
-	public GameState defend(DefendRequest defendRequest) {
-		String player = defendRequest.getPlayer1();
-		String opponent = defendRequest.getPlayer2();
-		GameState gameState = getGameState(player, opponent);
-		
-		// return game state before making changes if not the proper player/phase
-		if (!validationManager.isValidPlayerPhase(gameState, player, DEFEND_PHASE)) {
-			return gameState;
+	public PlayableView declareDefenseTarget(TargetRequest targetRequest) throws Exception {
+		GameState gameState = gameCache.getGameState(targetRequest);
+		if (!validationManager.validRequest(targetRequest, gameState, GamePhase.DEFENSE)) {
+			throw new Exception();
 		}
 
-		// set the card names of the defend request
-		for (DefendTarget defendTarget : defendRequest.getCardAndTargets()) {
-			String cardName = gameState.getPlayers().get(player).getHand().get(defendTarget.getCard());
-			defendTarget.setCardName(cardName);
-		}
+		// apply target
+		gameState.getSkillArea().addDefenseTarget(targetRequest);
 		
-		// add the defend request
-		gameState.setDefendRequest(defendRequest);
-		gameState.setDefendId(gameState.getDefendId() + 1);
-		
-		// resolve attack
-		attackResolver.resolveAttack(gameState);
-		
-		if (gameState.getPlayers().get(player).allMonstersDead()) {
-			gameState.setWinner(opponent);
-		}
-		else if (gameState.getPlayers().get(opponent).allMonstersDead()) {
-			gameState.setWinner(player);
-		}
-		
-		AttackRequest attackRequest = gameState.getAttackRequest();
-		PlayerArea playerArea = gameState.getPlayers().get(player);
-		PlayerArea opponentArea = gameState.getPlayers().get(opponent);
-		// discard attack and defense cards
-		for (int cardIndex : attackRequest.getCardsPlayed()) {
-			CardUtil.discard(opponentArea.getHand(), opponentArea.getDiscard(), cardIndex);
-		}
-		for (DefendTarget defendTarget : defendRequest.getCardAndTargets()) {
-			CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), defendTarget.getCard());
-		}
-
-		// switch to next player and change phase
-		gameState.setCurrentPlayer(opponent);
-		gameState.setPhase(ATTACK_PHASE);
-		return gameState;
+		// find playable cards and targets
+		return findPlayables(gameState, targetRequest);
 	}
 	
-	public GameState endAttack(PlayersRequest playersRequest) {
+	public GameView endDefense(PlayersRequest playersRequest) throws Exception {
+		GameState gameState = gameCache.getGameState(playersRequest);
+		if (!validationManager.validGameState(playersRequest, gameState, GamePhase.DEFENSE)) {
+			throw new Exception();
+		}
+		
 		String player = playersRequest.getPlayer1();
 		String opponent = playersRequest.getPlayer2();
-		GameState gameState = getGameState(player, opponent);
 		
-		// return game state before making changes if not the proper player/phase
-		if (!validationManager.isValidPlayerPhase(gameState, player, ATTACK_PHASE)) {
-			return gameState;
+		// resolve attack
+		attackResolver.resolveAttack(gameState, playersRequest);
+		
+		// find winners
+		if (gameState.getPlayerArea(player).allMonstersDead()) {
+			declareWinner(gameState, opponent);
+		}
+		else if (gameState.getPlayerArea(opponent).allMonstersDead()) {
+			declareWinner(gameState, player);
 		}
 		
-		// remove statuses from player monsters
-		for (Monster monster : gameState.getPlayers().get(player).getMonsters()) {
-			monster.getStatus().clear();
+		// discard attack and defense cards
+		PlayerArea playerArea = gameState.getPlayerArea(player);
+		PlayerArea opponentArea = gameState.getPlayerArea(opponent);
+		for (ActiveSkill attackSkill : gameState.getSkillArea().getAttacks()) {
+			CardUtil.discard(opponentArea.getHand(), opponentArea.getDiscard(), attackSkill.getHandIndex());
+		}
+		for (ActiveSkill defenseSkill : gameState.getSkillArea().getDefenses()) {
+			CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), defenseSkill.handIndex);
+		}
+		
+		// go to next phase
+		gameState.setCurrentPlayer(playersRequest.getPlayer2());
+		gameState.setPhase(GamePhase.ATTACK);
+		return findGameView(playersRequest);
+	}
+	
+	public GameView endTurn(GutsRequest gutsRequest) throws Exception {
+		GameState gameState = gameCache.getGameState(gutsRequest);
+		if (!validationManager.validGameState(gutsRequest, gameState, GamePhase.GUTS)) {
+			throw new Exception();
+		}
+		
+		// can only make 2 guts on the first phase
+		if(gameState.getTurnCount() == 0 && gutsRequest.getDiscards().size() > 2) {
+			throw new Exception();
+		}
+		
+		// discard cards and add guts
+		PlayerArea playerArea = gameState.getPlayerArea(gutsRequest.getPlayer1());
+		for (Integer discard : gutsRequest.getDiscards()) {
+			if (CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), discard)) {
+				playerArea.setGuts(playerArea.getGuts() + 1);
+			}
+		}
+		
+		// remove statuses from your monsters
+		for (Monster monster : gameState.getPlayerArea(gutsRequest.getPlayer1()).getMonsters()) {
+			ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
+			for (Map.Entry<MonsterStatus, Integer> statusDuration : monster.getStatusDuration().entrySet()) {
+				statusDuration.setValue(statusDuration.getValue() - 1);
+				if (statusDuration.getValue() < 1) {
+					expiredStatuses.add(statusDuration.getKey());
+				}
+			}
+			for (MonsterStatus expiredStatus : expiredStatuses) {
+				monster.getStatusDuration().remove(expiredStatus);
+			}
 		}
 		
 		// set opponent monsters to canAttack
-		for (Monster monster : gameState.getPlayers().get(opponent).getMonsters()) {
+		for (Monster monster : gameState.getPlayerArea(gutsRequest.getPlayer2()).getMonsters()) {
 			monster.setCanAttack(true);
 		}
 		
-		// switch to next phase
-		gameState.setPhase(GUTS_PHASE);
-		return gameState;
-	}
-	
-	public void startupMonsters(PlayerArea playerArea) {
-		ArrayList<Monster> monsters = new ArrayList<Monster>();
-		for (String monsterName : playerArea.getDeck().getMonsterCards()) {
-			MonsterCard monsterCard = (MonsterCard) cardCache.getCard(monsterName);
-			Monster monster = new Monster(monsterCard);
-			monster.setCurrentLife(monster.getMaxLife());
-			monsters.add(monster);
+		// increase turn count
+		gameState.setTurnCount(gameState.getTurnCount() + 1);
+		gameState.setCurrentPlayer(gutsRequest.getPlayer2());
+		gameState.setPhase(GamePhase.ATTACK);
+		
+		// opponent draws (not on the first turn)
+		if (gameState.getTurnCount() > 1) {
+			try {
+				// draw until you have 5 cards
+				CardUtil.drawUntilFull(gameState.getPlayerArea(gutsRequest.getPlayer1()));
+			} catch (NoSuchElementException nsee) {
+				// if you can't draw your opponent wins
+				declareWinner(gameState, gutsRequest.getPlayer2());
+			}
 		}
-		playerArea.setMonsters(monsters);
+		
+		return findGameView(gutsRequest);
 	}
 	
-	//TODO: to remove
-	public GameState getGameAdminView(PlayersRequest playersRequest) {
-		String player1 = playersRequest.getPlayer1();
-		String player2 = playersRequest.getPlayer2();
-		return getGameState(player1, player2);
-	}
-	
-	public GameView getGameView(PlayersRequest playersRequest) {
-		String player1 = playersRequest.getPlayer1();
-		String player2 = playersRequest.getPlayer2();
-		return ViewMapper.convertToView(getGameState(player1, player2), player1, player2);
-	}
-	
-	public GameState getGameState(String player1, String player2) {
-		GameState gameState = gameStates.get(player1 + player2);
-		if (gameState == null) {
-			gameState = gameStates.get(player2 + player1);
-		}
-		return gameState;
+	public void declareWinner(GameState gameState, String winner) {
+		//declare the winner and end the match
+		gameState.setWinner(winner);
 	}
 
 }

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import card.model.game.Deck;
+import card.model.cards.Deck;
 
 /**
 * Class run on engine startup to load all decks

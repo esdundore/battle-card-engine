@@ -4,9 +4,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import card.dao.CardCache;
 import card.dao.DeckCache;
-import card.manager.GameManager;
+import card.dao.GameCache;
 import card.model.cards.BattleCard;
-import card.model.game.Deck;
+import card.model.cards.Deck;
 import card.model.game.GameState;
 import card.model.requests.PlayersRequest;
 
@@ -29,12 +29,7 @@ public class AdminActions {
 	DeckCache deckCache;
 	
 	@Autowired
-	GameManager gameManager;
-
-    @RequestMapping("/")
-    public String index() {
-        return "Battle Card Engine is Online";
-    }
+	GameCache gameCache;
     
     @RequestMapping("/cards")
     public Map<String, BattleCard> viewCards() {
@@ -57,14 +52,21 @@ public class AdminActions {
     		@RequestParam(value="owner-id") String ownerId) {
     	return deckCache.getDeck(ownerId);
     }
-    
-    //TODO: to remove
-    @RequestMapping(value = "/get-game-admin",
+
+    @RequestMapping(value = "/start-match",
     		method = RequestMethod.POST, 
     		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public GameState getGame(
+    public void startup(
     		@RequestBody PlayersRequest playersRequest) {
-        return gameManager.getGameAdminView(playersRequest);
+    	gameCache.startup(playersRequest);
+    }
+    
+    @RequestMapping(value = "/get-game",
+    		method = RequestMethod.POST, 
+    		consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public GameState getGameState(
+    		@RequestBody PlayersRequest playersRequest) {
+        return gameCache.getGameState(playersRequest);
     }
     
 }

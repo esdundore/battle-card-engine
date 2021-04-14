@@ -9,6 +9,10 @@ import java.util.Map;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import card.enums.MonsterType;
+import card.enums.SkillKeyword;
+import card.enums.SkillType;
+import card.enums.TargetArea;
 import card.model.cards.BattleCard;
 import card.model.cards.MonsterCard;
 import card.model.cards.SkillCard;
@@ -35,22 +39,22 @@ public class CardCache {
 				int i = 0;
 				String monsterName = split[i++];
 				String cardName = split[i++];
-				String cardType = split[i++];
-				int gutsCost = Integer.parseInt(split[i++]);
-				int damage = Integer.parseInt(split[i++]);
-				String targeting = split[i++];
-				String keyword = split[i++];
-				int keyValue = Integer.parseInt(split[i++]);
+				String skillType = split[i++];
+				Integer gutsCost = Integer.parseInt(split[i++]);
+				Integer damage = Integer.parseInt(split[i++]);
+				String targetArea = split[i++];
+				String skillKeyword = split[i++];
+				Integer keyValue = Integer.parseInt(split[i++]);
 					
 				SkillCard skillCard = new SkillCard();
 				skillCard.setId(monsterName + "_" + cardName);
 				skillCard.setUserId(monsterName);
-				skillCard.setType(cardType);
+				skillCard.setSkillType(SkillType.valueOf(null, skillType));
 				skillCard.setGutsCost(gutsCost);
 				skillCard.setDamage(damage);
-				skillCard.setTargeting(targeting);
-				skillCard.setKeyword(keyword);
-				skillCard.setKeyValue(keyValue);
+				skillCard.setTargetArea(TargetArea.valueOf(null, targetArea));
+				skillCard.setSkillKeyword(SkillKeyword.valueOf(null, skillKeyword));
+				skillCard.setKeywordValue(keyValue);
 			
 				battleCards.put(skillCard.getId(), skillCard);
 			}
@@ -65,13 +69,13 @@ public class CardCache {
 				String mainLineage = split[1];
 				String subLineage = split[2];
 				String monsterType = split[3];
-				int maxLife = Integer.parseInt(split[4]);
+				Integer maxLife = Integer.parseInt(split[4]);
 			
 				MonsterCard monsterCard = new MonsterCard();
 				monsterCard.setId(monsterName);
 				monsterCard.setMainLineage(mainLineage);
 				monsterCard.setSubLineage(subLineage);
-				monsterCard.setType(monsterType);
+				monsterCard.setMonsterType(MonsterType.valueOf(null, monsterType));
 				monsterCard.setMaxLife(maxLife);
 				
 				battleCards.put(monsterCard.getId(), monsterCard);

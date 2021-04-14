@@ -1,19 +1,24 @@
 package card.manager;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import card.dao.CardCache;
+import card.enums.GamePhase;
+import card.enums.MonsterStatus;
+import card.enums.TargetArea;
 import card.model.cards.SkillCard;
+import card.model.game.ActiveSkill;
 import card.model.game.GameState;
 import card.model.game.Monster;
-import card.model.requests.PlayableRequest;
+import card.model.requests.PlayersRequest;
+import card.model.requests.SkillRequest;
+import card.model.requests.TargetRequest;
 import card.model.view.PlayableCard;
-import card.model.view.PlayableCardView;
+import card.model.view.PlayableView;
 
 @Component("validationManager")
 public class ValidationManager {
@@ -21,260 +26,244 @@ public class ValidationManager {
 	@Autowired
 	CardCache cardCache;
 	
-	@Autowired
-	GameManager gameManager;
+	public static final String ANY_USER = "Any";
+	public static final String BREEDER_USER = "Breeder";
 	
-	public PlayableCardView findPlayableCards(PlayableRequest playableRequest) {
-		String player = playableRequest.getPlayer1();
-		String opponent = playableRequest.getPlayer2();
-		GameState gameState = gameManager.getGameState(player, opponent);
-		ArrayList<Integer> playedCards = playableRequest.getPlayedCardIndexes();
-		Integer userId = playableRequest.getUserId();
-		
-		// not the player's turn or game over
-		if (!gameState.getCurrentPlayer().equals(player) || gameState.getWinner() != null) {
-			return null;
-		}
-		
-		ArrayList<PlayableCard> playableCards = new ArrayList<PlayableCard>();
-		ArrayList<String> hand = gameState.getPlayers().get(player).getHand();
-		ArrayList<Monster> monsters = gameState.getPlayers().get(player).getMonsters();
-		ArrayList<Monster> opponentMonsters = gameState.getPlayers().get(opponent).getMonsters();
-		int guts = gameState.getPlayers().get(player).getGutsPool();
-		boolean breederAttack = gameState.getPlayers().get(player).isCanAttack();
-		
-		// find the attackRequest cards
-		ArrayList<SkillCard> attackCards = new ArrayList<SkillCard>();
-		if (gameState.getAttackRequest() != null) {
-			for (String attackCardName : gameState.getAttackRequest().getCardNames()) {
-				attackCards.add((SkillCard) cardCache.getCard(attackCardName));
-			}
-		}
-		
-		if(playedCards == null) playedCards = new ArrayList<Integer>();
-		
-		for (int i = 0; i < hand.size(); i++) {
-			if (!(hand.get(i) == null)) {
-				PlayableCard playableCard = new PlayableCard();
-				playableCard.setCardIndex(i);
-				if (playedCards.contains(i)) {
-					// card is already played do not add to return list
-				}
-				else if (gameManager.GUTS_PHASE.equals(gameState.getPhase())) {
-					if (playedCards.size() < 2 || gameState.getTurnCount() > 0) {
-						playableCards.add(playableCard);
-					}
-				}
-				else {
-					SkillCard skillCard = (SkillCard) cardCache.getCard(hand.get(i));
-					ArrayList<SkillCard> playedSkillCards = new ArrayList<SkillCard>();
-					for (int cardIndex : playedCards) {
-						SkillCard otherCard = (SkillCard) cardCache.getCard(gameState.getPlayers().get(player).getHand().get(cardIndex));
-						playedSkillCards.add(otherCard);
-					}
-					if (gameManager.ATTACK_PHASE.equals(gameState.getPhase())) {
-						playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, true, userId));
-						playableCard.setTargets(findCommonTargets(skillCard, playedSkillCards, monsters, opponentMonsters));
-						if (isPlayableAttack(guts, playableCard, skillCard, playedSkillCards)) {
-							playableCards.add(playableCard);
-						}
-					}
-					else if (gameManager.DEFEND_PHASE.equals(gameState.getPhase())) {
-						playableCard.setUsers(findUsers(skillCard, monsters, breederAttack, false, null));
-						if (isPlayableDefense(guts, playableCard, skillCard, playedSkillCards, attackCards)) {
-							playableCards.add(playableCard);
-						}
-					}
-				}
-			}
-		}
-		
-		PlayableCardView playableCardView = new PlayableCardView();
-		playableCardView.setPlayableCards(playableCards);
-		
-		return playableCardView;
-	}
-	
-	
-	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, 
-			boolean breederAttack, boolean isAttack, Integer user) {
-		ArrayList<Integer> users = new ArrayList<Integer>();
-		
-		// make a temporary monster list and add a monster to represent the breeder
-		ArrayList<Monster> tempMonsters = new ArrayList<Monster>();
-		for (Monster monster : monsters) {
-			tempMonsters.add(monster);
-		}
-		Monster breeder = new Monster();
-		breeder.setMainLineage("Breeder");
-		breeder.setSubLineage("Breeder");
-		breeder.setCanAttack(breederAttack);
-		tempMonsters.add(breeder);
-		
-		ArrayList<String> lineages = new ArrayList<String>();
-		for (Monster monster : tempMonsters) {
-			String lineage = isAttack ? monster.getMainLineage() : monster.getSubLineage();
-			lineages.add(lineage);
-		}
-		
-		// compare lineages to the designated card user
-		for (int i = 0; i < lineages.size(); i++) {
-			if (lineages.get(i).equals(skillCard.getUserId()) || skillCard.anyUser()) {
-				if (!isAttack || (tempMonsters.get(i).canAttack())) {
-					users.add(i);
-				}
-			}
-		}
-		if (user != null) {
-			users.retainAll(new ArrayList<Integer>(user));
+	public Boolean validRequest(SkillRequest skillRequest, GameState gameState, GamePhase phase) {
+		if(!validGameState(skillRequest, gameState, phase)) {
+			return false;
 		}
 
-		return users;
-	}
-	
-	public ArrayList<Integer> findCommonTargets(SkillCard skillCard, ArrayList<SkillCard> skillCards, 
-			ArrayList<Monster> monsters, ArrayList<Monster> opponentMonsters) {
-		ArrayList<SkillCard> allSkillCards = new ArrayList<SkillCard>();
-		allSkillCards.add(skillCard);
-		allSkillCards.addAll(skillCards);
-		ArrayList<Integer> commonTargets = new ArrayList<Integer>();
-		for (SkillCard anySkillCard : allSkillCards) {
-			commonTargets.addAll(findTargets(anySkillCard, monsters, opponentMonsters));
-		}
-		commonTargets = (ArrayList<Integer>) commonTargets.stream().distinct().collect(Collectors.toList());
-		return commonTargets;
-	}
-	
-	public ArrayList<Integer> findTargets (SkillCard skillCard, 
-			ArrayList<Monster> monsters, ArrayList<Monster> opponentMonsters) {
-		ArrayList<Integer> targets = new ArrayList<Integer>();
-		
-		// target enemy monsters
-		if (skillCard.targetEnemy()) {
-			for (int i = 0; i < opponentMonsters.size(); i++) {
-				if (opponentMonsters.get(i).getCurrentLife() > 0) {
-					targets.add(i);
-				}
-			}
-		}
-		// target friendly monsters
-		else if (skillCard.targetFriend()) {
-			for (int i = 0; i < monsters.size(); i++) {
-				if (monsters.get(i).getCurrentLife() > 0) {
-					targets.add(i);
-				}
-			}
-		}
-		
-		return targets;
-	}
-	
-	public boolean isPlayableAttack(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards) {
-		
-		// check that the move is an attack
-		if (!skillCard.typeAttack()) {
-			return false;
-		}
-		
-		// check that the card has users
-		if (playableCard.getUsers().isEmpty()) {
-			return false;
-		}
-		
-		// check the player has enough guts
-		int totalGutsCost = 0;
-		totalGutsCost += skillCard.getGutsCost();
-		for (SkillCard otherCard : playedCards) {
-			totalGutsCost += otherCard.getGutsCost();
-		}
-		if (guts < totalGutsCost) {
-			return false;
-		}
-		
-		// check that the card can or must combo
-		if (!canCombo(skillCard, playedCards)) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public boolean isPlayableDefense(int guts, PlayableCard playableCard, SkillCard skillCard, ArrayList<SkillCard> playedCards, ArrayList<SkillCard> attackCards) {
-		
-		// check that the move is a defense
-		if (!skillCard.typeDefense()) {
-			return false;
-		}
-		
-		// check that the card has users
-		if (playableCard.getUsers().isEmpty()) {
-			return false;
-		}
-		
-		// check the player has enough guts
-		int totalGutsCost = 0;
-		totalGutsCost += skillCard.getGutsCost();
-		for (SkillCard otherCard : playedCards) {
-			totalGutsCost += otherCard.getGutsCost();
-		}
-		if (guts < totalGutsCost) {
-			return false;
-		}
-		
-		// cannot dodge the attack
-		for (SkillCard attackCard : attackCards) {
-			if (attackCard.keywordUndodgable() && skillCard.typeDGE()) {
-				return false;
-			}
-		}
-		
-		// can use defense card only after certain attack type
-		List<String> attackCardTypes = attackCards.stream()
-				.map(SkillCard::getType)
-				.collect(Collectors.toCollection(ArrayList::new));
-		if (!attackCardTypes.contains("POW") && skillCard.keywordDodgePOW()) {
-			return false;
-		}
-		if (!attackCardTypes.contains("INT") && skillCard.keywordDodgeINT()) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public boolean isValidPlayerPhase(GameState gameState, String player, String phase) {
-		// not this players turn
-		if (!gameState.getCurrentPlayer().equals(player)) {
-			return false;
-		}
-		// not the guts phase
-		if (!gameState.getPhase().equals(phase)) {
-			return false;
-		}
-		return true;
-	}
-	
-	public static boolean canCombo(SkillCard skillCard, ArrayList<SkillCard> skillCards) {
-		if (skillCards.isEmpty()) {
-			// cannot use these cards first
-			if (!skillCard.isCombo()) {
+		ArrayList<PlayableCard> playableCards = findPlayables(gameState, skillRequest).getPlayableCards();
+		for (PlayableCard playableCard : playableCards) {
+			if (playableCard.getHandIndex() == skillRequest.getHandIndex() &&
+					playableCard.getUsers().contains(skillRequest.getUser())) {
 				return true;
 			}
 		}
-		else {
-			for (SkillCard otherCard : skillCards) {
-				// Tiger Combo
-				if (skillCard.keywordComboTiger() && otherCard.keywordComboTiger()
-						&& !skillCard.getId().equals(otherCard.getId())) {
-					return true;
-				}
-				// POW Combo
-				//else if (skillCard.keywordPOW() && otherCard.typePOW()) {
-				//	return true;
-				//}
+		
+		return false;
+	}
+	
+	public Boolean validRequest(TargetRequest targetRequest, GameState gameState, GamePhase phase) {
+		if(!validGameState(targetRequest, gameState, phase)) {
+			return false;
+		}
+
+		ArrayList<Integer> playableTargets = findPlayables(gameState, targetRequest).getPlayableTargets();
+		if (playableTargets.contains(targetRequest.getTarget())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public Boolean validGameState(PlayersRequest playersRequest, GameState gameState, GamePhase phase) {
+		// game is already over
+		if (gameState.getWinner() != null) {
+			return false;
+		}
+		// not this players turn
+		if (!gameState.getCurrentPlayer().equals(playersRequest.getPlayer1())) {
+			return false;
+		}
+		// not the given phase
+		if (!phase.equals(gameState.getPhase())) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public PlayableView findPlayables(GameState gameState, PlayersRequest playersRequest) {
+		PlayableView playableView = new PlayableView();
+		ArrayList<Integer> playableTargets = new ArrayList<Integer>();
+		if (GamePhase.ATTACK == gameState.getPhase()) {
+			playableTargets = findPlayableAttackTargets(gameState, playersRequest);
+		}
+		else if (GamePhase.DEFENSE == gameState.getPhase()) {
+			playableTargets = findPlayableDefenseTargets(gameState, playersRequest);
+		}
+		playableView.setPlayableCards(findPlayableCards(gameState, playersRequest, playableTargets));
+		playableView.setPlayableTargets(playableTargets);
+		return playableView;
+	}
+	
+	public ArrayList<PlayableCard> findPlayableCards(GameState gameState, PlayersRequest playersRequest, ArrayList<Integer> playableTargets) {
+		ArrayList<PlayableCard> playableCards = new ArrayList<PlayableCard>();
+		Integer handIndex = -1;
+		for (SkillCard skillCard : gameState.getPlayerArea(playersRequest.getPlayer1()).getHand()) {
+			handIndex++;
+			if (skillCard == null) {
+				// no card here
+				continue;
+			}
+			PlayableCard playableCard = new PlayableCard();
+			playableCard.setHandIndex(handIndex);
+			if (GamePhase.GUTS == gameState.getPhase()) {
+				playableCards.add(playableCard);
+			}
+			else {
+				playableCards.add(findPlayableSkill(gameState, playersRequest, skillCard, playableCard, playableTargets));
 			}
 		}
-		return false;
+		return playableCards;
+	}
+	
+	public PlayableCard findPlayableSkill(GameState gameState, PlayersRequest playersRequest, SkillCard skillCard, PlayableCard playableCard, ArrayList<Integer> playableTargets) {
+		String player = playersRequest.getPlayer1();
+		if (skillCard.getGutsCost() > gameState.getPlayerArea(player).getGuts()) {
+			// player does not have required guts to use
+			return null;
+		}
+		playableCard.setUsers(findUsers(skillCard, 
+				gameState.getPlayerArea(player).getMonsters(), 
+				gameState.getPlayerArea(player).getCanBreederAttack()));
+		if (playableCard.getUsers().isEmpty()) {
+			// no valid users
+			return null;
+		}
+		if (GamePhase.ATTACK == gameState.getPhase() && skillCard.isAttack()) {
+			// validate attack
+			return findPlayableAttack(gameState, playersRequest, skillCard, playableCard);
+		}
+		else if (GamePhase.DEFENSE == gameState.getPhase() && !skillCard.isAttack()) {
+			// validate defense
+			return findPlayableDefense(gameState, playersRequest, skillCard, playableCard, playableTargets);
+		}
+		return null;
+	}
+	
+	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, Boolean breederAttack) {
+		// make a user list and add a monster to represent the breeder
+		ArrayList<Monster> users = new ArrayList<Monster>();
+		for (Monster monster : monsters) {
+			users.add(monster);
+		}
+		Monster breeder = new Monster();
+		breeder.setMainLineage(BREEDER_USER);
+		breeder.setSubLineage(BREEDER_USER);
+		breeder.setCurrentLife(1);
+		breeder.setCanAttack(breederAttack);
+		users.add(breeder);
+
+		// find the users
+		ArrayList<Integer> userIndexes = new ArrayList<>();
+		Integer userIndex = 0;
+		for (Monster user : users) {
+			if (canUseSkill(user, skillCard)) {
+				userIndexes.add(userIndex);
+			}
+			userIndex++;
+		}
+
+		return userIndexes;
+	}
+	
+	public Boolean canUseSkill(Monster monster, SkillCard skillCard) {
+		String lineage = skillCard.isAttack() ? monster.getMainLineage() : monster.getSubLineage();
+		if (!ANY_USER.equals(skillCard.getUserId()) && !lineage.equals(skillCard.getUserId())) {
+			// can't use because of lineage
+			return false;
+		}
+		if (!monster.isAlive()) {
+			// can't use because that monster is dead
+			return false;
+		}
+		if (monster.getStatusDuration().containsKey(MonsterStatus.STUNNED)) {
+			// can't use because that monster is stunned
+			return false;
+		}
+		if (skillCard.isAttack() && !monster.getCanAttack()) {
+			// can't use because of monster already attacked
+			return false;
+		}
+
+		return true;
+	}
+	
+	public PlayableCard findPlayableAttack(GameState gameState, PlayersRequest playersRequest, SkillCard skillCard, PlayableCard playableCard) {
+		// combo attack rules
+		if (!gameState.getSkillArea().isResolved()) {
+			ArrayList<ActiveSkill> attacks = gameState.getSkillArea().getAttacks();
+			// the attack cannot be used by the current attacker
+			if (!playableCard.getUsers().contains(attacks.get(0).getUser())) {
+				return null;
+			}
+			playableCard.setUsers((ArrayList<Integer>) Arrays.asList(attacks.get(0).getUser()));
+			// must be able to combo
+		}
+		return null;
+	}
+	
+	public PlayableCard findPlayableDefense(GameState gameState, PlayersRequest playersRequest, SkillCard skillCard, PlayableCard playableCard, ArrayList<Integer> playableTargets) {
+		// valid defense rules
+		if (!playableTargets.isEmpty()) {
+			return null;
+		}
+		return playableCard;
+	}
+	
+	public ArrayList<Integer> findPlayableAttackTargets(GameState gameState, PlayersRequest playersRequest) {
+		String player = playersRequest.getPlayer1();
+		String opponent = playersRequest.getPlayer2();
+		ArrayList<Integer> playableTargets = new ArrayList<>();
+		TargetArea targetArea = gameState.getSkillArea().getTargetArea();
+		Integer targetIndex = -1;
+		
+		switch(targetArea) {
+			case HAND:
+				for (SkillCard skillCard : gameState.getPlayerArea(player).getHand()) {
+					targetIndex++;
+					if (skillCard != null) {
+						playableTargets.add(targetIndex);
+					}
+
+				}
+			case DISCARD:
+				for (String skillCard : gameState.getPlayerArea(player).getDiscard()) {
+					targetIndex++;
+					if (skillCard != null) {
+						playableTargets.add(targetIndex);
+					}
+				}
+			case ALLY:
+				for (Monster targetMonster : gameState.getPlayerArea(player).getMonsters()) {
+					targetIndex++;
+					if (targetMonster.isAlive()) {
+						playableTargets.add(targetIndex);
+					}
+				}
+			case ENEMY:
+				for (Monster targetMonster : gameState.getPlayerArea(opponent).getMonsters()) {
+					targetIndex++;
+					if (targetMonster.isAlive()) {
+						playableTargets.add(targetIndex);
+					}
+				}
+			default:
+				break;
+		}
+		
+		return playableTargets;
+	}
+	
+	public ArrayList<Integer> findPlayableDefenseTargets(GameState gameState, PlayersRequest playersRequest) {
+		ArrayList<Integer> playableTargets = new ArrayList<>();
+		ArrayList<ActiveSkill> defenses = gameState.getSkillArea().getDefenses();
+		ActiveSkill lastPlayedDefense = defenses.get(defenses.size());
+		// TODO: check for target defense cards
+		if (lastPlayedDefense == new ActiveSkill()) {
+			Integer targetIndex = -1;
+			for (Monster targetMonster : gameState.getPlayerArea(playersRequest.getPlayer1()).getMonsters()) {
+				targetIndex++;
+				if (targetMonster.isAlive()) {
+					playableTargets.add(targetIndex);
+				}
+			}
+		}
+		
+		return playableTargets;
 	}
 	
 }

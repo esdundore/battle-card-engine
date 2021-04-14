@@ -3,89 +3,38 @@ package card.model.game;
 import java.util.Date;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import card.enums.GamePhase;
 import card.model.cards.SkillCard;
-import card.model.requests.AttackRequest;
-import card.model.requests.DefendRequest;
 
-@XmlRootElement
 public class GameState {
-
-	String sessionId;
-	int attackId = 0;
-	int defendId = 0;
-	int turnCount = 0;
-	Map<String, PlayerArea> players;
-	Date currentTime = new Date();
-	SkillCard environmentCard;
-	String phase;
-	String currentPlayer;
-	String winner;
-	AttackRequest attackRequest;
-	DefendRequest defendRequest;
+	
+	public String sessionId;
+	public Integer turnCount = 0;
+	public Date currentTime = new Date();
+	public String winner;
+	public String currentPlayer;
+	public GamePhase phase;
+	public SkillCard environmentCard;
+	public Map<String, PlayerArea> playerArea;
+	public SkillArea skillArea;
 	
 	public String getSessionId() {
 		return sessionId;
 	}
-	@XmlElement
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-	public int getAttackId() {
-		return attackId;
-	}
-	public void setAttackId(int attackId) {
-		this.attackId = attackId;
-	}
-	public int getDefendId() {
-		return defendId;
-	}
-	public void setDefendId(int defendId) {
-		this.defendId = defendId;
-	}
-	public int getTurnCount() {
+	public Integer getTurnCount() {
 		return turnCount;
 	}
-	@XmlElement
-	public void setTurnCount(int turnCount) {
+	public void setTurnCount(Integer turnCount) {
 		this.turnCount = turnCount;
-	}
-	public Map<String, PlayerArea> getPlayers() {
-		return players;
-	}
-	@XmlElement
-	public void setPlayers(Map<String, PlayerArea> players) {
-		this.players = players;
 	}
 	public Date getCurrentTime() {
 		return currentTime;
 	}
-	@XmlElement
 	public void setCurrentTime(Date currentTime) {
 		this.currentTime = currentTime;
-	}
-	public SkillCard getEnvironmentCard() {
-		return environmentCard;
-	}
-	@XmlElement
-	public void setEnvironmentCard(SkillCard environmentCard) {
-		this.environmentCard = environmentCard;
-	}
-	public String getPhase() {
-		return phase;
-	}
-	@XmlElement
-	public void setPhase(String phase) {
-		this.phase = phase;
-	}
-	public String getCurrentPlayer() {
-		return currentPlayer;
-	}
-	@XmlElement
-	public void setCurrentPlayer(String currentPlayer) {
-		this.currentPlayer = currentPlayer;
 	}
 	public String getWinner() {
 		return winner;
@@ -93,19 +42,39 @@ public class GameState {
 	public void setWinner(String winner) {
 		this.winner = winner;
 	}
-	public AttackRequest getAttackRequest() {
-		return attackRequest;
+	public String getCurrentPlayer() {
+		return currentPlayer;
 	}
-	@XmlElement
-	public void setAttackRequest(AttackRequest attackRequest) {
-		this.attackRequest = attackRequest;
+	public void setCurrentPlayer(String currentPlayer) {
+		this.currentPlayer = currentPlayer;
 	}
-	public DefendRequest getDefendRequest() {
-		return defendRequest;
+	public GamePhase getPhase() {
+		return phase;
 	}
-	@XmlElement
-	public void setDefendRequest(DefendRequest defendRequest) {
-		this.defendRequest = defendRequest;
+	public void setPhase(GamePhase phase) {
+		this.phase = phase;
 	}
-	
+	public SkillCard getEnvironmentCard() {
+		return environmentCard;
+	}
+	public void setEnvironmentCard(SkillCard environmentCard) {
+		this.environmentCard = environmentCard;
+	}
+	public Map<String, PlayerArea> getPlayerArea() {
+		return playerArea;
+	}
+	public PlayerArea getPlayerArea(String player) {
+		return playerArea.get(player);
+	}
+	public void setPlayerArea(Map<String, PlayerArea> playerArea) {
+		this.playerArea = playerArea;
+	}
+	public SkillArea getSkillArea() {
+		return skillArea;
+	}
+	public void setSkillArea(SkillArea skillArea) {
+		this.skillArea = skillArea;
+	}
+
+
 }

@@ -2,68 +2,65 @@ package card.model.game;
 
 import java.util.ArrayList;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import card.model.cards.Deck;
+import card.model.cards.SkillCard;
 
-@XmlRootElement
 public class PlayerArea {
 
-	int gutsPool = 0;
-	Deck deck;
-	ArrayList<String> hand = new ArrayList<String>();
-	ArrayList<String> discard = new ArrayList<String>();
-	ArrayList<Monster> monsters;
-	boolean canAttack = true;
+	public Deck deck;
+	public ArrayList<SkillCard> hand = new ArrayList<SkillCard>();
+	public ArrayList<String> discard = new ArrayList<String>();
+	public ArrayList<Monster> monsters;
+	public Integer guts = 0;
+	public Boolean canBreederAttack = true;
 	
-	public int getGutsPool() {
-		return gutsPool;
-	}
-	@XmlElement
-	public void setGutsPool(int gutsPool) {
-		this.gutsPool = gutsPool >= 0 ? gutsPool : 0;
-	}
 	public Deck getDeck() {
 		return deck;
 	}
-	@XmlElement
 	public void setDeck(Deck deck) {
 		this.deck = deck;
 	}
-	public ArrayList<String> getHand() {
+	public ArrayList<SkillCard> getHand() {
 		return hand;
 	}
-	@XmlElement
-	public void setHand(ArrayList<String> hand) {
+	public SkillCard getHand(Integer index) {
+		return hand.get(index);
+	}
+	public void setHand(ArrayList<SkillCard> hand) {
 		this.hand = hand;
 	}
 	public ArrayList<String> getDiscard() {
 		return discard;
 	}
-	@XmlElement
 	public void setDiscard(ArrayList<String> discard) {
 		this.discard = discard;
 	}
 	public ArrayList<Monster> getMonsters() {
 		return monsters;
 	}
-	public boolean allMonstersDead() {
+	public void setMonsters(ArrayList<Monster> monsters) {
+		this.monsters = monsters;
+	}
+	public Integer getGuts() {
+		return guts;
+	}
+	public void setGuts(Integer guts) {
+		this.guts = guts >= 0 ? guts : 0;
+	}
+	public Boolean getCanBreederAttack() {
+		return canBreederAttack;
+	}
+	public void setCanBreederAttack(Boolean canBreederAttack) {
+		this.canBreederAttack = canBreederAttack;
+	}
+	
+	public Boolean allMonstersDead() {
 		for (Monster monster : monsters) {
 			if (monster.getCurrentLife() > 0) {
 				return false;
 			}
 		}
 		return true;
-	}
-	@XmlElement
-	public void setMonsters(ArrayList<Monster> monsters) {
-		this.monsters = monsters;
-	}
-	public boolean isCanAttack() {
-		return canAttack;
-	}
-	@XmlElement
-	public void setCanAttack(boolean canAttack) {
-		this.canAttack = canAttack;
 	}
 	
 }
