@@ -9,33 +9,64 @@ import java.util.Map;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import card.enums.MonsterBreed;
 import card.enums.MonsterType;
 import card.enums.SkillKeyword;
 import card.enums.SkillType;
 import card.enums.TargetArea;
-import card.model.cards.BattleCard;
 import card.model.cards.MonsterCard;
 import card.model.cards.SkillCard;
 
-/**
-* Class run on engine startup to load all battle cards into a cache
- */
-@Component("cardCache")
+@Component
 public class CardCache {
 	
-	private Map<String,BattleCard> battleCards = new HashMap<String,BattleCard>();
+	private static final String MONSTER_CARDS_PATH = "card/cards/monstercards.txt";
+	private static final String SKILL_CARDS_PATH = "card/cards/skillcards.txt";
 	
+	public static final String DEL = "/";
+	public static final String DRAGON_BITE = MonsterBreed.Dragon.name()+DEL+"Bite";
+	public static final String DRAGON_TAIL_ATTACK = MonsterBreed.Dragon.name()+DEL+"Tail Attack";
+	
+	private Map<String,MonsterCard> monsterCards = new HashMap<String,MonsterCard>();
+	private Map<String,SkillCard> skillCards = new HashMap<String,SkillCard>();
+
+	/** Loads monster and skill cards into cache at runtime **/
 	CardCache() throws Exception {
-		String currentLine;
 		BufferedReader bufferedSkillReader = null;
 		BufferedReader bufferedMonsterReader = null;
 		try {
-			// load skill cards to cache
-			ClassPathResource skillPathResource = new ClassPathResource("card/cards/skillcards.txt");
+			
+			// Load monster cards into cache
+			String currentMonsterLine;
+			ClassPathResource monsterPathResource = new ClassPathResource(MONSTER_CARDS_PATH);
+	        InputStream monsterStream = monsterPathResource.getInputStream();
+			bufferedMonsterReader = new BufferedReader(new InputStreamReader(monsterStream));
+			while ((currentMonsterLine = bufferedMonsterReader.readLine()) != null) {
+				String[] split = currentMonsterLine.split(",");
+				int i = 0;
+				String monsterName = split[i++];
+				String mainLineage = split[i++];
+				String subLineage = split[i++];
+				String monsterType = split[i++];
+				Integer maxLife = Integer.parseInt(split[i++]);
+			
+				MonsterCard monsterCard = new MonsterCard();
+				monsterCard.setName(monsterName);
+				monsterCard.setMainLineage(MonsterBreed.valueOf(mainLineage));
+				monsterCard.setSubLineage(MonsterBreed.valueOf(subLineage));
+				monsterCard.setMonsterType(MonsterType.valueOf(monsterType));
+				monsterCard.setMaxLife(maxLife);
+				
+				monsterCards.put(monsterCard.getName(), monsterCard);
+			}
+			
+			// Load skill cards into cache
+			String currentSkillLine;
+			ClassPathResource skillPathResource = new ClassPathResource(SKILL_CARDS_PATH);
 	        InputStream skillStream = skillPathResource.getInputStream();
 			bufferedSkillReader = new BufferedReader(new InputStreamReader(skillStream));
-			while ((currentLine = bufferedSkillReader.readLine()) != null) {
-				String[] split = currentLine.split(",");
+			while ((currentSkillLine = bufferedSkillReader.readLine()) != null) {
+				String[] split = currentSkillLine.split(",");
 				int i = 0;
 				String monsterName = split[i++];
 				String cardName = split[i++];
@@ -47,56 +78,38 @@ public class CardCache {
 				Integer keyValue = Integer.parseInt(split[i++]);
 					
 				SkillCard skillCard = new SkillCard();
-				skillCard.setId(monsterName + "_" + cardName);
-				skillCard.setUserId(monsterName);
-				skillCard.setSkillType(SkillType.valueOf(null, skillType));
+				skillCard.setName(monsterName + DEL + cardName);
+				skillCard.setUserBreed(MonsterBreed.valueOf(monsterName));
+				skillCard.setSkillType(SkillType.valueOf(skillType));
 				skillCard.setGutsCost(gutsCost);
+				skillCard.setBaseGutsCost(gutsCost);
 				skillCard.setDamage(damage);
-				skillCard.setTargetArea(TargetArea.valueOf(null, targetArea));
-				skillCard.setSkillKeyword(SkillKeyword.valueOf(null, skillKeyword));
+				skillCard.setBaseDamage(damage);
+				skillCard.setTargetArea(TargetArea.valueOf(targetArea));
+				skillCard.setSkillKeyword(SkillKeyword.valueOf(skillKeyword));
 				skillCard.setKeywordValue(keyValue);
 			
-				battleCards.put(skillCard.getId(), skillCard);
+				skillCards.put(skillCard.getName(), skillCard);
 			}
-		
-			// load monster cards to cache
-			ClassPathResource monsterPathResource = new ClassPathResource("card/cards/monstercards.txt");
-	        InputStream monsterStream = monsterPathResource.getInputStream();
-			bufferedMonsterReader = new BufferedReader(new InputStreamReader(monsterStream));
-			while ((currentLine = bufferedMonsterReader.readLine()) != null) {
-				String[] split = currentLine.split(",");
-				String monsterName = split[0];
-				String mainLineage = split[1];
-				String subLineage = split[2];
-				String monsterType = split[3];
-				Integer maxLife = Integer.parseInt(split[4]);
-			
-				MonsterCard monsterCard = new MonsterCard();
-				monsterCard.setId(monsterName);
-				monsterCard.setMainLineage(mainLineage);
-				monsterCard.setSubLineage(subLineage);
-				monsterCard.setMonsterType(MonsterType.valueOf(null, monsterType));
-				monsterCard.setMaxLife(maxLife);
-				
-				battleCards.put(monsterCard.getId(), monsterCard);
-			}
+
 		} finally {
-			if (bufferedSkillReader != null) {
-				bufferedSkillReader.close();
-			}
-			if (bufferedMonsterReader != null) {
-				bufferedMonsterReader.close();
-			}
+			if (bufferedSkillReader != null) bufferedSkillReader.close();
+			if (bufferedMonsterReader != null) bufferedMonsterReader.close();
 		}
 		
 	}
 	
-	public BattleCard getCard(String id) {
-		return battleCards.get(id);
+	public MonsterCard getMonsterCard(String name) {
+		return monsterCards.get(name);
 	}
-	
-	public Map<String,BattleCard> getCards() {
-		return battleCards;
+	public Map<String,MonsterCard> getMonsterCards() {
+		return monsterCards;
+	}
+	public SkillCard getSkillCard(String name) {
+		return skillCards.get(name);
+	}
+	public Map<String,SkillCard> getSkillCards() {
+		return skillCards;
 	}
 	
 }

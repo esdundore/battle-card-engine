@@ -1,11 +1,6 @@
 Manifest-Version: 1.0
-Built-By: Eric
-Build-Jdk: 15.0.2
+Build-Jdk-Spec: 15
 Implementation-Title: battle-card-engine
-Implementation-Version: 0.1.0
-Implementation-Vendor-Id: org.smashtime
-Implementation-Vendor: Pivotal Software, Inc.
-Implementation-URL: http://projects.spring.io/spring-boot/battle-card-en
- gine/
+Implementation-Version: 1.0.0
 Created-By: Maven Integration for Eclipse
 

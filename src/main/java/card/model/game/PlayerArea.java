@@ -1,6 +1,7 @@
 package card.model.game;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import card.model.cards.Deck;
 import card.model.cards.SkillCard;
@@ -9,10 +10,27 @@ public class PlayerArea {
 
 	public Deck deck;
 	public ArrayList<SkillCard> hand = new ArrayList<SkillCard>();
-	public ArrayList<String> discard = new ArrayList<String>();
+	public LinkedList<SkillCard> discards = new LinkedList<SkillCard>();
 	public ArrayList<Monster> monsters;
-	public Integer guts = 0;
-	public Boolean canBreederAttack = true;
+	public ArrayList<Monster> subMonsters;
+	public Breeder breeder = new Breeder();
+	
+	public PlayerArea() {}
+	public PlayerArea(String playerName) {
+		breeder.setPlayerName(playerName);
+	}
+	
+	public PlayerArea copy() {
+		PlayerArea copy = new PlayerArea();
+		copy.setDeck(deck);
+		copy.setHand(new ArrayList<SkillCard>());
+		for (SkillCard card : hand) copy.getHand().add(card);
+		copy.setDiscards(discards);
+		copy.setMonsters(monsters);
+		copy.setSubMonsters(subMonsters);
+		copy.setBreeder(breeder.copy());
+		return copy;
+	}
 	
 	public Deck getDeck() {
 		return deck;
@@ -29,11 +47,11 @@ public class PlayerArea {
 	public void setHand(ArrayList<SkillCard> hand) {
 		this.hand = hand;
 	}
-	public ArrayList<String> getDiscard() {
-		return discard;
+	public LinkedList<SkillCard> getDiscards() {
+		return discards;
 	}
-	public void setDiscard(ArrayList<String> discard) {
-		this.discard = discard;
+	public void setDiscards(LinkedList<SkillCard> discards) {
+		this.discards = discards;
 	}
 	public ArrayList<Monster> getMonsters() {
 		return monsters;
@@ -41,19 +59,18 @@ public class PlayerArea {
 	public void setMonsters(ArrayList<Monster> monsters) {
 		this.monsters = monsters;
 	}
-	public Integer getGuts() {
-		return guts;
+	public ArrayList<Monster> getSubMonsters() {
+		return subMonsters;
 	}
-	public void setGuts(Integer guts) {
-		this.guts = guts >= 0 ? guts : 0;
+	public void setSubMonsters(ArrayList<Monster> subMonsters) {
+		this.subMonsters = subMonsters;
 	}
-	public Boolean getCanBreederAttack() {
-		return canBreederAttack;
+	public Breeder getBreeder() {
+		return breeder;
 	}
-	public void setCanBreederAttack(Boolean canBreederAttack) {
-		this.canBreederAttack = canBreederAttack;
+	public void setBreeder(Breeder breeder) {
+		this.breeder = breeder;
 	}
-	
 	public Boolean allMonstersDead() {
 		for (Monster monster : monsters) {
 			if (monster.getCurrentLife() > 0) {
@@ -62,5 +79,5 @@ public class PlayerArea {
 		}
 		return true;
 	}
-	
+
 }

@@ -1,59 +1,66 @@
 package card.model.view;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import card.dao.CardCache;
+import card.enums.MonsterBreed;
 import card.model.cards.SkillCard;
 import card.model.game.Monster;
 import card.model.game.PlayerArea;
 
 public class PlayerAreaView {
 	
-	public Integer deckSize;
-	public ArrayList<String> hand;
-	public ArrayList<String> discard;
-	public ArrayList<Monster> monsters;
-	public Integer guts;
+	public DeckView deck;
+	public ArrayList<SkillCardView> hand;
+	public LinkedList<String> discards;
+	public ArrayList<MonsterView> monsters = new ArrayList<>();
+	public BreederView breeder = new BreederView();
+	
+	public static final SkillCardView DEFAULT_CARD = new SkillCardView(MonsterBreed.Breeder + CardCache.DEL + "Help", 1, 1);
 	
 	public PlayerAreaView() { }
-	public PlayerAreaView(PlayerArea playerArea) {
-		deckSize = playerArea.getDeck().getSkillCards().size();
-		guts = playerArea.getGuts();
-		hand = playerArea.getHand().stream()
-				.map(SkillCard::getId).collect(Collectors.toCollection(ArrayList::new));
-		monsters = playerArea.getMonsters();
-		discard = playerArea.getDiscard();
+	public PlayerAreaView(PlayerArea playerArea, boolean showCards, String playerName) {
+		deck = new DeckView(playerArea.getDeck());
+		hand = new ArrayList<SkillCardView>();
+		for (SkillCard card : playerArea.getHand()) {
+			if (null == card) {
+				hand.add(null);
+			}
+			else if (showCards) {
+				hand.add(new SkillCardView(card));
+			}
+			else {
+				hand.add(DEFAULT_CARD);
+			}
+		}
+		for (Monster monster : playerArea.getMonsters()) {
+			 monsters.add(new MonsterView(monster));
+		}
+		discards = playerArea.getDiscards().stream()
+				.map(SkillCard::getName)
+				.collect(Collectors.toCollection(LinkedList::new));
+		breeder = new BreederView(playerArea.getBreeder());
 	}
 	
-	public Integer getDeckSize() {
-		return deckSize;
-	}
-	public void setDeckSize(Integer deckSize) {
-		this.deckSize = deckSize;
-	}
-	public ArrayList<String> getHand() {
+	public ArrayList<SkillCardView> getHand() {
 		return hand;
 	}
-	public void setHand(ArrayList<String> hand) {
+	public void setHand(ArrayList<SkillCardView> hand) {
 		this.hand = hand;
 	}
-	public ArrayList<String> getDiscard() {
-		return discard;
+	public LinkedList<String> getDiscards() {
+		return discards;
 	}
-	public void setDiscard(ArrayList<String> discard) {
-		this.discard = discard;
+	public void setDiscards(LinkedList<String> discards) {
+		this.discards = discards;
 	}
-	public ArrayList<Monster> getMonsters() {
+	public ArrayList<MonsterView> getMonsters() {
 		return monsters;
 	}
-	public void setMonsters(ArrayList<Monster> monsters) {
+	public void setMonsters(ArrayList<MonsterView> monsters) {
 		this.monsters = monsters;
-	}
-	public Integer getGuts() {
-		return guts;
-	}
-	public void setGuts(Integer guts) {
-		this.guts = guts;
 	}
 	
 }

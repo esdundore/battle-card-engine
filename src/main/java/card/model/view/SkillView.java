@@ -1,27 +1,32 @@
 package card.model.view;
 
+import java.util.ArrayList;
+
 import card.model.game.ActiveSkill;
+import card.model.game.Monster;
+import card.model.game.PlayerArea;
 
 public class SkillView {
 
-	public String cardName;
+	public SkillCardView skillCard;
 	public Integer user;
 	public Integer target;
 	public Integer handIndex;
 	
 	public SkillView() { }
-	public SkillView(ActiveSkill activeSkill) {
-		this.cardName = activeSkill.getCard().getId();
-		this.user = activeSkill.getUser();
-		this.target = activeSkill.getTarget();
-		this.handIndex = activeSkill.getHandIndex();
+	public SkillView(ActiveSkill activeSkill, PlayerArea playerArea) {
+		ArrayList<Monster> monsters = playerArea.getMonsters();
+		skillCard = new SkillCardView(activeSkill.getCard());
+		user = monsters.indexOf(activeSkill.getUser());
+		target = activeSkill.getTarget();
+		handIndex = activeSkill.getHandIndex();
 	}
 
-	public String getCardName() {
-		return cardName;
+	public SkillCardView getSkillCard() {
+		return skillCard;
 	}
-	public void setCardName(String cardName) {
-		this.cardName = cardName;
+	public void setSkillCard(SkillCardView skillCard) {
+		this.skillCard = skillCard;
 	}
 	public Integer getUser() {
 		return user;

@@ -1,6 +1,6 @@
 package card.model.game;
 
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import card.enums.GamePhase;
@@ -10,14 +10,28 @@ public class GameState {
 	
 	public String sessionId;
 	public Integer turnCount = 0;
-	public Date currentTime = new Date();
 	public String winner;
 	public String currentPlayer;
 	public GamePhase phase;
-	public SkillCard environmentCard;
+	public SkillCard environmentCard = new SkillCard();
 	public Map<String, PlayerArea> playerArea;
-	public SkillArea skillArea;
+	public SkillArea skillArea = new SkillArea();
 	
+	public GameState copy() {
+		GameState copy = new GameState();
+		copy.setSessionId(sessionId);
+		copy.setTurnCount(turnCount);;
+		copy.setWinner(winner);
+		copy.setCurrentPlayer(currentPlayer);
+		copy.setPhase(phase);
+		copy.setEnvironmentCard(environmentCard);
+		copy.setPlayerArea(new HashMap<>());
+		for (Map.Entry<String,PlayerArea> playArea : playerArea.entrySet()) {
+			copy.getPlayerArea().put(playArea.getKey(), playArea.getValue().copy());
+		}
+		copy.setSkillArea(skillArea.copy());
+		return copy;
+	}
 	public String getSessionId() {
 		return sessionId;
 	}
@@ -29,12 +43,6 @@ public class GameState {
 	}
 	public void setTurnCount(Integer turnCount) {
 		this.turnCount = turnCount;
-	}
-	public Date getCurrentTime() {
-		return currentTime;
-	}
-	public void setCurrentTime(Date currentTime) {
-		this.currentTime = currentTime;
 	}
 	public String getWinner() {
 		return winner;
@@ -75,6 +83,5 @@ public class GameState {
 	public void setSkillArea(SkillArea skillArea) {
 		this.skillArea = skillArea;
 	}
-
 
 }

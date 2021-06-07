@@ -1,49 +1,71 @@
 package card.model.view;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import card.enums.TargetArea;
+import card.model.game.GameState;
+import card.model.game.PlayerArea;
 import card.model.game.SkillArea;
-import card.model.requests.PlayersRequest;
 
-public class SkillAreaView extends PlayersRequest {
+public class SkillAreaView{
 	
+	public String attacker;
+	public String defender;
 	public Integer attackId;
-	public String targetArea;
-	public ArrayList<Integer> damages;
+	public Boolean resolved;
+	public TargetArea targetArea;
 	public ArrayList<SkillView> attacks;
 	public ArrayList<SkillView> defenses;
 
 	public SkillAreaView() { }
-	public SkillAreaView(SkillArea skillArea) {
-		player1 = skillArea.getPlayer1();
-		player2 = skillArea.getPlayer2();
-		attackId = skillArea.attackId;
-		targetArea = skillArea.getTargetArea().name();
-		damages = skillArea.getDamages();
-		attacks = skillArea.getAttacks().stream().map(skill -> new SkillView(skill))
+	public SkillAreaView(GameState gameState) {
+		SkillArea skillArea = gameState.getSkillArea();
+		attacker = skillArea.getAttacker();
+		defender = skillArea.getDefender();
+		attackId = skillArea.getAttackId();
+		resolved = skillArea.isResolved();
+		targetArea = skillArea.getTargetArea();
+		PlayerArea attackerArea = gameState.getPlayerArea(attacker);
+		PlayerArea defenderArea = gameState.getPlayerArea(defender);
+		attacks = skillArea.getAttacks().stream().filter(Objects::nonNull)
+				.map(skill -> new SkillView(skill, attackerArea))
 				.collect(Collectors.toCollection(ArrayList::new));
-		defenses = skillArea.getDefenses().stream().map(skill -> new SkillView(skill))
+		defenses = skillArea.getDefenses().stream().filter(Objects::nonNull)
+				.map(skill -> new SkillView(skill, defenderArea))
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 	
+	public String getAttacker() {
+		return attacker;
+	}
+	public void setAttacker(String attacker) {
+		this.attacker = attacker;
+	}
+	public String getDefender() {
+		return defender;
+	}
+	public void setDefender(String defender) {
+		this.defender = defender;
+	}
 	public Integer getAttackId() {
 		return attackId;
 	}
 	public void setAttackId(Integer attackId) {
 		this.attackId = attackId;
 	}
-	public String getTargetArea() {
+	public Boolean getResolved() {
+		return resolved;
+	}
+	public void setResolved(Boolean resolved) {
+		this.resolved = resolved;
+	}
+	public TargetArea getTargetArea() {
 		return targetArea;
 	}
-	public void setTargetArea(String targetArea) {
+	public void setTargetArea(TargetArea targetArea) {
 		this.targetArea = targetArea;
-	}
-	public ArrayList<Integer> getDamages() {
-		return damages;
-	}
-	public void setDamages(ArrayList<Integer> damages) {
-		this.damages = damages;
 	}
 	public ArrayList<SkillView> getAttacks() {
 		return attacks;

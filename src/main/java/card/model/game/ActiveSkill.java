@@ -5,16 +5,16 @@ import card.model.cards.SkillCard;
 public class ActiveSkill {
 	
 	public SkillCard card;
-	public Integer user;
+	public Monster user;
 	public Integer target;
 	public Integer handIndex;
 	
 	public ActiveSkill() { }
-	public ActiveSkill(SkillCard card, Integer user, Integer target, Integer handIndex) {
+	public ActiveSkill(SkillCard card, Monster user, Integer target, Integer handIndex) {
 		this.card = card;
 		this.user = user;
-		this.target = target;
 		this.handIndex = handIndex;
+		this.target = target;
 	}
 	
 	public SkillCard getCard() {
@@ -23,10 +23,10 @@ public class ActiveSkill {
 	public void setCard(SkillCard card) {
 		this.card = card;
 	}
-	public Integer getUser() {
+	public Monster getUser() {
 		return user;
 	}
-	public void setUser(Integer user) {
+	public void setUser(Monster user) {
 		this.user = user;
 	}
 	public Integer getTarget() {

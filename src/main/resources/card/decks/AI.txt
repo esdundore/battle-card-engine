@@ -1,0 +1,39 @@
+AI
+Deck Name
+Cue
+Mocchi
+Tiger
+Dino
+Mocchi/Licking
+Mocchi/Press
+Mocchi/1-2 Thrust
+Mocchi/Roll
+Mocchi/Petal Wind
+Mocchi/Thrust
+Mocchi/Round
+Mocchi/Slap
+Mocchi/Roll Attack
+Mocchi/Motch Ray
+Mocchi/Headbutt
+Dino/Leap Kick
+Dino/Fire Dash
+Dino/Charge
+Dino/Jump Aside
+Dino/Throw Away
+Dino/Dust Kick
+Dino/Endure
+Dino/Punch
+Dino/Knee Kick
+Dino/Flame
+Dino/Bite
+Tiger/Sonic Move
+Tiger/Charge
+Tiger/Back Roll
+Tiger/Ice Bomb
+Tiger/Right Claw
+Tiger/Left Claw
+Tiger/Horn
+Tiger/Roar
+Tiger/Stab
+Tiger/Lightning
+Tiger/Bolt

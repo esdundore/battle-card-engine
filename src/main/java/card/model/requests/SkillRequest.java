@@ -5,6 +5,12 @@ public class SkillRequest extends PlayersRequest {
 	public Integer user;
 	public Integer handIndex;
 
+	public SkillRequest() {}
+	public SkillRequest(PlayersRequest playersRequest) {
+		player1 = playersRequest.getPlayer1();
+		player2 = playersRequest.getPlayer2();
+	}
+	
 	public Integer getUser() {
 		return user;
 	}

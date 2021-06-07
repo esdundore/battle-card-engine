@@ -7,162 +7,235 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import card.dao.GameCache;
+import card.dao.CardCache;
 import card.enums.GamePhase;
+import card.enums.MonsterBreed;
 import card.enums.MonsterStatus;
+import card.enums.MonsterType;
+import card.enums.SkillKeyword;
+import card.enums.TargetArea;
 import card.model.cards.SkillCard;
 import card.model.game.ActiveSkill;
+import card.model.game.Breeder;
 import card.model.game.GameState;
 import card.model.game.Monster;
 import card.model.game.PlayerArea;
+import card.model.game.SkillArea;
 import card.model.requests.SkillRequest;
 import card.model.requests.TargetRequest;
-import card.model.view.GameView;
-import card.model.view.PlayableView;
-import card.model.requests.GutsRequest;
 import card.model.requests.PlayersRequest;
 import card.util.CardUtil;
 
-@Component("gameManager")
+@Component
 public class GameManager {
-	
-	@Autowired
-	GameCache gameCache;
 	
 	@Autowired
 	AttackResolver attackResolver;
 	
 	@Autowired
-	ValidationManager validationManager;
+	DamageCalculator damageCalculator;
 	
-	public GameView findGameView(PlayersRequest playersRequest) {
-		return gameCache.getGameView(playersRequest);
-	}
+	@Autowired
+	DecisionManager decisionManager;
 	
-	public PlayableView findPlayables(PlayersRequest playersRequest) {
-		return findPlayables(gameCache.getGameState(playersRequest), playersRequest);
-	}
+	@Autowired
+	CardCache cardCache;
 	
-	public PlayableView findPlayables(GameState gameState, PlayersRequest playersRequest) {
-		if (!validationManager.validGameState(playersRequest, gameState, gameState.getPhase())) {
-			return null;
+	private static String AI_PLAYER = "AI";
+	
+	public void useSkill(SkillRequest skillRequest, GameState gameState) {
+		SkillArea skillArea = gameState.getSkillArea();
+		PlayerArea playerArea = gameState.getPlayerArea(skillRequest.getPlayer1());
+		
+		Integer cardIndex = skillRequest.getHandIndex();
+		SkillCard card = playerArea.getHand(cardIndex);
+		Monster user = playerArea.getMonsters().get(skillRequest.getUser());
+		Breeder breeder = playerArea.getBreeder();
+		
+		// Create a new skill area or add to this existing skill area
+		if (skillArea.isResolved()) skillArea.incrementSkillArea(skillRequest, card.getTargetArea());
+		else if (TargetArea.SELF != skillArea.getTargetArea()) skillArea.setTargetArea(card.getTargetArea());
+		ArrayList<ActiveSkill> activeSkills = skillArea.getAttacks();
+		if (GamePhase.ATTACK == gameState.getPhase()) activeSkills = skillArea.getAttacks();
+		else if (GamePhase.DEFENSE == gameState.getPhase()) activeSkills = skillArea.getDefenses();
+		
+		SkillCard baseAttackCard = new SkillCard();
+		baseAttackCard.setSkillKeyword(SkillKeyword.NORMAL);
+		if (skillArea.getBaseAttack() != null) baseAttackCard = skillArea.getBaseAttack().getCard();
+		if (SkillKeyword.HIT_CARD != baseAttackCard.getSkillKeyword()) {
+			breeder.setGutsSpent(breeder.getGutsSpent() + card.getGutsCost());
+			if (SkillKeyword.POWER_OF_SUN == card.getSkillKeyword()) {
+				breeder.setGutsSpent(breeder.getGutsSpent() - 2);
+			}
+			if (SkillKeyword.SUPPORT == card.getSkillKeyword()) {
+				breeder.setGutsSpent(breeder.getGutsSpent() - 3);
+			}
+			CardUtil.playCard(playerArea.getHand(), user, null, cardIndex, activeSkills);
+			resolvePlay(playerArea, card, user);
+			// automatically declare target if self targeted skill
+			if (TargetArea.SELF == card.getTargetArea()) {
+				TargetRequest targetRequest = new TargetRequest(skillRequest);
+				targetRequest.setTarget(playerArea.getMonsters().indexOf(user));
+				if (GamePhase.ATTACK == gameState.getPhase()) declareAttackTarget(targetRequest, gameState);
+				else if (GamePhase.DEFENSE == gameState.getPhase()) declareDefenseTarget(targetRequest, gameState);
+			}
 		}
-		return validationManager.findPlayables(gameState, playersRequest);
+		else {
+			baseAttackCard.setDamage(baseAttackCard.getDamage() + 1);
+			CardUtil.discardFromHand(playerArea.getHand(), cardIndex, playerArea.getDiscards());
+		}
+		autoResponse(skillRequest, gameState);
 	}
 	
-	public PlayableView useSkill(SkillRequest skillRequest, GamePhase phase) throws Exception {
-		GameState gameState = gameCache.getGameState(skillRequest);
-		if (!validationManager.validRequest(skillRequest, gameState, phase)) {
-			throw new Exception();
+	public void resolvePlay(PlayerArea playerArea, SkillCard card, Monster user) {
+		// Remove the other cards on dragon combo
+		if (SkillKeyword.COMBO_DRAGON == card.getSkillKeyword()) {
+			Integer biteIndex = -1;
+			Integer tailAttackIndex = -1;
+			Integer handIndex = -1;
+			for (SkillCard handCard : playerArea.getHand()) {
+				handIndex++;
+				if (CardCache.DRAGON_BITE.equals(handCard.getName())) biteIndex = handIndex;
+				if (CardCache.DRAGON_TAIL_ATTACK.equals(handCard.getName())) tailAttackIndex = handIndex;
+			}
+			CardUtil.discardFromHand(playerArea.getHand(), biteIndex, playerArea.getDiscards());
+			CardUtil.discardFromHand(playerArea.getHand(), tailAttackIndex, playerArea.getDiscards());
+		}
+		// Your other monsters become AIR.
+		else if (SkillKeyword.BLOW_HOLE == card.getSkillKeyword()) {
+			ArrayList<Monster> otherMonsters = new ArrayList<Monster>();
+			otherMonsters.addAll(playerArea.getMonsters());
+			otherMonsters.remove(user);
+			for (Monster monster : otherMonsters) {
+				monster.setMonsterType(MonsterType.AIR);
+			}
+		}
+	}
+	
+	public void declareAttackTarget(TargetRequest targetRequest, GameState gameState) {
+		SkillArea skillArea = gameState.getSkillArea();
+		PlayerArea playerArea =  gameState.getPlayerArea(targetRequest.getPlayer1());
+		PlayerArea opponentArea = gameState.getPlayerArea(targetRequest.getPlayer2());
+		Breeder breeder = playerArea.getBreeder();
+		
+		// reduce guts (cannot spend negative guts)
+		Integer gutsSpent = breeder.getGutsSpent() > 0 ? breeder.getGutsSpent() : 0;
+		breeder.setGuts(breeder.getGuts() - gutsSpent);
+		breeder.setGutsSpent(0);
+		
+		// apply target to all attacks and set can attack to false
+		for(ActiveSkill attack : skillArea.getAttacks()) {
+			attack.setTarget(targetRequest.getTarget());
+			attack.getUser().setCanAttack(false);
+			if (MonsterBreed.Breeder == attack.getUser().getMainLineage()) {
+				breeder.setCanAttack(false);
+			}
 		}
 		
-		PlayerArea playerArea = gameState.getPlayerArea(skillRequest.getPlayer1());
-		// find the skill card from hand index
-		SkillCard card = playerArea.getHand(skillRequest.getHandIndex());
-		// add to the skill area
-		if (GamePhase.ATTACK == phase) {
-			if (gameState.getSkillArea().isResolved()) {
-				gameState.getSkillArea().newAttack(skillRequest, card);
-			}
-			else {
-				gameState.getSkillArea().addAttack(skillRequest, card);
-			}
-			attackResolver.calculateDamages(gameState.getSkillArea(), 3);
+		// find targets and calculate damages
+		if (TargetArea.ENEMY == skillArea.getTargetArea()) {
+			damageCalculator.calculateDamages(skillArea, playerArea, opponentArea, gameState.getEnvironmentCard());
 		}
-		if (GamePhase.DEFENSE == phase) {
-			gameState.getSkillArea().addDefense(skillRequest, card);
-		}
-		// subtract guts cost
-		playerArea.setGuts(playerArea.getGuts() - card.getGutsCost());
-
-		// find playable cards and targets
-		return findPlayables(gameState, skillRequest);
-	}
-	
-	public void declareAttackTarget(TargetRequest targetRequest) throws Exception {
-		GameState gameState = gameCache.getGameState(targetRequest);
-		if (!validationManager.validRequest(targetRequest, gameState, GamePhase.ATTACK)) {
-			throw new Exception();
-		}
-
-		// apply target
-		gameState.getSkillArea().addAttackTarget(targetRequest);
 		
 		// go to next phase
 		gameState.setCurrentPlayer(targetRequest.getPlayer2());
 		gameState.setPhase(GamePhase.DEFENSE);
+		autoResponse(targetRequest, gameState);
 	}
 	
-	public PlayableView declareDefenseTarget(TargetRequest targetRequest) throws Exception {
-		GameState gameState = gameCache.getGameState(targetRequest);
-		if (!validationManager.validRequest(targetRequest, gameState, GamePhase.DEFENSE)) {
-			throw new Exception();
-		}
-
-		// apply target
-		gameState.getSkillArea().addDefenseTarget(targetRequest);
-		
-		// find playable cards and targets
-		return findPlayables(gameState, targetRequest);
-	}
-	
-	public GameView endDefense(PlayersRequest playersRequest) throws Exception {
-		GameState gameState = gameCache.getGameState(playersRequest);
-		if (!validationManager.validGameState(playersRequest, gameState, GamePhase.DEFENSE)) {
-			throw new Exception();
-		}
-		
-		String player = playersRequest.getPlayer1();
-		String opponent = playersRequest.getPlayer2();
-		
-		// resolve attack
-		attackResolver.resolveAttack(gameState, playersRequest);
-		
-		// find winners
-		if (gameState.getPlayerArea(player).allMonstersDead()) {
-			declareWinner(gameState, opponent);
-		}
-		else if (gameState.getPlayerArea(opponent).allMonstersDead()) {
-			declareWinner(gameState, player);
-		}
-		
-		// discard attack and defense cards
-		PlayerArea playerArea = gameState.getPlayerArea(player);
-		PlayerArea opponentArea = gameState.getPlayerArea(opponent);
-		for (ActiveSkill attackSkill : gameState.getSkillArea().getAttacks()) {
-			CardUtil.discard(opponentArea.getHand(), opponentArea.getDiscard(), attackSkill.getHandIndex());
-		}
-		for (ActiveSkill defenseSkill : gameState.getSkillArea().getDefenses()) {
-			CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), defenseSkill.handIndex);
-		}
-		
-		// go to next phase
-		gameState.setCurrentPlayer(playersRequest.getPlayer2());
-		gameState.setPhase(GamePhase.ATTACK);
-		return findGameView(playersRequest);
-	}
-	
-	public GameView endTurn(GutsRequest gutsRequest) throws Exception {
-		GameState gameState = gameCache.getGameState(gutsRequest);
-		if (!validationManager.validGameState(gutsRequest, gameState, GamePhase.GUTS)) {
-			throw new Exception();
-		}
-		
-		// can only make 2 guts on the first phase
-		if(gameState.getTurnCount() == 0 && gutsRequest.getDiscards().size() > 2) {
-			throw new Exception();
-		}
-		
-		// discard cards and add guts
-		PlayerArea playerArea = gameState.getPlayerArea(gutsRequest.getPlayer1());
-		for (Integer discard : gutsRequest.getDiscards()) {
-			if (CardUtil.discard(playerArea.getHand(), playerArea.getDiscard(), discard)) {
-				playerArea.setGuts(playerArea.getGuts() + 1);
+	public void endAttack(PlayersRequest playersRequest, GameState gameState) {
+		// All monsters on attacking team lose 1 life point at the end of the attack phase.
+		if (SkillKeyword.ARID_LAND == gameState.getEnvironmentCard().getSkillKeyword()) {
+			for (Monster monster : gameState.getPlayerArea(playersRequest.getPlayer1()).getMonsters()) {
+				monster.setCurrentLife(monster.getCurrentLife() - 1);
 			}
 		}
+		// go to next phase
+		gameState.setPhase(GamePhase.GUTS);
+		autoResponse(playersRequest, gameState);
+	}
+	
+	public void declareDefenseTarget(TargetRequest targetRequest, GameState gameState) {
+		SkillArea skillArea = gameState.getSkillArea();
+		PlayerArea playerArea =  gameState.getPlayerArea(targetRequest.getPlayer1());
+		PlayerArea opponentArea = gameState.getPlayerArea(targetRequest.getPlayer2());
 		
-		// remove statuses from your monsters
-		for (Monster monster : gameState.getPlayerArea(gutsRequest.getPlayer1()).getMonsters()) {
+		// apply target to the last played defense
+		ArrayList<ActiveSkill> defenses = skillArea.getDefenses();
+		Integer lastDefenseIndex = defenses.size() - 1;
+		defenses.get(lastDefenseIndex).setTarget(targetRequest.getTarget());
+		
+		// recalculate damages
+		damageCalculator.calculateDamages(skillArea, opponentArea, playerArea, gameState.getEnvironmentCard());
+		autoResponse(targetRequest, gameState);
+	}
+	
+	public void endDefense(PlayersRequest playersRequest, GameState gameState) {
+		SkillArea skillArea = gameState.getSkillArea();
+		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
+		PlayerArea opponentArea = gameState.getPlayerArea(playersRequest.getPlayer2());
+
+		// resolve attack
+		attackResolver.resolveAttack(playersRequest, gameState);
+		gameState.getSkillArea().setResolved(true);
+		
+		// find winners; check the defenders monsters first
+		if (playerArea.allMonstersDead()) {
+			gameState.setWinner(playersRequest.getPlayer2());
+		}
+		else if (opponentArea.allMonstersDead()) {
+			gameState.setWinner(playersRequest.getPlayer1());
+		}
+		
+		// discard attack and defense cards from skill area
+		Boolean endAttack = false;
+		for (ActiveSkill attackSkill : skillArea.getAttacks()) {
+			if (SkillKeyword.WILD_RUSH == attackSkill.getCard().getSkillKeyword()) {
+				endAttack = true;
+			}
+			CardUtil.putOnTop(opponentArea.getDiscards(), attackSkill.getCard());
+		}
+		for (ActiveSkill defenseSkill : skillArea.getDefenses()) {
+			CardUtil.putOnTop(playerArea.getDiscards(), defenseSkill.getCard());
+		}
+		
+		if (endAttack) {
+			PlayersRequest reversedPlayersRequest = new PlayersRequest();
+			reversedPlayersRequest.setPlayer1(playersRequest.getPlayer2());
+			reversedPlayersRequest.setPlayer2(playersRequest.getPlayer1());
+			endAttack(reversedPlayersRequest, gameState);
+		}
+		else {
+			gameState.setCurrentPlayer(playersRequest.getPlayer2());
+			gameState.setPhase(GamePhase.ATTACK);
+		}
+		autoResponse(playersRequest, gameState);
+	}
+	
+	public void makeGuts(SkillRequest skillRequest, GameState gameState) {
+		PlayerArea playerArea = gameState.getPlayerArea(skillRequest.getPlayer1());
+		Breeder breeder = playerArea.getBreeder();
+		
+		// discard cards and add guts
+		CardUtil.discardFromHand(playerArea.getHand(), skillRequest.getHandIndex(), playerArea.getDiscards());
+		breeder.setGuts(breeder.getGuts() + 1);
+		breeder.setGutsMade(breeder.getGutsMade() + 1);
+		
+	}
+	
+	public void endTurn(PlayersRequest playersRequest, GameState gameState) {
+		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
+		PlayerArea opponentArea = gameState.getPlayerArea(playersRequest.getPlayer2());
+		Breeder breeder = playerArea.getBreeder();
+		
+		breeder.setGutsMade(0);
+		// Players discard all cards in their hand after their GUTS phase.
+		if (SkillKeyword.CLOSE_UP == gameState.getEnvironmentCard().getSkillKeyword()) {
+			CardUtil.discardHand(playerArea.getHand(), playerArea.getDiscards());
+		}
+		
+		// remove expired statuses from your monsters
+		for (Monster monster : playerArea.getMonsters()) {
 			ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
 			for (Map.Entry<MonsterStatus, Integer> statusDuration : monster.getStatusDuration().entrySet()) {
 				statusDuration.setValue(statusDuration.getValue() - 1);
@@ -175,33 +248,75 @@ public class GameManager {
 			}
 		}
 		
-		// set opponent monsters to canAttack
-		for (Monster monster : gameState.getPlayerArea(gutsRequest.getPlayer2()).getMonsters()) {
-			monster.setCanAttack(true);
-		}
-		
-		// increase turn count
-		gameState.setTurnCount(gameState.getTurnCount() + 1);
-		gameState.setCurrentPlayer(gutsRequest.getPlayer2());
-		gameState.setPhase(GamePhase.ATTACK);
-		
-		// opponent draws (not on the first turn)
-		if (gameState.getTurnCount() > 1) {
-			try {
-				// draw until you have 5 cards
-				CardUtil.drawUntilFull(gameState.getPlayerArea(gutsRequest.getPlayer1()));
-			} catch (NoSuchElementException nsee) {
-				// if you can't draw your opponent wins
-				declareWinner(gameState, gutsRequest.getPlayer2());
+		// remove expired statuses from breeder
+		ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
+		for (Map.Entry<MonsterStatus, Integer> statusDuration : breeder.getStatusDuration().entrySet()) {
+			statusDuration.setValue(statusDuration.getValue() - 1);
+			if (statusDuration.getValue() < 1) {
+				expiredStatuses.add(statusDuration.getKey());
 			}
 		}
+		for (MonsterStatus expiredStatus : expiredStatuses) {
+			breeder.getStatusDuration().remove(expiredStatus);
+		}
 		
-		return findGameView(gutsRequest);
+		// set your monsters and breeder to canAttack
+		for (Monster monster : playerArea.getMonsters()) {
+			monster.setCanAttack(true);
+		}
+		breeder.setCanAttack(true);
+
+		gameState.setTurnCount(gameState.getTurnCount() + 1);
+		if (breeder.getStatusDuration().containsKey(MonsterStatus.EXTRA_TURN)) {
+			gameState.setCurrentPlayer(playersRequest.getPlayer1());
+			drawPhase(gameState, playerArea, playersRequest.getPlayer2());
+		}
+		else {
+			gameState.setCurrentPlayer(playersRequest.getPlayer2());
+			drawPhase(gameState, opponentArea, playersRequest.getPlayer1());
+		}
+		gameState.setPhase(GamePhase.ATTACK);
+		autoResponse(playersRequest, gameState);
+		
 	}
 	
-	public void declareWinner(GameState gameState, String winner) {
-		//declare the winner and end the match
-		gameState.setWinner(winner);
+	public void drawPhase(GameState gameState, PlayerArea playerArea, String opponent) {
+		Breeder breeder = playerArea.getBreeder();
+		
+		// Discard two cards from the top of each player's deck on their draw phase.
+		if (SkillKeyword.CLOSE_UP == gameState.getEnvironmentCard().getSkillKeyword()) {
+			CardUtil.discardFromDeck(playerArea.getDeck().getSkillCards(), playerArea.getDiscards());
+			CardUtil.discardFromDeck(playerArea.getDeck().getSkillCards(), playerArea.getDiscards());
+		}
+		
+		// Draw from deck (not on the first turn)
+		if (gameState.getTurnCount() > 1) {
+			try {
+				// Draw until full or discard the top card of your deck to make 1 GUTS
+				if (!CardUtil.drawUntilFull(playerArea.getDeck().getSkillCards(), playerArea.getDiscards(), playerArea.getHand())) {
+					breeder.setGuts(breeder.getGuts() + 1);
+				}
+			} catch (NoSuchElementException nsee) {
+				// if you can't draw your opponent wins
+				gameState.setWinner(opponent);
+			}
+		}
+	}
+	
+	public void autoResponse(PlayersRequest playersRequest, GameState gameState) {
+		if (AI_PLAYER.equals(gameState.getCurrentPlayer())) {
+			if (AI_PLAYER.equals(playersRequest.getPlayer2())) {
+				PlayersRequest aiRequest = new PlayersRequest();
+				aiRequest.setPlayer1(playersRequest.getPlayer2());
+				aiRequest.setPlayer2(playersRequest.getPlayer1());
+				Thread newThread = new Thread(() -> {decisionManager.makeDecision(aiRequest, gameState);});
+				newThread.start();
+			}
+			else if (AI_PLAYER.equals(playersRequest.getPlayer1())) {
+				Thread newThread = new Thread(() -> {decisionManager.makeDecision(playersRequest, gameState);});
+				newThread.start();
+			}
+		}
 	}
 
 }

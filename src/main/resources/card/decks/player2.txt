@@ -1,0 +1,39 @@
+player2
+Deck Name
+Cue
+MOCCHI
+TIGER
+DINO
+MOCCHI/Licking
+MOCCHI/Press
+MOCCHI/1-2 Thrust
+MOCCHI/Roll
+MOCCHI/Petal Wind
+MOCCHI/Thrust
+MOCCHI/Round
+MOCCHI/Slap
+MOCCHI/Roll Attack
+MOCCHI/Motch Ray
+MOCCHI/Headbutt
+DINO/Leap Kick
+DINO/Fire Dash
+DINO/Charge
+DINO/Jump Aside
+DINO/Throw Away
+DINO/Dust Kick
+DINO/Endure
+DINO/Punch
+DINO/Knee Kick
+DINO/Flame
+DINO/Bite
+TIGER/Sonic Move
+TIGER/Charge
+TIGER/Back Roll
+TIGER/Ice Bomb
+TIGER/Right Claw
+TIGER/Left Claw
+TIGER/Horn
+TIGER/Roar
+TIGER/Stab
+TIGER/Lightning
+TIGER/Bolt

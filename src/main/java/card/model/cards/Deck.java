@@ -5,42 +5,56 @@ import java.util.LinkedList;
 
 public class Deck {
 
-	public String ownerId;
-	public ArrayList<String> monsterCards;
-	public LinkedList<String> skillCards;
+	public String ownerID;
+	public String deckName;
+	public String deckAvatar;
+	public ArrayList<MonsterCard> monsterCards;
+	public LinkedList<SkillCard> skillCards;
 	
 	public Deck copy() {
 		Deck deck = new Deck();
-		deck.setOwnerId(new String(ownerId));
-		ArrayList<String> monsterCards = new ArrayList<>();
-		for (String monsterCard : this.monsterCards) {
-			monsterCards.add(new String(monsterCard));
+		deck.setOwnerID(ownerID);
+		ArrayList<MonsterCard> monsterCards = new ArrayList<>();
+		for (MonsterCard monsterCard : this.monsterCards) {
+			monsterCards.add(monsterCard);
 		}
 		deck.setMonsterCards(monsterCards);
-		LinkedList<String> skillCards = new LinkedList<>();
-		for (String skillCard : this.skillCards) {
-			skillCards.add(new String(skillCard));
+		LinkedList<SkillCard> skillCards = new LinkedList<>();
+		for (SkillCard skillCard : this.skillCards) {
+			skillCards.add(skillCard);
 		}
 		deck.setSkillCards(skillCards);
 		return deck;
 	}
 	
-	public String getOwnerId() {
-		return ownerId;
+	public String getOwnerID() {
+		return ownerID;
 	}
-	public void setOwnerId(String ownerId) {
-		this.ownerId = ownerId;
+	public void setOwnerID(String ownerID) {
+		this.ownerID = ownerID;
 	}
-	public ArrayList<String> getMonsterCards() {
+	public String getDeckName() {
+		return deckName;
+	}
+	public void setDeckName(String deckName) {
+		this.deckName = deckName;
+	}
+	public String getDeckAvatar() {
+		return deckAvatar;
+	}
+	public void setDeckAvatar(String deckAvatar) {
+		this.deckAvatar = deckAvatar;
+	}
+	public ArrayList<MonsterCard> getMonsterCards() {
 		return monsterCards;
 	}
-	public void setMonsterCards(ArrayList<String> monsterCards) {
+	public void setMonsterCards(ArrayList<MonsterCard> monsterCards) {
 		this.monsterCards = monsterCards;
 	}
-	public LinkedList<String> getSkillCards() {
+	public LinkedList<SkillCard> getSkillCards() {
 		return skillCards;
 	}
-	public void setSkillCards(LinkedList<String> skillCards) {
+	public void setSkillCards(LinkedList<SkillCard> skillCards) {
 		this.skillCards = skillCards;
 	}
 

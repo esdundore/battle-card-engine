@@ -1,39 +1,35 @@
 package card.model.view;
 
-import java.util.Date;
-
+import card.enums.MonsterStatus;
 import card.model.game.GameState;
+import card.model.game.PlayerArea;
+import card.model.requests.PlayersRequest;
 
 public class GameView {
 
-	public Date currentTime;
 	public String currentPlayer;
 	public String winner;
 	public String phase;
 	public String environmentCard;
 	public PlayerAreaView playerArea;
-	public OpponentAreaView opponentArea;
+	public PlayerAreaView opponentArea;
 	public SkillAreaView skillArea;
+	public PlayableView playable;
 
 	public GameView() { }
-	public GameView(GameState gameState, String player, String opponent) {
-		// Basic info mapping
+	public GameView(PlayersRequest playersRequest, GameState gameState, PlayableView playableView) {
 		currentPlayer = gameState.getCurrentPlayer();
 		winner = gameState.getWinner();
 		phase = gameState.getPhase().name();
-		currentTime = gameState.getCurrentTime();
-		environmentCard = gameState.getEnvironmentCard() == null ? null : gameState.getEnvironmentCard().getId();
-		
-		// Player info mapping
-		this.playerArea = new PlayerAreaView(gameState.getPlayerArea().get(player));
-		
-		// Opponent info mapping
-		this.opponentArea = new OpponentAreaView(gameState.getPlayerArea().get(opponent));
-		
-		// Attack Model mapping
-		if(gameState.getSkillArea() != null) {
-			skillArea = new SkillAreaView(gameState.getSkillArea());
-		}
+		environmentCard = gameState.getEnvironmentCard().getName();
+		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
+		this.playerArea = new PlayerAreaView(playerArea, true, playersRequest.getPlayer1());
+		Boolean showHand = false;
+		if (playerArea.getBreeder().getStatusDuration().containsKey(MonsterStatus.SCOUTING)) showHand = true;
+		PlayerArea opponentArea = gameState.getPlayerArea(playersRequest.getPlayer2());
+		this.opponentArea = new PlayerAreaView(opponentArea, showHand, playersRequest.getPlayer2());
+		skillArea = new SkillAreaView(gameState);
+		this.playable = playableView;
 	}
 	
 	public String getCurrentPlayer() {
@@ -66,17 +62,17 @@ public class GameView {
 	public void setPlayerArea(PlayerAreaView playerArea) {
 		this.playerArea = playerArea;
 	}
-	public OpponentAreaView getOpponentArea() {
-		return opponentArea;
-	}
-	public void setOpponentArea(OpponentAreaView opponentArea) {
-		this.opponentArea = opponentArea;
-	}
 	public SkillAreaView getSkillArea() {
 		return skillArea;
 	}
 	public void setSkillArea(SkillAreaView skillArea) {
 		this.skillArea = skillArea;
+	}
+	public PlayableView getPlayable() {
+		return playable;
+	}
+	public void setPlayable(PlayableView playable) {
+		this.playable = playable;
 	}
 	
 }

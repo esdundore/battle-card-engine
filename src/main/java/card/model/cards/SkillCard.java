@@ -1,5 +1,6 @@
 package card.model.cards;
 
+import card.enums.MonsterBreed;
 import card.enums.SkillKeyword;
 import card.enums.SkillType;
 import card.enums.TargetArea;
@@ -7,24 +8,27 @@ import card.enums.TargetArea;
 public class SkillCard extends BattleCard {
 	
 	public SkillType skillType;
+	public MonsterBreed userBreed;
+	public TargetArea targetArea;
 	public SkillKeyword skillKeyword;
 	public Integer keywordValue;
-	public String userId;
 	public Integer gutsCost;
+	public Integer baseGutsCost;
 	public Integer damage;
-	public TargetArea targetArea;
-
+	public Integer baseDamage;
 
 	public SkillCard copy() {
 		SkillCard skillCard = new SkillCard();
-		skillCard.setId(new String(id));
+		skillCard.setName(name);
 		skillCard.setSkillType(skillType);
-		skillCard.setUserId(new String(userId));
-		skillCard.setGutsCost(gutsCost);
-		skillCard.setDamage(damage);
+		skillCard.setUserBreed(userBreed);
+		skillCard.setTargetArea(targetArea);
 		skillCard.setSkillKeyword(skillKeyword);
 		skillCard.setKeywordValue(keywordValue);
-		skillCard.setTargetArea(targetArea);
+		skillCard.setGutsCost(gutsCost);
+		skillCard.setBaseGutsCost(baseGutsCost);
+		skillCard.setDamage(damage);
+		skillCard.setBaseDamage(baseDamage);
 		return skillCard;
 	}
 	
@@ -33,6 +37,18 @@ public class SkillCard extends BattleCard {
 	}
 	public void setSkillType(SkillType skillType) {
 		this.skillType = skillType;
+	}
+	public MonsterBreed getUserBreed() {
+		return userBreed;
+	}
+	public void setUserBreed(MonsterBreed userBreed) {
+		this.userBreed = userBreed;
+	}
+	public TargetArea getTargetArea() {
+		return targetArea;
+	}
+	public void setTargetArea(TargetArea targetArea) {
+		this.targetArea = targetArea;
 	}
 	public SkillKeyword getSkillKeyword() {
 		return skillKeyword;
@@ -46,48 +62,45 @@ public class SkillCard extends BattleCard {
 	public void setKeywordValue(Integer keywordValue) {
 		this.keywordValue = keywordValue;
 	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 	public Integer getGutsCost() {
 		return gutsCost;
 	}
+	/** guts cost cannot be less than 0 **/
 	public void setGutsCost(Integer gutsCost) {
-		this.gutsCost = gutsCost;
+		this.gutsCost = gutsCost > 0 ? gutsCost : 0;
+	}
+	public Integer getBaseGutsCost() {
+		return baseGutsCost;
+	}
+	public void setBaseGutsCost(Integer baseGutsCost) {
+		this.baseGutsCost = baseGutsCost;
 	}
 	public Integer getDamage() {
 		return damage;
 	}
+	/** damage cannot be less than 0 **/
 	public void setDamage(Integer damage) {
-		this.damage = damage;
+		this.damage = damage > 0 ? damage : 0;
 	}
-	public TargetArea getTargetArea() {
-		return targetArea;
+	public Integer getBaseDamage() {
+		return baseDamage;
 	}
-	public void setTargetArea(TargetArea targetArea) {
-		this.targetArea = targetArea;
+	public void setBaseDamage(Integer baseDamage) {
+		this.baseDamage = baseDamage;
 	}
 
-	public Boolean isAttack() {
-		Boolean isAttack = false;
-        switch (skillType) {
-        	case POW:
-        		isAttack = true;  
-        	case INT:
-        		isAttack = true;    
-        	case SPE:
-        		isAttack = true;    
-        	case ENV:
-        		isAttack = true;
-        	case DGE:
-        		isAttack = false;
-        	case BLK:
-        		isAttack = false;
-        }
-		return isAttack;
+	public Boolean determineAttack() {
+		if (SkillType.POW == skillType || 
+				SkillType.INT == skillType || 
+				SkillType.SPE == skillType || 
+				SkillType.ENV == skillType) {
+			return true;
+		}
+		if (SkillType.BLK == skillType || 
+				SkillType.DGE == skillType) {
+			return false;
+		}
+		return false;
 	}
 	
 }
