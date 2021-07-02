@@ -20,6 +20,7 @@ public class SkillCard extends BattleCard {
 	public SkillCard copy() {
 		SkillCard skillCard = new SkillCard();
 		skillCard.setName(name);
+		skillCard.setId(id);
 		skillCard.setSkillType(skillType);
 		skillCard.setUserBreed(userBreed);
 		skillCard.setTargetArea(targetArea);

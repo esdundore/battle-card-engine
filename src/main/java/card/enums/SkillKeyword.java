@@ -69,6 +69,8 @@ public enum SkillKeyword {
 	DGE_GUTS,
 	/** Dodges a INT attack. **/
 	DGE_INT,
+	/** Dodges a POW attack. **/
+	DGE_POW,
 	/** Dodge a POW or INT attack. You lose all of your GUTS. **/
 	DODGE,
 	/** Select one DGE card from your discards. Put this card in your hand. **/

@@ -67,10 +67,13 @@ public class PlayTargetManager {
 		Integer defenseIndex = defenses.size() - 1;
 		if (defenseIndex >= 0) {
 			ActiveSkill lastPlayedDefense = defenses.get(defenseIndex);
-			ArrayList<Monster> otherMonsters = new ArrayList<>();
-			otherMonsters.addAll(playerArea.getMonsters());
-			otherMonsters.remove(lastPlayedDefense.getUser());
-			playableTargets.addAll(findMonsterTargets(otherMonsters, skillArea, false));
+			if (TargetArea.ALLY == lastPlayedDefense.card.targetArea && null == lastPlayedDefense.getTarget()) {
+				ArrayList<Monster> otherMonsters = new ArrayList<>();
+				otherMonsters.addAll(playerArea.getMonsters());
+				int index = otherMonsters.indexOf(lastPlayedDefense.getUser());
+				otherMonsters.set(index, null);
+				playableTargets.addAll(findMonsterTargets(otherMonsters, skillArea, false));
+			}
 		}
 		return playableTargets;
 	}
@@ -101,7 +104,8 @@ public class PlayTargetManager {
 		// find target-ability by monster
 		for (Monster monster : monsters) {
 			targetIndex++;
-			if (attackKeywords.contains(SkillKeyword.REBORN) || attackKeywords.contains(SkillKeyword.TAKE_OVER)) {
+			if (monster == null) continue;
+			else if (attackKeywords.contains(SkillKeyword.REBORN) || attackKeywords.contains(SkillKeyword.TAKE_OVER)) {
 				if (monster.isAlive()) continue;
 			}
 			else if (!monster.isAlive()) continue;

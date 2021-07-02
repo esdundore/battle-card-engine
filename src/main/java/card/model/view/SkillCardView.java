@@ -5,17 +5,20 @@ import card.model.cards.SkillCard;
 public class SkillCardView {
 	
 	public String name;
+	public Integer id;
 	public Integer damage;
 	public Integer gutsCost;
 	
 	public SkillCardView() { }
-	public SkillCardView(String name, Integer damage, Integer gutsCost) {
+	public SkillCardView(String name, Integer id, Integer damage, Integer gutsCost) {
 		this.name = name;
+		this.id = id;
 		this.damage = damage;
 		this.gutsCost = gutsCost;
 	}
 	public SkillCardView(SkillCard skillCard) { 
 		name = skillCard.getName();
+		id = skillCard.getId();
 		damage = skillCard.getDamage();
 		gutsCost = skillCard.getGutsCost();
 	}
@@ -25,6 +28,12 @@ public class SkillCardView {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	public Integer getDamage() {
 		return damage;

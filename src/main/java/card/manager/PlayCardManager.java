@@ -1,6 +1,7 @@
 package card.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import card.enums.SkillType;
 import card.enums.TargetArea;
 import card.model.cards.SkillCard;
 import card.model.game.ActiveSkill;
+import card.model.game.Breeder;
 import card.model.game.GameState;
 import card.model.game.Monster;
 import card.model.game.PlayerArea;
@@ -74,12 +76,12 @@ public class PlayCardManager {
 		if (GamePhase.ATTACK == gameState.getPhase() && skillArea.getBaseAttack() != null) {
 			if (SkillKeyword.HIT_CARD == skillArea.getBaseAttack().getCard().getSkillKeyword()) {
 				Integer attackerIndex = playerArea.getMonsters().indexOf(skillArea.getAttackMonster());
-				playableCard.setUsers(new ArrayList<>(attackerIndex));
+				playableCard.setUsers(new ArrayList<>(Arrays.asList(attackerIndex)));
 				return playableCard;
 			}
 			if (SkillKeyword.COPY_CAT == skillArea.getBaseAttack().getCard().getSkillKeyword()) {
 				Integer attackerIndex = playerArea.getMonsters().indexOf(skillArea.getAttackMonster());
-				playableCard.setUsers(new ArrayList<>(attackerIndex));
+				playableCard.setUsers(new ArrayList<>(Arrays.asList(attackerIndex)));
 				if (SkillType.POW == skillCard.getSkillType() && SkillKeyword.ENSNARE != envKeyword) {
 					return playableCard;
 				}
@@ -99,7 +101,7 @@ public class PlayCardManager {
 		if (null != skillArea.getAttackMonster()) {
 			purebreedAttack = skillArea.getAttackMonster().isPurebreed();
 		}
-		playableCard.setUsers(findUsers(skillCard, playerArea.getMonsters(), playerArea.getBreeder().getCanAttack(), envKeyword, purebreedAttack));
+		playableCard.setUsers(findUsers(skillCard, playerArea.getMonsters(), playerArea.getBreeder(), envKeyword, purebreedAttack));
 		
 		// no valid users
 		if (playableCard.getUsers().isEmpty()) {
@@ -118,6 +120,7 @@ public class PlayCardManager {
 				// subsequent attacks must be able to combo
 				Monster attacker = skillArea.getAttackMonster();
 				Integer attackerIndex = playerArea.getMonsters().indexOf(attacker);
+				if (attackerIndex == -1) attackerIndex = playerArea.getMonsters().size();
 				return findPlayableCombo(playersRequest, gameState, skillCard, playableCard, attackerIndex);
 			}
 			
@@ -130,17 +133,14 @@ public class PlayCardManager {
 		return null;
 	}
 	
-	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, Boolean breederAttack, SkillKeyword envKeyword, Boolean purebreedAttack) {
+	public ArrayList<Integer> findUsers(SkillCard skillCard, ArrayList<Monster> monsters, Breeder breeder, SkillKeyword envKeyword, Boolean purebreedAttack) {
 		// make a list of all entities that can use skills
 		ArrayList<Monster> users = new ArrayList<Monster>();
 		// add a user for each monster 
 		for (Monster monster : monsters) users.add(monster);
 		// add a user to represent the breeder
-		Monster breeder = new Monster();
-		breeder.setMainLineage(MonsterBreed.Breeder);
-		breeder.setSubLineage(MonsterBreed.Breeder);
-		breeder.setCanAttack(breederAttack);
-		users.add(breeder);
+		Monster monster = breeder.createTempMonster();
+		users.add(monster);
 
 		// find the users for the skillCard
 		ArrayList<Integer> userIndexes = new ArrayList<>();
@@ -225,9 +225,10 @@ public class PlayCardManager {
 	public PlayableCard findPlayableCombo(PlayersRequest playersRequest, GameState gameState, SkillCard skillCard, PlayableCard playableCard, Integer attackerIndex) {
 		SkillArea skillArea = gameState.getSkillArea();
 		ArrayList<SkillKeyword> attackKeywords = skillArea.allAttackKeywords();
+
 		// Cannot combo with skill if the attacker cannot use
 		if (!playableCard.getUsers().contains(attackerIndex)) return null;
-		else playableCard.setUsers(new ArrayList<>(attackerIndex));
+		else playableCard.setUsers(new ArrayList<>(Arrays.asList(attackerIndex)));
 		
 		if (SkillKeyword.COMBO_TIGER == skillCard.getSkillKeyword()) {
 			if (attackKeywords.contains(SkillKeyword.COMBO_TIGER) &&
@@ -244,7 +245,15 @@ public class PlayCardManager {
 			if (comboWormCount == 1) return playableCard;
 		}
 		else if (KeywordUtil.COMBO.contains(skillCard.getSkillKeyword())) {
-			if (findTargetCombo(playersRequest, gameState, skillCard, playableCard, false)) return playableCard;
+			ArrayList<SkillType> attackTypes = skillArea.allAttackTypes();
+			Integer totalGutsCost = skillArea.allAttackCards().stream().map(SkillCard::getGutsCost).reduce(0, Integer::sum);
+			if (SkillKeyword.SUPPORT == skillCard.getSkillKeyword() 
+					&& skillArea.allAttackBreeds().contains(MonsterBreed.Breeder) 
+					&& totalGutsCost < 4) return playableCard;
+			else if (KeywordUtil.COMBO_POW.contains(skillCard.getSkillKeyword()) && attackTypes.contains(SkillType.POW)) return playableCard;
+			else if (KeywordUtil.COMBO_POW_INT.contains(skillCard.getSkillKeyword()) && 
+					(attackTypes.contains(SkillType.POW) || attackTypes.contains(SkillType.INT))) return playableCard;
+			else if (findTargetCombo(playersRequest, gameState, skillCard, playableCard, false)) return playableCard;
 		}
 		
 		// Already contains "must combo" skills
@@ -287,12 +296,23 @@ public class PlayCardManager {
 	public boolean findTargetCombo(PlayersRequest playersRequest, GameState gameState, SkillCard skillCard, PlayableCard playableCard, boolean findTarget) {
 		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
 		for (Integer user : playableCard.getUsers()) {
-			Monster monster = playerArea.getMonsters().get(user);
+			Monster monster = new Monster();
+			if (user >= playerArea.getMonsters().size()) {
+				monster = playerArea.getBreeder().createTempMonster();
+			}
+			else {
+				monster = playerArea.getMonsters().get(user);
+			}
 			ActiveSkill thisAttack = new ActiveSkill(skillCard, monster, null, playableCard.getHandIndex());
 			GameState tempGameState = gameState.copy();
 			tempGameState.getPlayerArea(playersRequest.getPlayer1()).getHand().set(playableCard.getHandIndex(), null);
 			tempGameState.getSkillArea().getAttacks().add(thisAttack);
 			if (tempGameState.getSkillArea().isResolved()) {
+				tempGameState.getSkillArea().setAttacker(playersRequest.getPlayer1());
+				tempGameState.getSkillArea().setDefender(playersRequest.getPlayer2());
+				tempGameState.getSkillArea().setAttacks(new ArrayList<ActiveSkill>());
+				tempGameState.getSkillArea().getAttacks().add(thisAttack);
+				tempGameState.getSkillArea().setDefenses(new ArrayList<ActiveSkill>());
 				tempGameState.getSkillArea().setResolved(false);
 				tempGameState.getSkillArea().setTargetArea(skillCard.getTargetArea());
 			}

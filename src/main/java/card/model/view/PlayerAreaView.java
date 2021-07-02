@@ -18,8 +18,6 @@ public class PlayerAreaView {
 	public ArrayList<MonsterView> monsters = new ArrayList<>();
 	public BreederView breeder = new BreederView();
 	
-	public static final SkillCardView DEFAULT_CARD = new SkillCardView(MonsterBreed.Breeder + CardCache.DEL + "Help", 1, 1);
-	
 	public PlayerAreaView() { }
 	public PlayerAreaView(PlayerArea playerArea, boolean showCards, String playerName) {
 		deck = new DeckView(playerArea.getDeck());
@@ -32,7 +30,7 @@ public class PlayerAreaView {
 				hand.add(new SkillCardView(card));
 			}
 			else {
-				hand.add(DEFAULT_CARD);
+				hand.add(new SkillCardView(MonsterBreed.Breeder + CardCache.DEL + "Help", card.getId(),  1, 1));
 			}
 		}
 		for (Monster monster : playerArea.getMonsters()) {

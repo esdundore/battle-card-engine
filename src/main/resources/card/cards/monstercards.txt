@@ -12,7 +12,7 @@ Mocchi,Mocchi,Mocchi,GRD,7
 Monol,Monol,Monol,AIR,8
 Naga,Naga,Naga,GRD,8
 Phoenix,Phoenix,Phoenix,AIR,4
-Pixie,Pixie,Pixie,AIR,7
+Pixie,Pixie,Pixie,AIR,6
 Plant,Plant,Plant,GRD,10
 Suezo,Suezo,Suezo,GRD,7
 Tiger,Tiger,Tiger,GRD,6

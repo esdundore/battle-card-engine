@@ -206,7 +206,7 @@ Phoenix,Fire Wave,INT,6,4,ENEMY,AOE_GRD,0
 Phoenix,Flame Beam,INT,5,8,ENEMY,NORMAL,0
 Phoenix,Hide Head,BLK,1,0,SELF,BLOCK,3
 Phoenix,Hurricane,INT,3,4,ENEMY,HALF_DODGE,0
-Phoenix,Insight,DGE,0,0,SELF,DGE_GUTS,1
+Phoenix,Insight,DGE,0,0,SELF,DGE_POW,0
 Phoenix,Mystery Power,SPE,1,0,DISCARD,MYSTERY_POWER,0
 Phoenix,Perceive,DGE,0,0,SELF,DGE_INT,0
 Phoenix,Typhoon,INT,4,6,ENEMY,HALF_DODGE,0

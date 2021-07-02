@@ -31,18 +31,25 @@ public class DamageCalculator {
 		Monster attacker = firstAttack.getUser();
 		Monster targetMonster = defenderArea.getMonsters().get(firstAttack.getTarget());
 
+		// recalculate damage
+		attacker.setTempDamage(null);
+		targetMonster.setTempDamage(null);
 		// Apply damage to the target
 		targetMonster.setTempDamage(calculateTargetDamage(attacks, targetMonster, envCard));
 		// Apply damage to other enemy targets if AOE
-		if (!Collections.disjoint(attackKeywords, KeywordUtil.AOE)) {
-			for (Monster monster : defenderArea.getMonsters()) {
-				if (monster != targetMonster) monster.setTempDamage(calculateTargetDamage(attacks, monster, envCard));
+		for (Monster monster : defenderArea.getMonsters()) {
+			if (monster != targetMonster) {
+				monster.setTempDamage(null);
+				if (!Collections.disjoint(attackKeywords, KeywordUtil.AOE)) 
+					monster.setTempDamage(calculateTargetDamage(attacks, monster, envCard));
 			}
 		}
 		// Apply damage to other ally monsters if ALL
-		if (!Collections.disjoint(attackKeywords, KeywordUtil.ALL)) {
-			for (Monster monster : attackerArea.getMonsters()) {
-				if (monster != attacker) monster.setTempDamage(calculateTargetDamage(attacks, monster, envCard));
+		for (Monster monster : attackerArea.getMonsters()) {
+			if (monster != attacker) {
+				monster.setTempDamage(null);
+				if (!Collections.disjoint(attackKeywords, KeywordUtil.ALL)) 
+					monster.setTempDamage(calculateTargetDamage(attacks, monster, envCard));
 			}
 		}
 		
@@ -57,7 +64,7 @@ public class DamageCalculator {
 				target.setTempDamage(calculateDodgeDamage(target, isHalfDodge));
 				if (SkillKeyword.RETREAT == defenseCard.getSkillKeyword()) {
 					for (Monster monster : defenderArea.getMonsters()) {
-						if (monster != defenseSkill.getUser()) target.setTempDamage(calculateDodgeDamage(monster, isHalfDodge));
+						if (monster != defenseSkill.getUser()) monster.setTempDamage(calculateDodgeDamage(monster, isHalfDodge));
 					}
 				}
 			}
@@ -78,7 +85,8 @@ public class DamageCalculator {
 					defenseSkill.getUser().setTempDamage(0);
 				}
 				else if (SkillKeyword.INTERCEPT == defenseCard.getSkillKeyword()) {
-					defenseSkill.getUser().setTempDamage(target.getTempDamage());
+					if (defenseSkill.getUser().getTempDamage() == null) defenseSkill.getUser().setTempDamage(0);
+					defenseSkill.getUser().setTempDamage(defenseSkill.getUser().getTempDamage() + target.getTempDamage());
 					target.setTempDamage(0);
 				}
 			}
@@ -87,7 +95,8 @@ public class DamageCalculator {
 		// Adjusted for non-lethal damage
 		if (attackKeywords.contains(SkillKeyword.HELP)) {
 			for (Monster monster : defenderArea.getMonsters()) {
-				if (monster.getTempDamage() >= monster.getCurrentLife()) monster.setTempDamage(monster.getCurrentLife() - 1);;
+				int tempDamage = monster.getTempDamage() == null ? 0 : monster.getTempDamage();
+				if (tempDamage >= monster.getCurrentLife()) monster.setTempDamage(monster.getCurrentLife() - 1);;
 			}
 		}
 		
@@ -107,10 +116,10 @@ public class DamageCalculator {
 		Integer comboCount = 0;
 		for (ActiveSkill attack : attacks) {
 			SkillKeyword skillKeyword = attack.getCard().getSkillKeyword();
-			if (KeywordUtil.HIT_AIR_ONLY.contains(skillKeyword) && MonsterType.AIR != monster.getMonsterType()) return null;
-			if (KeywordUtil.HIT_GROUND_ONLY.contains(skillKeyword) && MonsterType.GRD != monster.getMonsterType()) return null;
 			baseDamage += attack.getCard().getDamage();
-			if (SkillKeyword.COMBO_TIGER == skillKeyword) {
+			if (KeywordUtil.HIT_AIR_ONLY.contains(skillKeyword) && MonsterType.AIR != monster.getMonsterType()) return null;
+			else if (KeywordUtil.HIT_GROUND_ONLY.contains(skillKeyword) && MonsterType.GRD != monster.getMonsterType()) return null;
+			else if (SkillKeyword.COMBO_TIGER == skillKeyword) {
 				comboCount++;
 				if (comboCount == 2) baseDamage += 1;
 				else if (comboCount == 3) baseDamage += 3;
@@ -141,7 +150,7 @@ public class DamageCalculator {
 	}
 	
 	public Integer calculateBlockDamage(ActiveSkill block, Monster target) {
-		Integer tempDamage = 0;
+		Integer tempDamage = target.getTempDamage();
 		SkillKeyword skillKeyword = block.getCard().getSkillKeyword();
 		if (KeywordUtil.BLOCK.contains(skillKeyword)) {
 			tempDamage = target.getTempDamage() - block.getCard().getKeywordValue();

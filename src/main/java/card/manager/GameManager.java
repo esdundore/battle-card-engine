@@ -49,14 +49,18 @@ public class GameManager {
 		
 		Integer cardIndex = skillRequest.getHandIndex();
 		SkillCard card = playerArea.getHand(cardIndex);
-		Monster user = playerArea.getMonsters().get(skillRequest.getUser());
+		Monster user = new Monster();
+		if (skillRequest.getUser() >= playerArea.getMonsters().size()) user = playerArea.getBreeder().createTempMonster();
+		else user = playerArea.getMonsters().get(skillRequest.getUser());
 		Breeder breeder = playerArea.getBreeder();
 		
 		// Create a new skill area or add to this existing skill area
-		if (skillArea.isResolved()) skillArea.incrementSkillArea(skillRequest, card.getTargetArea());
-		else if (TargetArea.SELF != skillArea.getTargetArea()) skillArea.setTargetArea(card.getTargetArea());
 		ArrayList<ActiveSkill> activeSkills = skillArea.getAttacks();
-		if (GamePhase.ATTACK == gameState.getPhase()) activeSkills = skillArea.getAttacks();
+		if (GamePhase.ATTACK == gameState.getPhase()) {
+			if (skillArea.isResolved()) skillArea.incrementSkillArea(skillRequest, card.getTargetArea());
+			else if (TargetArea.SELF != skillArea.getTargetArea()) skillArea.setTargetArea(card.getTargetArea());
+			activeSkills = skillArea.getAttacks();
+		}
 		else if (GamePhase.DEFENSE == gameState.getPhase()) activeSkills = skillArea.getDefenses();
 		
 		SkillCard baseAttackCard = new SkillCard();
@@ -76,8 +80,10 @@ public class GameManager {
 			if (TargetArea.SELF == card.getTargetArea()) {
 				TargetRequest targetRequest = new TargetRequest(skillRequest);
 				targetRequest.setTarget(playerArea.getMonsters().indexOf(user));
+				if (targetRequest.getTarget() == -1) targetRequest.setTarget(playerArea.getMonsters().size());
 				if (GamePhase.ATTACK == gameState.getPhase()) declareAttackTarget(targetRequest, gameState);
 				else if (GamePhase.DEFENSE == gameState.getPhase()) declareDefenseTarget(targetRequest, gameState);
+				return;
 			}
 		}
 		else {
@@ -95,13 +101,14 @@ public class GameManager {
 			Integer handIndex = -1;
 			for (SkillCard handCard : playerArea.getHand()) {
 				handIndex++;
-				if (CardCache.DRAGON_BITE.equals(handCard.getName())) biteIndex = handIndex;
-				if (CardCache.DRAGON_TAIL_ATTACK.equals(handCard.getName())) tailAttackIndex = handIndex;
+				if (handCard != null) {
+					if (CardCache.DRAGON_BITE.equals(handCard.getName())) biteIndex = handIndex;
+					if (CardCache.DRAGON_TAIL_ATTACK.equals(handCard.getName())) tailAttackIndex = handIndex;
+				}
 			}
 			CardUtil.discardFromHand(playerArea.getHand(), biteIndex, playerArea.getDiscards());
 			CardUtil.discardFromHand(playerArea.getHand(), tailAttackIndex, playerArea.getDiscards());
 		}
-		// Your other monsters become AIR.
 		else if (SkillKeyword.BLOW_HOLE == card.getSkillKeyword()) {
 			ArrayList<Monster> otherMonsters = new ArrayList<Monster>();
 			otherMonsters.addAll(playerArea.getMonsters());
@@ -110,6 +117,12 @@ public class GameManager {
 				monster.setMonsterType(MonsterType.AIR);
 			}
 		}
+		else if (SkillKeyword.DODGE == card.getSkillKeyword()) {
+			playerArea.getBreeder().setGuts(0);
+		}
+        else if (SkillKeyword.GRIT == card.getSkillKeyword()) {
+        	user.addStatusDuration(MonsterStatus.GRIT, 999);
+        }
 	}
 	
 	public void declareAttackTarget(TargetRequest targetRequest, GameState gameState) {
@@ -166,7 +179,10 @@ public class GameManager {
 		defenses.get(lastDefenseIndex).setTarget(targetRequest.getTarget());
 		
 		// recalculate damages
-		damageCalculator.calculateDamages(skillArea, opponentArea, playerArea, gameState.getEnvironmentCard());
+		if (TargetArea.ENEMY == skillArea.getTargetArea()) {
+			damageCalculator.calculateDamages(skillArea, opponentArea, playerArea, gameState.getEnvironmentCard());
+		}
+		
 		autoResponse(targetRequest, gameState);
 	}
 	
@@ -227,6 +243,7 @@ public class GameManager {
 		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
 		PlayerArea opponentArea = gameState.getPlayerArea(playersRequest.getPlayer2());
 		Breeder breeder = playerArea.getBreeder();
+		Breeder opponentBreeder = playerArea.getBreeder();
 		
 		breeder.setGutsMade(0);
 		// Players discard all cards in their hand after their GUTS phase.
@@ -245,9 +262,24 @@ public class GameManager {
 			}
 			for (MonsterStatus expiredStatus : expiredStatuses) {
 				monster.getStatusDuration().remove(expiredStatus);
+				if (MonsterStatus.FOCUSPOWx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.POWx2, 1);
+				else if (MonsterStatus.FOCUSINTx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.INTx2, 1);
 			}
 		}
-		
+		for (Monster monster : opponentArea.getMonsters()) {
+			ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
+			for (Map.Entry<MonsterStatus, Integer> statusDuration : monster.getStatusDuration().entrySet()) {
+				statusDuration.setValue(statusDuration.getValue() - 1);
+				if (statusDuration.getValue() < 1) {
+					expiredStatuses.add(statusDuration.getKey());
+				}
+			}
+			for (MonsterStatus expiredStatus : expiredStatuses) {
+				monster.getStatusDuration().remove(expiredStatus);
+				if (MonsterStatus.FOCUSPOWx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.POWx2, 1);
+				else if (MonsterStatus.FOCUSINTx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.INTx2, 1);
+			}
+		}
 		// remove expired statuses from breeder
 		ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
 		for (Map.Entry<MonsterStatus, Integer> statusDuration : breeder.getStatusDuration().entrySet()) {
@@ -258,6 +290,16 @@ public class GameManager {
 		}
 		for (MonsterStatus expiredStatus : expiredStatuses) {
 			breeder.getStatusDuration().remove(expiredStatus);
+		}
+		expiredStatuses = new ArrayList<>();
+		for (Map.Entry<MonsterStatus, Integer> statusDuration : opponentBreeder.getStatusDuration().entrySet()) {
+			statusDuration.setValue(statusDuration.getValue() - 1);
+			if (statusDuration.getValue() < 1) {
+				expiredStatuses.add(statusDuration.getKey());
+			}
+		}
+		for (MonsterStatus expiredStatus : expiredStatuses) {
+			opponentBreeder.getStatusDuration().remove(expiredStatus);
 		}
 		
 		// set your monsters and breeder to canAttack

@@ -57,8 +57,9 @@ public class GameCache {
 		gameState.getSkillArea().setAttacks(new ArrayList<ActiveSkill>());
 		gameState.getSkillArea().setDefenses(new ArrayList<ActiveSkill>());
 		// fetch deck recipes and initialize monsters
-		startupDeck(player1Area, playersRequest.getPlayer1());
-		startupDeck(player2Area, playersRequest.getPlayer2());
+		int cardID = 1;
+		cardID = startupDeck(player1Area, playersRequest.getPlayer1(), cardID);
+		cardID = startupDeck(player2Area, playersRequest.getPlayer2(), cardID);
 		// shuffle decks
 		CardUtil.shuffle(player1Area.getDeck().getSkillCards());
 		CardUtil.shuffle(player2Area.getDeck().getSkillCards());
@@ -74,20 +75,37 @@ public class GameCache {
 		return gameState;
 	}
 	
-	public GameState startupTest(PlayersRequest playersRequest, String cardName, String monsterName) {
-		SkillCard skillCard = cardCache.getSkillCard(cardName.replace("_", CardCache.DEL)).copy();
-		MonsterCard monsterCard = cardCache.getMonsterCard(monsterName).copy();
-		Monster monster = new Monster(monsterCard);
+	public GameState startupTest(PlayersRequest playersRequest, String cardName1, String monsterName1, String cardName2, String monsterName2) {
 		GameState testGameState = startup(playersRequest);
+		// current player 1
 		testGameState.setCurrentPlayer(playersRequest.getPlayer1());
+		// each player gets 10 guts
 		testGameState.getPlayerArea(playersRequest.getPlayer1()).getBreeder().setGuts(10);
 		testGameState.getPlayerArea(playersRequest.getPlayer2()).getBreeder().setGuts(10);
-		testGameState.getPlayerArea(playersRequest.getPlayer2()).getHand().set(0, skillCard);
-		testGameState.getPlayerArea(playersRequest.getPlayer2()).getMonsters().set(0, monster);
+		// each player gets monster in their first monster slot
+		MonsterCard monsterCard1 = cardCache.getMonsterCard(monsterName1).copy();
+		testGameState.getPlayerArea(playersRequest.getPlayer1()).getMonsters().set(0, new Monster(monsterCard1));
+		MonsterCard monsterCard2 = cardCache.getMonsterCard(monsterName2).copy();
+		testGameState.getPlayerArea(playersRequest.getPlayer2()).getMonsters().set(0, new Monster(monsterCard2));
+		// each player gets skill cards from list
+		String[] cardNames1 = cardName1.split(",");
+		for (int i = 0; i < cardNames1.length; i++) {
+			SkillCard skillCard = cardCache.getSkillCard(cardNames1[i].replace("_", CardCache.DEL)).copy();
+			skillCard.setId(i+1000);
+			testGameState.getPlayerArea(playersRequest.getPlayer1()).getHand().set(i, skillCard);
+		}
+		String[] cardNames2 = cardName2.split(",");
+		for (int i = 0; i < cardNames2.length; i++) {
+			SkillCard skillCard = cardCache.getSkillCard(cardNames2[i].replace("_", CardCache.DEL)).copy();
+			skillCard.setId(i+2000);
+			testGameState.getPlayerArea(playersRequest.getPlayer2()).getHand().set(i, skillCard);
+		}
+
+		
 		return testGameState;
 	}
 	
-	public void startupDeck(PlayerArea playerArea, String deckName) {
+	public int startupDeck(PlayerArea playerArea, String deckName, int cardID) {
 		Deck deckRecipe = deckCache.getDeck(deckName);
 		Deck deck = new Deck();
 		deck.setDeckName(deckRecipe.getDeckName());
@@ -103,6 +121,7 @@ public class GameCache {
 		}
 		for (SkillCard card : deckRecipe.getSkillCards()) {
 			SkillCard skillCard = cardCache.getSkillCard(card.getName()).copy();
+			skillCard.setId(cardID++);
 			deck.getSkillCards().add(skillCard);
 		}
 		for (MonsterCard monsterCard : deck.getMonsterCards()) {
@@ -119,6 +138,7 @@ public class GameCache {
 				}
 			}
 		}
+		return cardID;
 	}
 	
 	public GameState getGameState(PlayersRequest playersRequest) {

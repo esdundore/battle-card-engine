@@ -42,10 +42,12 @@ public class GameActions {
 	
 	@RequestMapping(value = "/start-test-match", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public GameView startupTest(@RequestParam(value="card") String card,
-			@RequestParam(value="monster") String monster, 
+	public GameView startupTest(@RequestParam(value="card1") String card1,
+			@RequestParam(value="monster1") String monster1,
+			@RequestParam(value="card2") String card2,
+			@RequestParam(value="monster2") String monster2,
 			@RequestBody PlayersRequest playersRequest) {
-		GameState gameState = gameCache.startupTest(playersRequest, card, monster);
+		GameState gameState = gameCache.startupTest(playersRequest, card1, monster1, card2, monster2);
 		return getGameView(playersRequest, gameState);
 	}
 	
@@ -59,9 +61,11 @@ public class GameActions {
 			throw new Exception();
 		}
 		GameView gameView = getGameView(skillRequest, gameState);
-		if (gameView.getPlayable().getPlayableCards().isEmpty() && gameView.getPlayable().getPlayableTargets().isEmpty()) {
-			attackTarget(new TargetRequest(skillRequest));
-		}
+//		if (gameView.getPlayable().getPlayableTargets().contains(-1)) {
+//			TargetRequest targetRequest = new TargetRequest(skillRequest);
+//			targetRequest.setTarget(-1);
+//			attackTarget(targetRequest);
+//		}
 		return gameView;
 	}
 

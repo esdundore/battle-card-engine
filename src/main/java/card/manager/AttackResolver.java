@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import card.enums.MonsterStatus;
@@ -12,30 +13,33 @@ import card.enums.SkillKeyword;
 import card.enums.SkillType;
 import card.model.cards.SkillCard;
 import card.model.game.ActiveSkill;
-import card.model.game.Expression;
 import card.model.game.GameState;
 import card.model.game.Monster;
 import card.model.game.PlayerArea;
 import card.model.game.SkillArea;
 import card.model.requests.PlayersRequest;
-import card.rules.AttackEffectsEngine;
 import card.util.CardUtil;
 
 @Component
 public class AttackResolver {
 	
-	private AttackEffectsEngine attackEffectsEngine = new AttackEffectsEngine();
+	@Autowired
+	AttackEffects attackEffects;
 	
 	public void resolveAttack(PlayersRequest playersRequest, GameState gameState) {
 		SkillArea skillArea = gameState.getSkillArea();
-		PlayerArea attackerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
-		PlayerArea defenderArea = gameState.getPlayerArea(playersRequest.getPlayer2());
+		PlayerArea attackerArea = gameState.getPlayerArea(playersRequest.getPlayer2());
+		PlayerArea defenderArea = gameState.getPlayerArea(playersRequest.getPlayer1());
 		
 		// Apply damage to defenders
 		Integer damageDealt = 0;
 		for (Monster monster : defenderArea.getMonsters()) {
 			if (null != monster.getTempDamage()) {
 				monster.setCurrentLife(monster.getCurrentLife() - monster.getTempDamage());
+				if (monster.getTempDamage() > 0) {
+					monster.getStatusDuration().remove(MonsterStatus.FOCUSPOWx2);
+					monster.getStatusDuration().remove(MonsterStatus.FOCUSINTx2);
+				}
 				damageDealt += monster.getTempDamage();
 			}
 			monster.setTempDamage(null);
@@ -52,28 +56,24 @@ public class AttackResolver {
 		// Apply defense skill effects
 		for (ActiveSkill defenseSkill : skillArea.getDefenses()) {
 			Monster defender = defenseSkill.getUser();
-			if (SkillKeyword.DODGE == defenseSkill.getCard().getSkillKeyword()) {
-				defenderArea.getBreeder().setGuts(0);
-			}
-			else if (SkillKeyword.FLY_AWAY == defenseSkill.getCard().getSkillKeyword()) {
-				defender.addStatusDuration(MonsterStatus.DMGx2, 1);
+			if (SkillKeyword.FLY_AWAY == defenseSkill.getCard().getSkillKeyword()) {
+				defender.addStatusDuration(MonsterStatus.DMGx2, 2);
 			}
 			else if (SkillKeyword.JUMP == defenseSkill.getCard().getSkillKeyword()) {
-				defender.addStatusDuration(MonsterStatus.AIRBORNE, 1);
-				defender.addStatusDuration(MonsterStatus.POWx2, 1);
+				defender.addStatusDuration(MonsterStatus.AIRBORNE, 2);
+				defender.addStatusDuration(MonsterStatus.POWx2, 2);
 			}
 			else if (SkillKeyword.JUMP_IN == defenseSkill.getCard().getSkillKeyword()) {
-				defender.addStatusDuration(MonsterStatus.POWx3, 1);
+				defender.addStatusDuration(MonsterStatus.POWx3, 2);
 			}
 			else if (SkillKeyword.SOAR == defenseSkill.getCard().getSkillKeyword()) {
-				defender.addStatusDuration(MonsterStatus.POWx2, 1);
+				defender.addStatusDuration(MonsterStatus.POWx2, 2);
 			}
 		}
 		
 		// Apply after effects for each attack skill
 		for (ActiveSkill attackSkill : skillArea.getAttacks()) {
-			Expression expression = new Expression(gameState, attackerArea, defenderArea, attackSkill, damageDealt);
-			attackEffectsEngine.applyEffects(expression);
+			attackEffects.applyAttackEffects(playersRequest, gameState, attackSkill, damageDealt);
 		}
 		
 		// Play environment cards

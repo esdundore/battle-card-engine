@@ -18,6 +18,7 @@ public class SkillView {
 		ArrayList<Monster> monsters = playerArea.getMonsters();
 		skillCard = new SkillCardView(activeSkill.getCard());
 		user = monsters.indexOf(activeSkill.getUser());
+		if (user == -1) user = monsters.size();
 		target = activeSkill.getTarget();
 		handIndex = activeSkill.getHandIndex();
 	}

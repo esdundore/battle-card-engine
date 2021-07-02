@@ -2,6 +2,7 @@ package card.model.game;
 
 import java.util.HashMap;
 
+import card.enums.MonsterBreed;
 import card.enums.MonsterStatus;
 
 public class Breeder {
@@ -69,6 +70,16 @@ public class Breeder {
 	}
 	public void addStatusDuration(MonsterStatus status, Integer duration) {
 		this.statusDuration.put(status, duration);
+	}
+	public Monster createTempMonster() {
+		Monster monster = new Monster();
+		monster.setMainLineage(MonsterBreed.Breeder);
+		monster.setSubLineage(MonsterBreed.Breeder);
+		monster.setMaxLife(1);
+		monster.setCurrentLife(1);
+		monster.setCanAttack(getCanAttack());
+		monster.setStatusDuration(statusDuration);
+		return monster;
 	}
 
 }
