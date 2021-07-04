@@ -99,7 +99,7 @@ public class AttackResolver {
 			revertGutsCosts(gameState);
 		}
 		else if (SkillKeyword.BAD_WEATHER == oldEnvCard.getSkillKeyword()) {
-			revertMonsterType(gameState);
+			revertMonsterType(gameState, playersRequest);
 		}
 		if (SkillKeyword.ENCOURAGE == oldEnvCard.getSkillKeyword()) {
 			revertGutsCosts(gameState);
@@ -115,7 +115,7 @@ public class AttackResolver {
 			revertDamageType(gameState, SkillType.INT);
 		}
 		else if (SkillKeyword.WARP == oldEnvCard.getSkillKeyword()) {
-			revertMonsterType(gameState);
+			revertMonsterType(gameState, playersRequest);
 		}
 		
 		// add the new ENV card and update
@@ -124,7 +124,7 @@ public class AttackResolver {
 			modifyGutsCosts(gameState, 1);
 		}
 		else if (SkillKeyword.BAD_WEATHER == newEnvCard.getSkillKeyword()) {
-			modifyMonsterType(gameState, MonsterType.GRD);
+			modifyMonsterType(gameState, playersRequest, MonsterType.GRD);
 		}
 		else if (SkillKeyword.COOL_JUDGE == newEnvCard.getSkillKeyword()) {
 			CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
@@ -143,7 +143,7 @@ public class AttackResolver {
 			modifyDamageType(gameState, 2, SkillType.INT);
 		}
 		else if (SkillKeyword.WARP == newEnvCard.getSkillKeyword()) {
-			modifyMonsterType(gameState, MonsterType.AIR);
+			modifyMonsterType(gameState, playersRequest, MonsterType.AIR);
 		}
 	}
 	
@@ -202,23 +202,22 @@ public class AttackResolver {
         return allSkillCards;
 	}
 	
-	public void modifyMonsterType(GameState gameState, MonsterType monsterType) {
-		ArrayList<Monster> monsters = getAllMonsters(gameState);
+	public void modifyMonsterType(GameState gameState, PlayersRequest playersRequest, MonsterType monsterType) {
+		ArrayList<Monster> monsters = getAllMonsters(gameState, playersRequest);
 		for (Monster monster : monsters) {
 			monster.setMonsterType(monsterType);
 		}
 	}
 	
-	public void revertMonsterType(GameState gameState) {
-		ArrayList<Monster> monsters = getAllMonsters(gameState);
+	public void revertMonsterType(GameState gameState, PlayersRequest playersRequest) {
+		ArrayList<Monster> monsters = getAllMonsters(gameState, playersRequest);
 		for (Monster monster : monsters) {
 			monster.setMonsterType(monster.getBaseMonsterType());
 		}
 	}
-	public ArrayList<Monster> getAllMonsters(GameState gameState) {
-		Collection<PlayerArea> playerAreas = gameState.getPlayerArea().values();
-        PlayerArea player1Area = playerAreas.iterator().next();
-        PlayerArea player2Area = playerAreas.iterator().next();
+	public ArrayList<Monster> getAllMonsters(GameState gameState, PlayersRequest playersRequest) {
+		PlayerArea player1Area = gameState.getPlayerArea(playersRequest.getPlayer1());
+		PlayerArea player2Area = gameState.getPlayerArea(playersRequest.getPlayer2());
         ArrayList<Monster> allMonsters = new ArrayList<>();
         allMonsters.addAll(player1Area.getMonsters());
         allMonsters.addAll(player2Area.getMonsters());

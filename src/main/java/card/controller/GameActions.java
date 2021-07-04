@@ -61,11 +61,6 @@ public class GameActions {
 			throw new Exception();
 		}
 		GameView gameView = getGameView(skillRequest, gameState);
-//		if (gameView.getPlayable().getPlayableTargets().contains(-1)) {
-//			TargetRequest targetRequest = new TargetRequest(skillRequest);
-//			targetRequest.setTarget(-1);
-//			attackTarget(targetRequest);
-//		}
 		return gameView;
 	}
 
