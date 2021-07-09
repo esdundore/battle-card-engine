@@ -30,7 +30,7 @@ public class PlayerAreaView {
 				hand.add(new SkillCardView(card));
 			}
 			else {
-				hand.add(new SkillCardView(MonsterBreed.Breeder + CardCache.DEL + "Help", card.getId(),  1, 1));
+				hand.add(new SkillCardView(MonsterBreed.Breeder + CardCache.DEL + "Hidden", card.getId(),  1, 1));
 			}
 		}
 		for (Monster monster : playerArea.getMonsters()) {

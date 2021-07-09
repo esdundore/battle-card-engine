@@ -7,6 +7,8 @@ public enum MonsterStatus {
 	BERSERK,
 	/** This monster cannot use skills besides "Emerge" **/
 	COCOON,
+	/** Must combo with a POW attack. This attack becomes any POW card from your deck. **/
+	COPY_CAT,
 	/** All POW or INT attacks deal double damage. **/
 	DMGx2,
 	/** This breeder will get an extra turn after this one. **/

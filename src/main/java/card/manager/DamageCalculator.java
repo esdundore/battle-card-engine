@@ -69,18 +69,27 @@ public class DamageCalculator {
 				}
 			}
 			else if (SkillType.BLK == defenseCard.getSkillType()) {
-				if (SkillKeyword.COUNTER == defenseCard.getSkillKeyword()) {
-					Integer counterDamage = defenseSkill.getUser().getTempDamage() / 2;
-					attacker.setTempDamage(attacker.getTempDamage() + counterDamage);
+				if (SkillKeyword.BOUNCE == defenseCard.getSkillKeyword()) {
+					if (attacker.getTempDamage() == null) attacker.setTempDamage(0);
+					attacker.setTempDamage(attacker.getTempDamage() + defenseSkill.getUser().getTempDamage());
+				}
+				else if (SkillKeyword.COUNTER == defenseCard.getSkillKeyword()) {
+					if (attacker.getTempDamage() == null) attacker.setTempDamage(0);
+					attacker.setTempDamage(attacker.getTempDamage() + defenseSkill.getUser().getTempDamage() / 2);
 				}
 				else if (SkillKeyword.DEFLECT == defenseCard.getSkillKeyword()) {
-					Integer deflectDamage = defenseSkill.getUser().getTempDamage();
-					attacker.setTempDamage(attacker.getTempDamage() + deflectDamage);
+					if (attacker.getTempDamage() == null) attacker.setTempDamage(0);
+					attacker.setTempDamage(attacker.getTempDamage() + defenseSkill.getUser().getTempDamage());
 				}
+				
 				if (!attackKeywords.contains(SkillKeyword.UNBLOCKABLE)) {
 					target.setTempDamage(calculateBlockDamage(defenseSkill, target));
 				}
-				if (SkillKeyword.HIDE == defenseCard.getSkillKeyword()) {
+				
+				if (SkillKeyword.JUMP_IN == defenseCard.getSkillKeyword()) {
+					target.setTempDamage(target.getTempDamage() * 2);
+				}
+				else if (SkillKeyword.HIDE == defenseCard.getSkillKeyword()) {
 					target.setTempDamage(defenseSkill.getUser().getTempDamage());
 					defenseSkill.getUser().setTempDamage(0);
 				}
@@ -162,11 +171,7 @@ public class DamageCalculator {
 			tempDamage = target.getTempDamage() / 2;
 		}
 		else if (SkillKeyword.GRIT == skillKeyword) {
-			Integer life = target.getCurrentLife();
-			tempDamage = target.getTempDamage() >= life ?  life - 1 : target.getTempDamage();
-		}
-		else if (SkillKeyword.JUMP_IN == skillKeyword) {
-			tempDamage = target.getTempDamage() * 2;
+			tempDamage = target.getCurrentLife() - 1;
 		}
 		else if (SkillKeyword.LEAF_ZERO == skillKeyword) {
 			tempDamage = target.getCurrentLife() / 2;

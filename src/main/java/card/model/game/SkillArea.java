@@ -21,13 +21,12 @@ public class SkillArea {
 	public ArrayList<ActiveSkill> attacks;
 	public ArrayList<ActiveSkill> defenses;
 
-	public void incrementSkillArea(PlayersRequest playerRequest, TargetArea targetArea) {
+	public void clearSkillArea(PlayersRequest playerRequest, TargetArea targetArea) {
 		attacker = playerRequest.getPlayer1();
 		defender = playerRequest.getPlayer2();
 		this.targetArea = targetArea;
 		attacks = new ArrayList<ActiveSkill>();
 		defenses = new ArrayList<ActiveSkill>();
-		attackId++;
 		resolved = false;
 	}
 
@@ -127,6 +126,9 @@ public class SkillArea {
 	}
 	public ArrayList<String> allAttackNames() {
 		return allAttackCards().stream().map(BattleCard::getName).collect(Collectors.toCollection(ArrayList::new));
+	}
+	public Integer totalAttackCost() {
+		return allAttackCards().stream().map(SkillCard::getGutsCost).collect(Collectors.summingInt(Integer::intValue));
 	}
 	public ArrayList<SkillCard> allDefenseCards() {
 		return defenses.stream().map(ActiveSkill::getCard).collect(Collectors.toCollection(ArrayList::new));

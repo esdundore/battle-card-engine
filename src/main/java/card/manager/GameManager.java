@@ -57,8 +57,13 @@ public class GameManager {
 		// Create a new skill area or add to this existing skill area
 		ArrayList<ActiveSkill> activeSkills = skillArea.getAttacks();
 		if (GamePhase.ATTACK == gameState.getPhase()) {
-			if (skillArea.isResolved()) skillArea.incrementSkillArea(skillRequest, card.getTargetArea());
-			else if (TargetArea.SELF != skillArea.getTargetArea()) skillArea.setTargetArea(card.getTargetArea());
+			if (skillArea.isResolved()) {
+				skillArea.clearSkillArea(skillRequest, card.getTargetArea());
+				skillArea.setAttackId(skillArea.getAttackId() + 1);
+			}
+			else if (TargetArea.SELF != skillArea.getTargetArea()) {
+				skillArea.setTargetArea(card.getTargetArea());
+			}
 			activeSkills = skillArea.getAttacks();
 		}
 		else if (GamePhase.DEFENSE == gameState.getPhase()) activeSkills = skillArea.getDefenses();
@@ -68,12 +73,6 @@ public class GameManager {
 		if (skillArea.getBaseAttack() != null) baseAttackCard = skillArea.getBaseAttack().getCard();
 		if (SkillKeyword.HIT_CARD != baseAttackCard.getSkillKeyword()) {
 			breeder.setGutsSpent(breeder.getGutsSpent() + card.getGutsCost());
-			if (SkillKeyword.POWER_OF_SUN == card.getSkillKeyword()) {
-				breeder.setGutsSpent(breeder.getGutsSpent() - 2);
-			}
-			if (SkillKeyword.SUPPORT == card.getSkillKeyword()) {
-				breeder.setGutsSpent(breeder.getGutsSpent() - 3);
-			}
 			CardUtil.playCard(playerArea.getHand(), user, null, cardIndex, activeSkills);
 			resolvePlay(playerArea, card, user);
 			// automatically declare target if self targeted skill
@@ -135,6 +134,7 @@ public class GameManager {
 		Integer gutsSpent = breeder.getGutsSpent() > 0 ? breeder.getGutsSpent() : 0;
 		breeder.setGuts(breeder.getGuts() - gutsSpent);
 		breeder.setGutsSpent(0);
+		playerArea.setAttacksThisTurn(playerArea.getAttacksThisTurn() + 1);
 		
 		// apply target to all attacks and set can attack to false
 		for(ActiveSkill attack : skillArea.getAttacks()) {
@@ -204,27 +204,15 @@ public class GameManager {
 		}
 		
 		// discard attack and defense cards from skill area
-		Boolean endAttack = false;
 		for (ActiveSkill attackSkill : skillArea.getAttacks()) {
-			if (SkillKeyword.WILD_RUSH == attackSkill.getCard().getSkillKeyword()) {
-				endAttack = true;
-			}
 			CardUtil.putOnTop(opponentArea.getDiscards(), attackSkill.getCard());
 		}
 		for (ActiveSkill defenseSkill : skillArea.getDefenses()) {
 			CardUtil.putOnTop(playerArea.getDiscards(), defenseSkill.getCard());
 		}
 		
-		if (endAttack) {
-			PlayersRequest reversedPlayersRequest = new PlayersRequest();
-			reversedPlayersRequest.setPlayer1(playersRequest.getPlayer2());
-			reversedPlayersRequest.setPlayer2(playersRequest.getPlayer1());
-			endAttack(reversedPlayersRequest, gameState);
-		}
-		else {
-			gameState.setCurrentPlayer(playersRequest.getPlayer2());
-			gameState.setPhase(GamePhase.ATTACK);
-		}
+		gameState.setCurrentPlayer(playersRequest.getPlayer2());
+		gameState.setPhase(GamePhase.ATTACK);
 		autoResponse(playersRequest, gameState);
 	}
 	
@@ -242,93 +230,69 @@ public class GameManager {
 	public void endTurn(PlayersRequest playersRequest, GameState gameState) {
 		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
 		PlayerArea opponentArea = gameState.getPlayerArea(playersRequest.getPlayer2());
-		Breeder breeder = playerArea.getBreeder();
-		Breeder opponentBreeder = playerArea.getBreeder();
 		
-		breeder.setGutsMade(0);
+		playerArea.getBreeder().setGutsMade(0);
 		// Players discard all cards in their hand after their GUTS phase.
 		if (SkillKeyword.CLOSE_UP == gameState.getEnvironmentCard().getSkillKeyword()) {
 			CardUtil.discardHand(playerArea.getHand(), playerArea.getDiscards());
 		}
 		
-		// remove expired statuses from your monsters
-		for (Monster monster : playerArea.getMonsters()) {
-			ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
-			for (Map.Entry<MonsterStatus, Integer> statusDuration : monster.getStatusDuration().entrySet()) {
-				statusDuration.setValue(statusDuration.getValue() - 1);
-				if (statusDuration.getValue() < 1) {
-					expiredStatuses.add(statusDuration.getKey());
-				}
-			}
-			for (MonsterStatus expiredStatus : expiredStatuses) {
-				monster.getStatusDuration().remove(expiredStatus);
-				if (MonsterStatus.FOCUSPOWx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.POWx2, 1);
-				else if (MonsterStatus.FOCUSINTx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.INTx2, 1);
-			}
-		}
-		for (Monster monster : opponentArea.getMonsters()) {
-			ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
-			for (Map.Entry<MonsterStatus, Integer> statusDuration : monster.getStatusDuration().entrySet()) {
-				statusDuration.setValue(statusDuration.getValue() - 1);
-				if (statusDuration.getValue() < 1) {
-					expiredStatuses.add(statusDuration.getKey());
-				}
-			}
-			for (MonsterStatus expiredStatus : expiredStatuses) {
-				monster.getStatusDuration().remove(expiredStatus);
-				if (MonsterStatus.FOCUSPOWx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.POWx2, 1);
-				else if (MonsterStatus.FOCUSINTx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.INTx2, 1);
-			}
-		}
-		// remove expired statuses from breeder
-		ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
-		for (Map.Entry<MonsterStatus, Integer> statusDuration : breeder.getStatusDuration().entrySet()) {
-			statusDuration.setValue(statusDuration.getValue() - 1);
-			if (statusDuration.getValue() < 1) {
-				expiredStatuses.add(statusDuration.getKey());
-			}
-		}
-		for (MonsterStatus expiredStatus : expiredStatuses) {
-			breeder.getStatusDuration().remove(expiredStatus);
-		}
-		expiredStatuses = new ArrayList<>();
-		for (Map.Entry<MonsterStatus, Integer> statusDuration : opponentBreeder.getStatusDuration().entrySet()) {
-			statusDuration.setValue(statusDuration.getValue() - 1);
-			if (statusDuration.getValue() < 1) {
-				expiredStatuses.add(statusDuration.getKey());
-			}
-		}
-		for (MonsterStatus expiredStatus : expiredStatuses) {
-			opponentBreeder.getStatusDuration().remove(expiredStatus);
-		}
+		boolean extraTurn = playerArea.getBreeder().getStatusDuration().containsKey(MonsterStatus.EXTRA_TURN);
+		reduceStatusDuration(playerArea);
+		reduceStatusDuration(opponentArea);
 		
 		// set your monsters and breeder to canAttack
 		for (Monster monster : playerArea.getMonsters()) {
 			monster.setCanAttack(true);
 		}
-		breeder.setCanAttack(true);
+		playerArea.getBreeder().setCanAttack(true);
+		playerArea.setAttacksThisTurn(0);
 
 		gameState.setTurnCount(gameState.getTurnCount() + 1);
-		if (breeder.getStatusDuration().containsKey(MonsterStatus.EXTRA_TURN)) {
+		if (extraTurn) {
 			gameState.setCurrentPlayer(playersRequest.getPlayer1());
 			drawPhase(gameState, playerArea, playersRequest.getPlayer2());
+			gameState.setPhase(GamePhase.ATTACK);
 		}
 		else {
 			gameState.setCurrentPlayer(playersRequest.getPlayer2());
 			drawPhase(gameState, opponentArea, playersRequest.getPlayer1());
+			gameState.setPhase(GamePhase.ATTACK);
+			autoResponse(playersRequest, gameState);
 		}
-		gameState.setPhase(GamePhase.ATTACK);
-		autoResponse(playersRequest, gameState);
-		
+
+	}
+	
+	public void reduceStatusDuration(PlayerArea playerArea) {
+		ArrayList<Monster> users = new ArrayList<Monster>();
+		for (Monster monster : playerArea.getMonsters()) users.add(monster);
+		users.add(playerArea.getBreeder().createTempMonster());
+		// remove expired statuses from your monsters
+		for (Monster monster : users) {
+			ArrayList<MonsterStatus> expiredStatuses = new ArrayList<>();
+			for (Map.Entry<MonsterStatus, Integer> statusDuration : monster.getStatusDuration().entrySet()) {
+				statusDuration.setValue(statusDuration.getValue() - 1);
+				if (statusDuration.getValue() < 1) {
+					expiredStatuses.add(statusDuration.getKey());
+				}
+			}
+			for (MonsterStatus expiredStatus : expiredStatuses) {
+				monster.getStatusDuration().remove(expiredStatus);
+				if (MonsterStatus.FOCUSPOWx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.POWx2, 1);
+				else if (MonsterStatus.FOCUSINTx2 == expiredStatus) monster.addStatusDuration(MonsterStatus.INTx2, 1);
+			}
+		}
 	}
 	
 	public void drawPhase(GameState gameState, PlayerArea playerArea, String opponent) {
 		Breeder breeder = playerArea.getBreeder();
 		
 		// Discard two cards from the top of each player's deck on their draw phase.
-		if (SkillKeyword.CLOSE_UP == gameState.getEnvironmentCard().getSkillKeyword()) {
-			CardUtil.discardFromDeck(playerArea.getDeck().getSkillCards(), playerArea.getDiscards());
-			CardUtil.discardFromDeck(playerArea.getDeck().getSkillCards(), playerArea.getDiscards());
+		if (SkillKeyword.CONFUSION == gameState.getEnvironmentCard().getSkillKeyword()) {
+			try {
+				CardUtil.discardFromDeck(playerArea.getDeck().getSkillCards(), playerArea.getDiscards());
+				CardUtil.discardFromDeck(playerArea.getDeck().getSkillCards(), playerArea.getDiscards());
+			} catch (NoSuchElementException nsee) { }
 		}
 		
 		// Draw from deck (not on the first turn)

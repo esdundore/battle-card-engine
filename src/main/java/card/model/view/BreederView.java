@@ -16,7 +16,12 @@ public class BreederView {
 	public BreederView() {}
 	public BreederView(Breeder breeder) {
 		playerName = breeder.getPlayerName();
-		guts = breeder.getGuts();
+		if (breeder.getGutsSpent() > 0) {
+			guts = breeder.getGuts() - breeder.getGutsSpent();
+		}
+		else {
+			guts = breeder.getGuts();
+		}
 		message = breeder.getMessage();
 		canAttack = breeder.getCanAttack();
 		statuses = breeder.getStatusDuration().keySet();

@@ -159,7 +159,7 @@ public enum SkillKeyword {
 	POWER_OF_SUN,
 	/** Prevent ENV card from being played. **/
 	PRAY,
-	/** Mixed breed monsters can't use DGE defense against purebred monster's attacks. **/
+	/** Mixed breed monsters can't use DGE defense against purebreed monster's attacks. **/
 	PRIDE,
 	/** Opponent's monsters can only attack this monster on their next turn. **/
 	PROVOKE,

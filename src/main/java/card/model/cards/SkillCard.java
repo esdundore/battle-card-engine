@@ -64,6 +64,12 @@ public class SkillCard extends BattleCard {
 		this.keywordValue = keywordValue;
 	}
 	public Integer getGutsCost() {
+		if (SkillKeyword.POWER_OF_SUN == getSkillKeyword()) {
+			return -2;
+		}
+		if (SkillKeyword.SUPPORT == getSkillKeyword()) {
+			return -3;
+		}
 		return gutsCost;
 	}
 	/** guts cost cannot be less than 0 **/

@@ -66,7 +66,11 @@ public class PlayValidationManager {
 		hand.addAll(gameState.getPlayerArea(playersRequest.getPlayer1()).getHand());
 		ArrayList<ActiveSkill> attacks = new ArrayList<>();
 		attacks.addAll(gameState.getSkillArea().getAttacks());
-		playableView.setPlayableCards(playCardManager.findPlayableCards(playersRequest, gameState, playableTargets.isEmpty()));
+		ArrayList<PlayableCard> playableCards = new ArrayList<>();
+		if (playableTargets.isEmpty() || GamePhase.DEFENSE != gameState.getPhase()) {
+			playableCards = playCardManager.findPlayableCards(playersRequest, gameState);
+		}
+		playableView.setPlayableCards(playableCards);
 		playableView.setPlayableTargets(playableTargets);
 		return playableView;
 	}

@@ -3,6 +3,7 @@ package card.manager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -35,9 +36,10 @@ public class AttackEffects {
         	attacker.addStatusDuration(MonsterStatus.BERSERK, 1);
         }
         else if (SkillKeyword.BUSY_TIME == keyword) {
-        	
             for (int i = 0; i < attackerArea.getBreeder().getGuts(); i++) {
-            	CardUtil.discardFromDeck(attackerArea.getDiscards(), attackerArea.getDeck().getSkillCards());
+            	try {
+            		CardUtil.discardFromDeck(attackerArea.getDiscards(), attackerArea.getDeck().getSkillCards());
+            	} catch (NoSuchElementException nsee) { }
             }
 			CardUtil.shuffle(attackerArea.getDeck().getSkillCards());
         }
@@ -46,12 +48,16 @@ public class AttackEffects {
         }
         else if (SkillKeyword.COMPUTING == keyword) {
             CardUtil.discardFromHand(attackerArea.getHand(), attackSkill.getTarget(), attackerArea.getDiscards());
-			CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand(), 2);
+            try {
+            	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand(), 2);
+            } catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.DODGE_PROGRAM == keyword) {
             Integer discardIndex = attackSkill.getTarget();
             CardUtil.discardFromHand(attackerArea.getDiscards(), discardIndex, attackerArea.getDeck().getSkillCards());
-            CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            try {
+            	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            } catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.DOLL == keyword) {
         	attacker.addStatusDuration(MonsterStatus.INVULNERABLE, 2);
@@ -74,13 +80,15 @@ public class AttackEffects {
         	attacker.addStatusDuration(MonsterStatus.UNTARGETABLE, 2);
         }
         else if (SkillKeyword.FAINTED == keyword) {
-        	if (!defenseKeywords.contains(SkillKeyword.PERSISTANCE)) {
+        	if (!defenseKeywords.contains(SkillKeyword.PERSISTANCE) 
+        			&& !defenderArea.getBreeder().getStatusDuration().containsKey(MonsterStatus.MEDITATING)) {
         		defenderArea.getBreeder().setGuts(0);
         		attackerArea.getBreeder().setGuts(0);
         	}
         }
         else if (SkillKeyword.FAKE_CRY == keyword) {
-        	if (!defenseKeywords.contains(SkillKeyword.PERSISTANCE)) {
+        	if (!defenseKeywords.contains(SkillKeyword.PERSISTANCE)
+        			&& !defenderArea.getBreeder().getStatusDuration().containsKey(MonsterStatus.MEDITATING)) {
         		defenderArea.getBreeder().setGuts(defenderArea.getBreeder().getGuts() - 1);
         	}
         }
@@ -92,13 +100,17 @@ public class AttackEffects {
         }
         else if (SkillKeyword.GOOD_LUCK == keyword) {
 			for (int i = 0; i < attacker.getCurrentLife(); i++) {
-				CardUtil.discardFromDeck(attackerArea.getDeck().getSkillCards(), attackerArea.getDiscards());
-				attackerArea.getBreeder().setGuts(attackerArea.getBreeder().getGuts() + 1);
+				try {
+					CardUtil.discardFromDeck(attackerArea.getDeck().getSkillCards(), attackerArea.getDiscards());
+					attackerArea.getBreeder().setGuts(attackerArea.getBreeder().getGuts() + 1);
+				} catch (NoSuchElementException nsee) { }
 			}
 			attacker.setCurrentLife(0);
         }
         else if (SkillKeyword.GUTS_DMG == keyword) {
-            if (!defenseKeywords.contains(SkillKeyword.PERSISTANCE) && damageDealt > 0) {
+            if ((!defenseKeywords.contains(SkillKeyword.PERSISTANCE) 
+            		&& !defenderArea.getBreeder().getStatusDuration().containsKey(MonsterStatus.MEDITATING)) 
+            		&& damageDealt > 0) {
             	defenderArea.getBreeder().setGuts(defenderArea.getBreeder().getGuts() - attackSkill.getCard().getKeywordValue());
             }
         }
@@ -117,9 +129,11 @@ public class AttackEffects {
         }
         else if (SkillKeyword.LAST_TRUMP == keyword) {
             Integer targetIndex = attackSkill.getTarget();
-            CardUtil.discardFromHand(attackerArea.getDeck().getSkillCards(), targetIndex, attackerArea.getDeck().getSkillCards());
+            CardUtil.discardFromHand(attackerArea.getHand(), targetIndex, attackerArea.getDeck().getSkillCards());
             CardUtil.shuffle(attackerArea.getDeck().getSkillCards());
-			CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            try {
+            	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            } catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.LIFE_STEAL == keyword) {
             attacker.setCurrentLife(attacker.getCurrentLife() + damageDealt);
@@ -156,7 +170,9 @@ public class AttackEffects {
         else if (SkillKeyword.POWDER == keyword) {
         	Monster target = attackerArea.getMonsters().get(attackSkill.getTarget());
 			target.setCurrentLife(target.getCurrentLife() - 1);
-			CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+			try {
+				CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+			} catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.PROVOKE == keyword) {
             ArrayList<Monster> monsters = attackerArea.getMonsters();
@@ -171,6 +187,7 @@ public class AttackEffects {
         else if (SkillKeyword.REBORN == keyword) {
         	Monster targetMonster = attackerArea.getMonsters().get(attackSkill.getTarget());
             targetMonster.setCurrentLife(targetMonster.getMaxLife());
+            targetMonster.setCanAttack(false);
         }
         else if (SkillKeyword.RECHARGE == keyword) {
         	attacker.addStatusDuration(MonsterStatus.POWx2, 3);
@@ -185,7 +202,9 @@ public class AttackEffects {
             		cardsDiscarded++;
             	}
             }
-            CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand(), cardsDiscarded);
+            try {
+            	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand(), cardsDiscarded);
+            } catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.RESTORE == keyword) {
         	Monster target = attackerArea.getMonsters().get(attackSkill.getTarget());
@@ -199,7 +218,9 @@ public class AttackEffects {
             		CardUtil.putOnBottom(defenderArea.getHand(), handIndex, defenderArea.getDiscards());
             	}
             }
-            CardUtil.draw(defenderArea.getDeck().getSkillCards(), defenderArea.getHand(), 4);
+            try {
+            	CardUtil.draw(defenderArea.getDeck().getSkillCards(), defenderArea.getHand(), 4);
+            } catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.ROAR == keyword) {
             for (Monster monster : defenderArea.getMonsters()) {
@@ -213,7 +234,7 @@ public class AttackEffects {
         	attackerArea.getBreeder().addStatusDuration(MonsterStatus.SCOUTING, 1);
         }
         else if (SkillKeyword.SILENT_STANCE == keyword) {
-        	attacker.addStatusDuration(MonsterStatus.FOCUSINTx2, 1);
+        	attacker.addStatusDuration(MonsterStatus.FOCUSINTx2, 2);
         }
         else if (SkillKeyword.SINGING_CAT == keyword) {
         	attackerArea.getBreeder().addStatusDuration(MonsterStatus.BERSERK, 1);
@@ -231,7 +252,9 @@ public class AttackEffects {
         else if (SkillKeyword.TACTICS == keyword) {
         	Integer discardIndex = attackSkill.getTarget();
             CardUtil.discardFromHand(attackerArea.getDiscards(), discardIndex, attackerArea.getDeck().getSkillCards());
-            CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            try {
+            	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            } catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.TAKE_OVER == keyword) {
         	attacker.setCurrentLife(0);
@@ -248,7 +271,9 @@ public class AttackEffects {
         else if (SkillKeyword.TRANSFORM == keyword) {
             MonsterType attackerType = attacker.getMonsterType();
             attacker.setMonsterType(attackerType == MonsterType.GRD ? MonsterType.AIR : MonsterType.GRD);
-            CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            try {
+            	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+            } catch (NoSuchElementException nsee) { }
         }
         else if (SkillKeyword.TWINKLING == keyword) {
 			while (!attackerArea.getDeck().getSkillCards().isEmpty()) {
@@ -257,9 +282,12 @@ public class AttackEffects {
 			}
         }
         else if (SkillKeyword.WILD_RUSH == keyword) {
+        	attackerArea.setAttacksThisTurn(-1);
 			for (int i = 0; i < 5; i++) {
-				CardUtil.discardFromDeck(attackerArea.getDeck().getSkillCards(), attackerArea.getDiscards());
-				attackerArea.getBreeder().setGuts(attackerArea.getBreeder().getGuts() + 1);
+				try {
+					CardUtil.discardFromDeck(attackerArea.getDeck().getSkillCards(), attackerArea.getDiscards());
+					attackerArea.getBreeder().setGuts(attackerArea.getBreeder().getGuts() + 1);
+				} catch (NoSuchElementException nsee) { }
 			}
         }
         else if (SkillKeyword.YODEL == keyword) {

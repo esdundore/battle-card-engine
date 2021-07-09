@@ -1,7 +1,8 @@
 package card.manager;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,27 +93,26 @@ public class AttackResolver {
 	}
 
 	public void resolveEnvironment(PlayersRequest playersRequest, GameState gameState, SkillCard newEnvCard) {
-		PlayerArea attackerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
 		// remove the current ENV card and update
 		SkillCard oldEnvCard = gameState.getEnvironmentCard();
 		if (SkillKeyword.AWE == oldEnvCard.getSkillKeyword()) {
-			revertGutsCosts(gameState);
+			revertGutsCosts(gameState, playersRequest);
 		}
 		else if (SkillKeyword.BAD_WEATHER == oldEnvCard.getSkillKeyword()) {
 			revertMonsterType(gameState, playersRequest);
 		}
 		if (SkillKeyword.ENCOURAGE == oldEnvCard.getSkillKeyword()) {
-			revertGutsCosts(gameState);
+			revertGutsCosts(gameState, playersRequest);
 		}
 		else if (SkillKeyword.EXCITED == oldEnvCard.getSkillKeyword()) {
-			revertDamageType(gameState, SkillType.INT);
+			revertDamageType(gameState, playersRequest, SkillType.INT);
 		}
 		else if (SkillKeyword.HOT_BATTLE == oldEnvCard.getSkillKeyword()) {
-			revertDamageType(gameState, SkillType.POW);
-			revertDamageType(gameState, SkillType.INT);
+			revertDamageType(gameState, playersRequest, SkillType.POW);
+			revertDamageType(gameState, playersRequest, SkillType.INT);
 		}
 		else if (SkillKeyword.SPARK == oldEnvCard.getSkillKeyword()) {
-			revertDamageType(gameState, SkillType.INT);
+			revertDamageType(gameState, playersRequest, SkillType.INT);
 		}
 		else if (SkillKeyword.WARP == oldEnvCard.getSkillKeyword()) {
 			revertMonsterType(gameState, playersRequest);
@@ -121,48 +121,51 @@ public class AttackResolver {
 		// add the new ENV card and update
 		gameState.setEnvironmentCard(newEnvCard);
 		if (SkillKeyword.AWE == newEnvCard.getSkillKeyword()) {
-			modifyGutsCosts(gameState, 1);
+			modifyGutsCosts(gameState, playersRequest, 1);
 		}
 		else if (SkillKeyword.BAD_WEATHER == newEnvCard.getSkillKeyword()) {
 			modifyMonsterType(gameState, playersRequest, MonsterType.GRD);
 		}
 		else if (SkillKeyword.COOL_JUDGE == newEnvCard.getSkillKeyword()) {
-			CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
+			try {
+				PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer2());
+				CardUtil.draw(playerArea.getDeck().getSkillCards(), playerArea.getHand());
+			} catch (NoSuchElementException nsee) { }
 		}
 		else if (SkillKeyword.ENCOURAGE == newEnvCard.getSkillKeyword()) {
-			modifyGutsCosts(gameState, -1);
+			modifyGutsCosts(gameState, playersRequest, -1);
 		}
 		else if (SkillKeyword.EXCITED == newEnvCard.getSkillKeyword()) {
-			modifyDamageType(gameState, -2, SkillType.INT);
+			modifyDamageType(gameState, playersRequest, -2, SkillType.INT);
 		}
 		else if (SkillKeyword.HOT_BATTLE == newEnvCard.getSkillKeyword()) {
-			modifyDamageType(gameState, 1, SkillType.POW);
-			modifyDamageType(gameState, 1, SkillType.INT);
+			modifyDamageType(gameState, playersRequest, 1, SkillType.POW);
+			modifyDamageType(gameState, playersRequest, 1, SkillType.INT);
 		}
 		else if (SkillKeyword.SPARK == newEnvCard.getSkillKeyword()) {
-			modifyDamageType(gameState, 2, SkillType.INT);
+			modifyDamageType(gameState, playersRequest, 2, SkillType.INT);
 		}
 		else if (SkillKeyword.WARP == newEnvCard.getSkillKeyword()) {
 			modifyMonsterType(gameState, playersRequest, MonsterType.AIR);
 		}
 	}
 	
-	public void modifyGutsCosts(GameState gameState, Integer mod) {
-		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState);
+	public void modifyGutsCosts(GameState gameState, PlayersRequest playersRequest, Integer mod) {
+		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState, playersRequest);
 		for (SkillCard skillCard : skillCards) {
 			skillCard.setGutsCost(skillCard.getGutsCost() + mod);
 		}
 	}
 	
-	public void revertGutsCosts(GameState gameState) {
-		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState);
+	public void revertGutsCosts(GameState gameState, PlayersRequest playersRequest) {
+		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState, playersRequest);
 		for (SkillCard skillCard : skillCards) {
 			skillCard.setGutsCost(skillCard.getBaseGutsCost());
 		}
 	}
 	
-	public void modifyDamageType(GameState gameState, Integer mod, SkillType type) {
-		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState);
+	public void modifyDamageType(GameState gameState, PlayersRequest playersRequest, Integer mod, SkillType type) {
+		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState, playersRequest);
 		for (SkillCard skillCard : skillCards) {
 			if (type == skillCard.getSkillType()) {
 				skillCard.setDamage(skillCard.getDamage() + mod);
@@ -170,8 +173,8 @@ public class AttackResolver {
 		}
 	}
 	
-	public void revertDamageType(GameState gameState,  SkillType type) {
-		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState);
+	public void revertDamageType(GameState gameState, PlayersRequest playersRequest, SkillType type) {
+		ArrayList<SkillCard> skillCards = getAllSkillCards(gameState, playersRequest);
 		for (SkillCard skillCard : skillCards) {
 			if (type == skillCard.getSkillType()) {
 				skillCard.setDamage(skillCard.getBaseDamage());
@@ -179,10 +182,9 @@ public class AttackResolver {
 		}
 	}
 	
-	public ArrayList<SkillCard> getAllSkillCards(GameState gameState) {
-		Collection<PlayerArea> playerAreas = gameState.getPlayerArea().values();
-        PlayerArea player1Area = playerAreas.iterator().next();
-        PlayerArea player2Area = playerAreas.iterator().next();
+	public ArrayList<SkillCard> getAllSkillCards(GameState gameState, PlayersRequest playersRequest) {
+		PlayerArea player1Area = gameState.getPlayerArea(playersRequest.getPlayer1());
+		PlayerArea player2Area = gameState.getPlayerArea(playersRequest.getPlayer2());
         SkillArea skillArea = gameState.getSkillArea();
 		ArrayList<SkillCard> attackCards = skillArea.getAttacks().stream()
 				.map(ActiveSkill::getCard)
@@ -199,6 +201,7 @@ public class AttackResolver {
         allSkillCards.addAll(player2Area.getDiscards());
         allSkillCards.addAll(attackCards);
         allSkillCards.addAll(defenseCards);
+        allSkillCards.removeAll(Collections.singleton(null));
         return allSkillCards;
 	}
 	
@@ -215,6 +218,7 @@ public class AttackResolver {
 			monster.setMonsterType(monster.getBaseMonsterType());
 		}
 	}
+	
 	public ArrayList<Monster> getAllMonsters(GameState gameState, PlayersRequest playersRequest) {
 		PlayerArea player1Area = gameState.getPlayerArea(playersRequest.getPlayer1());
 		PlayerArea player2Area = gameState.getPlayerArea(playersRequest.getPlayer2());

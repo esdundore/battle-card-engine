@@ -20,7 +20,7 @@ public class SkillCardView {
 		name = skillCard.getName();
 		id = skillCard.getId();
 		damage = skillCard.getDamage();
-		gutsCost = skillCard.getGutsCost();
+		gutsCost = skillCard.getGutsCost() > 0 ? skillCard.getGutsCost() : 0;
 	}
 	
 	public String getName() {

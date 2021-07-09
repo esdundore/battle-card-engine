@@ -14,6 +14,7 @@ public class PlayerArea {
 	public ArrayList<Monster> monsters;
 	public ArrayList<Monster> subMonsters;
 	public Breeder breeder = new Breeder();
+	public Integer attacksThisTurn = 0;
 	
 	public PlayerArea() {}
 	public PlayerArea(String playerName) {
@@ -29,6 +30,7 @@ public class PlayerArea {
 		copy.setMonsters(monsters);
 		copy.setSubMonsters(subMonsters);
 		copy.setBreeder(breeder.copy());
+		copy.setAttacksThisTurn(attacksThisTurn);
 		return copy;
 	}
 	
@@ -70,6 +72,12 @@ public class PlayerArea {
 	}
 	public void setBreeder(Breeder breeder) {
 		this.breeder = breeder;
+	}
+	public Integer getAttacksThisTurn() {
+		return attacksThisTurn;
+	}
+	public void setAttacksThisTurn(Integer attacksThisTurn) {
+		this.attacksThisTurn = attacksThisTurn;
 	}
 	public Boolean allMonstersDead() {
 		for (Monster monster : monsters) {
