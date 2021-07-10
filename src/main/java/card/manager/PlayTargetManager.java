@@ -110,6 +110,7 @@ public class PlayTargetManager {
 			}
 			else if (!monster.isAlive()) continue;
 			else if (monster.getStatusDuration().containsKey(MonsterStatus.UNTARGETABLE) && enemyTarget) continue;
+			else if (attackKeywords.contains(SkillKeyword.RESTORE) && monster.getCurrentLife() == monster.getMaxLife()) continue;
 			else if (attackKeywords.contains(SkillKeyword.TARGET_GRD) && MonsterType.GRD != monster.getMonsterType()) continue;
 			playableTargets.add(targetIndex);
 		}

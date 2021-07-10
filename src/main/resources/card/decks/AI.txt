@@ -1,6 +1,6 @@
 AI
 Deck Name
-Cue
+Miller
 Mocchi
 Tiger
 Dino
@@ -15,6 +15,9 @@ Mocchi/Slap
 Mocchi/Roll Attack
 Mocchi/Motch Ray
 Mocchi/Headbutt
+Mocchi/Hide
+Mocchi/Motch Ray
+Mocchi/Headbutt
 Dino/Leap Kick
 Dino/Fire Dash
 Dino/Charge
@@ -26,6 +29,9 @@ Dino/Punch
 Dino/Knee Kick
 Dino/Flame
 Dino/Bite
+Dino/Tail Slap
+Dino/Charge
+Dino/Bite
 Tiger/Sonic Move
 Tiger/Charge
 Tiger/Back Roll
@@ -33,7 +39,18 @@ Tiger/Ice Bomb
 Tiger/Right Claw
 Tiger/Left Claw
 Tiger/Horn
+Tiger/Right Claw
+Tiger/Left Claw
+Tiger/Horn
 Tiger/Roar
 Tiger/Stab
 Tiger/Lightning
 Tiger/Bolt
+Tiger/Jump
+Any/Critical
+Any/Dodge
+Any/Grit
+Breeder/Help
+Breeder/Mango
+Breeder/Wine
+Breeder/Nuts Oil

@@ -283,3 +283,4 @@ Zilla,Scratch,POW,2,2,ENEMY,NORMAL,0
 Zilla,Sneeze,INT,2,1,ENEMY,GUTS_DMG,1
 Zilla,Tail Lashes,POW,4,4,ENEMY,HALF_DODGE,0
 Zilla,Tidal Wave,INT,7,4,ENEMY,ALL_GRD,0
+Breeder,Wine,SPE,0,0,ALLY,RESTORE,1

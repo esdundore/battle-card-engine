@@ -37,6 +37,7 @@ public class GameActions {
 			MediaType.APPLICATION_XML_VALUE })
 	public GameView startup(@RequestBody PlayersRequest playersRequest) {
 		GameState gameState = gameCache.startup(playersRequest);
+		gameManager.autoResponse(playersRequest, gameState);
 		return getGameView(playersRequest, gameState);
 	}
 	
