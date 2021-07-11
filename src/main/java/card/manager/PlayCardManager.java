@@ -119,7 +119,7 @@ public class PlayCardManager {
 			
 		}
 		else if (GamePhase.DEFENSE == gameState.getPhase() && !skillCard.determineAttack()) {
-			return isPlayableDefense(skillCard, skillArea) ? playableCard : null;
+			return isPlayableDefense(skillCard, playerArea, skillArea) ? playableCard : null;
 		}
 		
 		// cannot play this skill on this phase
@@ -247,7 +247,7 @@ public class PlayCardManager {
 		return null;
 	}
 	
-	public boolean isPlayableDefense(SkillCard defenseSkill, SkillArea skillArea) {
+	public boolean isPlayableDefense(SkillCard defenseSkill, PlayerArea playerArea, SkillArea skillArea) {
 		if (SkillKeyword.PRAY == defenseSkill.getSkillKeyword()) {
 			if (!skillArea.allAttackTypes().contains(SkillType.ENV)) return false;
 			else return true;
@@ -266,6 +266,9 @@ public class PlayCardManager {
 					&& KeywordUtil.INT_DEFENSE.contains(defenseSkill.getSkillKeyword())) return false;
 			else if (SkillKeyword.RETREAT == defenseSkill.getSkillKeyword() 
 					&& Collections.disjoint(skillArea.allAttackKeywords(), KeywordUtil.AOE)) return false;
+			else if ((SkillKeyword.HIDE == defenseSkill.getSkillKeyword() 
+					|| SkillKeyword.INTERCEPT == defenseSkill.getSkillKeyword())
+					&& playerArea.getMonsters().stream().filter(m -> m.isAlive()).collect(Collectors.toList()).size() < 2) return false;
 			else return true;
 		}
 		return false;

@@ -72,13 +72,23 @@ public class DecisionManager {
 
 	public void gutsDecision(PlayersRequest playersRequest, GameState gameState, PlayableView playableView) {
 		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
+		boolean endTurn = true;
 		SkillRequest skillRequest = new SkillRequest(playersRequest);
 		for (PlayableCard playableCard : playableView.getPlayableCards()) {
-			SkillCard skillCard = playerArea.getHand().get(playableCard.getHandIndex());
-			skillRequest.setHandIndex(playableCard.getHandIndex());
-			if (skillCard.determineAttack()) gameManager.makeGuts(skillRequest, gameState);
+			Integer handIndex = playableCard.getHandIndex();
+			SkillCard skillCard = playerArea.getHand().get(handIndex);
+			if (skillCard.determineAttack())
+			{
+				skillRequest.setHandIndex(handIndex);
+				gameManager.makeGuts(skillRequest, gameState);
+				endTurn = false;
+				break;
+			}
 		}
-		gameManager.endTurn(playersRequest, gameState);
+
+		if (endTurn) gameManager.endTurn(playersRequest, gameState);
+		else makeDecision(playersRequest, gameState);
+		
 	}
 	
 }

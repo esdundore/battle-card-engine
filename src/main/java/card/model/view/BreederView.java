@@ -16,7 +16,7 @@ public class BreederView {
 	public BreederView() {}
 	public BreederView(Breeder breeder) {
 		playerName = breeder.getPlayerName();
-		if (breeder.getGutsSpent() > 0) {
+		if (breeder.getGutsSpent() > 0 && (breeder.getGuts() - breeder.getGutsSpent() > 0)) {
 			guts = breeder.getGuts() - breeder.getGutsSpent();
 		}
 		else {

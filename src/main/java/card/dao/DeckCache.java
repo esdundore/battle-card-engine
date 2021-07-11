@@ -18,7 +18,7 @@ import card.model.cards.SkillCard;
 @Component
 public class DeckCache {
 	
-	private static final String PLAYER1_DECK_PATH = "card/decks/player1.txt";
+	private static final String PLAYER1_DECK_PATH = "card/decks/Player.txt";
 	private static final String PLAYER2_DECK_PATH = "card/decks/player2.txt";
 	private static final String AI_DECK_PATH = "card/decks/AI.txt";
 	

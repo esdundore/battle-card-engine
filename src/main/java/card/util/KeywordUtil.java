@@ -28,8 +28,7 @@ public class KeywordUtil {
 	/** Deals damage to GRD monsters only. **/
 	public static final ArrayList<SkillKeyword> HIT_GROUND_ONLY = new ArrayList<>(Arrays.asList(
 			SkillKeyword.ALL_GRD,  
-			SkillKeyword.AOE_GRD,
-			SkillKeyword.TARGET_GRD));
+			SkillKeyword.AOE_GRD));
 	
 	/** Can only be used in response to a POW attack **/
 	public static final ArrayList<SkillKeyword> POW_DEFENSE = new ArrayList<>(Arrays.asList(

@@ -171,7 +171,7 @@ public class DamageCalculator {
 			tempDamage = target.getTempDamage() / 2;
 		}
 		else if (SkillKeyword.GRIT == skillKeyword) {
-			tempDamage = target.getCurrentLife() - 1;
+			tempDamage = tempDamage > target.getCurrentLife() ? target.getCurrentLife() - 1 : tempDamage;
 		}
 		else if (SkillKeyword.LEAF_ZERO == skillKeyword) {
 			tempDamage = target.getCurrentLife() / 2;

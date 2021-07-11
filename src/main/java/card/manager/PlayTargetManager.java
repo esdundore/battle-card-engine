@@ -72,7 +72,13 @@ public class PlayTargetManager {
 				otherMonsters.addAll(playerArea.getMonsters());
 				int index = otherMonsters.indexOf(lastPlayedDefense.getUser());
 				otherMonsters.set(index, null);
-				playableTargets.addAll(findMonsterTargets(otherMonsters, skillArea, false));
+				int targetIndex = -1;
+				for (Monster otherMonster : otherMonsters) {
+					targetIndex++;
+					if (otherMonster == null) continue;
+					else if (!otherMonster.isAlive()) continue;
+					playableTargets.add(targetIndex);
+				}
 			}
 		}
 		return playableTargets;
@@ -111,6 +117,7 @@ public class PlayTargetManager {
 			else if (!monster.isAlive()) continue;
 			else if (monster.getStatusDuration().containsKey(MonsterStatus.UNTARGETABLE) && enemyTarget) continue;
 			else if (attackKeywords.contains(SkillKeyword.RESTORE) && monster.getCurrentLife() == monster.getMaxLife()) continue;
+			else if (attackKeywords.contains(SkillKeyword.NUTS_OIL) && monster.getCanAttack()) continue;
 			else if (attackKeywords.contains(SkillKeyword.TARGET_GRD) && MonsterType.GRD != monster.getMonsterType()) continue;
 			playableTargets.add(targetIndex);
 		}
