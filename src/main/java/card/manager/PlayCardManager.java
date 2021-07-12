@@ -58,7 +58,9 @@ public class PlayCardManager {
 			}
 			else {
 				// find which cards are playable, null otherwise
-				playableCards.add(findPlayableSkill(playersRequest, gameState, skillCard, playableCard));
+				PlayableCard usableCard = findPlayableSkill(playersRequest, gameState, skillCard, playableCard);
+				if (usableCard == null || !usableCard.getUsers().isEmpty()) playableCards.add(usableCard);
+				else playableCards.add(null);
 			}
 		}
 		// remove null cards
@@ -195,8 +197,7 @@ public class PlayCardManager {
 			ArrayList<String> cardNames = playerArea.getHand().stream().map(SkillCard::getName).collect(Collectors.toCollection(ArrayList::new));
 			if (!cardNames.contains(CardCache.DRAGON_BITE) || !cardNames.contains(CardCache.DRAGON_TAIL_ATTACK)) return null;
 		}
-		else if (!canTargetOrCombo(playersRequest, gameState, skillCard, playableCard)) return null;
-		return playableCard;
+		return canTargetOrCombo(playersRequest, gameState, skillCard, playableCard);
 	}
 	
 	public PlayableCard findPlayableCombo(PlayersRequest playersRequest, GameState gameState, SkillCard skillCard, PlayableCard playableCard) {
@@ -226,7 +227,7 @@ public class PlayCardManager {
 			else if (KeywordUtil.COMBO_POW.contains(skillCard.getSkillKeyword()) && attackTypes.contains(SkillType.POW)) return playableCard;
 			else if (KeywordUtil.COMBO_POW_INT.contains(skillCard.getSkillKeyword()) && 
 					(attackTypes.contains(SkillType.POW) || attackTypes.contains(SkillType.INT))) return playableCard;
-			else if (canTargetOrCombo(playersRequest, gameState, skillCard, playableCard)) return playableCard;
+			return canTargetOrCombo(playersRequest, gameState, skillCard, playableCard);
 		}
 		
 		// Already contains "must combo" skills
@@ -274,8 +275,11 @@ public class PlayCardManager {
 		return false;
 	}
 	
-	public boolean canTargetOrCombo(PlayersRequest playersRequest, GameState gameState, SkillCard skillCard, PlayableCard playableCard) {
+	public PlayableCard canTargetOrCombo(PlayersRequest playersRequest, GameState gameState, SkillCard skillCard, PlayableCard playableCard) {
 		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
+		PlayableCard tempPlayableCard = new PlayableCard();
+		tempPlayableCard.setHandIndex(playableCard.getHandIndex());
+		tempPlayableCard.setUsers(new ArrayList<>());
 		for (Integer user : playableCard.getUsers()) {
 			// create a temp game state
 			GameState tempGameState = gameState.copy();
@@ -296,10 +300,10 @@ public class PlayCardManager {
 			else monster = playerArea.getMonsters().get(user);
 			tempGameState.getSkillArea().getAttacks().add(new ActiveSkill(skillCard, monster, null, playableCard.getHandIndex()));
 			boolean mustCombo = KeywordUtil.COMBO.contains(skillCard.getSkillKeyword());
-			if (!mustCombo && !playTargetManager.findPlayableTargets(playersRequest, tempGameState).isEmpty()) return true;
-			else if (mustCombo && !findPlayableCards(playersRequest, tempGameState).isEmpty()) return true;
+			if (!mustCombo && !playTargetManager.findPlayableTargets(playersRequest, tempGameState).isEmpty()) tempPlayableCard.getUsers().add(user);
+			else if (mustCombo && !findPlayableCards(playersRequest, tempGameState).isEmpty()) tempPlayableCard.getUsers().add(user);
 		}
-		return false;
+		return tempPlayableCard;
 	}
 	
 }

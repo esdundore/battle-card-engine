@@ -5,5 +5,6 @@ public enum TargetArea {
 	ALLY, 
 	HAND, 
 	DISCARD,
-	SELF
+	SELF,
+	SUBMONS
 }

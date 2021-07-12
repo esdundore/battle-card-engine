@@ -55,6 +55,7 @@ public class AttackEffects {
         else if (SkillKeyword.DODGE_PROGRAM == keyword) {
             Integer discardIndex = attackSkill.getTarget();
             CardUtil.discardFromHand(attackerArea.getDiscards(), discardIndex, attackerArea.getDeck().getSkillCards());
+            attackerArea.getDiscards().removeAll(Collections.singleton(null));
             try {
             	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
             } catch (NoSuchElementException nsee) { }
@@ -231,7 +232,9 @@ public class AttackEffects {
         	attacker.addStatusDuration(MonsterStatus.FOCUSPOWx2, 2);
         }
         else if (SkillKeyword.SCOUTING == keyword) {
-        	attackerArea.getBreeder().addStatusDuration(MonsterStatus.SCOUTING, 1);
+        	for (SkillCard skillCard : defenderArea.getHand()) {
+        		if (skillCard != null) skillCard.setRevealed(true);
+        	}
         }
         else if (SkillKeyword.SILENT_STANCE == keyword) {
         	attacker.addStatusDuration(MonsterStatus.FOCUSINTx2, 2);
@@ -252,6 +255,7 @@ public class AttackEffects {
         else if (SkillKeyword.TACTICS == keyword) {
         	Integer discardIndex = attackSkill.getTarget();
             CardUtil.discardFromHand(attackerArea.getDiscards(), discardIndex, attackerArea.getDeck().getSkillCards());
+            attackerArea.getDiscards().removeAll(Collections.singleton(null));
             try {
             	CardUtil.draw(attackerArea.getDeck().getSkillCards(), attackerArea.getHand());
             } catch (NoSuchElementException nsee) { }

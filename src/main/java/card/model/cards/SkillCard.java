@@ -16,6 +16,7 @@ public class SkillCard extends BattleCard {
 	public Integer baseGutsCost;
 	public Integer damage;
 	public Integer baseDamage;
+	public Boolean revealed = false;
 
 	public SkillCard copy() {
 		SkillCard skillCard = new SkillCard();
@@ -30,6 +31,7 @@ public class SkillCard extends BattleCard {
 		skillCard.setBaseGutsCost(baseGutsCost);
 		skillCard.setDamage(damage);
 		skillCard.setBaseDamage(baseDamage);
+		skillCard.setRevealed(revealed);
 		return skillCard;
 	}
 	
@@ -94,6 +96,14 @@ public class SkillCard extends BattleCard {
 	}
 	public void setBaseDamage(Integer baseDamage) {
 		this.baseDamage = baseDamage;
+	}
+
+	public Boolean getRevealed() {
+		return revealed;
+	}
+
+	public void setRevealed(Boolean revealed) {
+		this.revealed = revealed;
 	}
 
 	public Boolean determineAttack() {

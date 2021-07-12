@@ -58,6 +58,9 @@ public class PlayTargetManager {
 		else if (TargetArea.ENEMY == skillArea.getTargetArea()) {
 			return findMonsterTargets(opponentArea.getMonsters(), skillArea, true);
 		}
+		else if (TargetArea.SUBMONS == skillArea.getTargetArea()) {
+			return findMonsterTargets(playerArea.getSubMonsters(), skillArea, true);
+		}
 		return new ArrayList<>();
 	}
 	
@@ -108,18 +111,21 @@ public class PlayTargetManager {
 		}	
 		Integer targetIndex = -1;
 		// find target-ability by monster
-		for (Monster monster : monsters) {
-			targetIndex++;
-			if (monster == null) continue;
-			else if (attackKeywords.contains(SkillKeyword.REBORN) || attackKeywords.contains(SkillKeyword.TAKE_OVER)) {
-				if (monster.isAlive()) continue;
+		if (monsters != null)
+		{
+			for (Monster monster : monsters) {
+				targetIndex++;
+				if (monster == null) continue;
+				else if (attackKeywords.contains(SkillKeyword.REBORN) || attackKeywords.contains(SkillKeyword.TAKE_OVER)) {
+					if (monster.isAlive()) continue;
+				}
+				else if (!monster.isAlive()) continue;
+				else if (monster.getStatusDuration().containsKey(MonsterStatus.UNTARGETABLE) && enemyTarget) continue;
+				else if (attackKeywords.contains(SkillKeyword.RESTORE) && monster.getCurrentLife() == monster.getMaxLife()) continue;
+				else if (attackKeywords.contains(SkillKeyword.NUTS_OIL) && monster.getCanAttack()) continue;
+				else if (attackKeywords.contains(SkillKeyword.TARGET_GRD) && MonsterType.GRD != monster.getMonsterType()) continue;
+				playableTargets.add(targetIndex);
 			}
-			else if (!monster.isAlive()) continue;
-			else if (monster.getStatusDuration().containsKey(MonsterStatus.UNTARGETABLE) && enemyTarget) continue;
-			else if (attackKeywords.contains(SkillKeyword.RESTORE) && monster.getCurrentLife() == monster.getMaxLife()) continue;
-			else if (attackKeywords.contains(SkillKeyword.NUTS_OIL) && monster.getCanAttack()) continue;
-			else if (attackKeywords.contains(SkillKeyword.TARGET_GRD) && MonsterType.GRD != monster.getMonsterType()) continue;
-			playableTargets.add(targetIndex);
 		}
 		return playableTargets;
 	}

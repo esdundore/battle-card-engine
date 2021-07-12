@@ -35,8 +35,6 @@ public enum MonsterStatus {
 	POWx2,
 	/** All POW attacks deal triple damage. **/
 	POWx3,
-	/** This breeder can see the enemy hand. **/
-	SCOUTING,
 	/** Cannot use attack skills. **/
 	STUNNED,
 	/** Opponent's monsters can only attack this monster. **/

@@ -1,6 +1,5 @@
 package card.model.view;
 
-import card.enums.MonsterStatus;
 import card.model.game.GameState;
 import card.model.game.PlayerArea;
 import card.model.requests.PlayersRequest;
@@ -23,11 +22,9 @@ public class GameView {
 		phase = gameState.getPhase().name();
 		environmentCard = gameState.getEnvironmentCard().getName();
 		PlayerArea playerArea = gameState.getPlayerArea(playersRequest.getPlayer1());
-		this.playerArea = new PlayerAreaView(playerArea, true, playersRequest.getPlayer1());
-		Boolean showHand = false;
-		if (playerArea.getBreeder().getStatusDuration().containsKey(MonsterStatus.SCOUTING)) showHand = true;
+		this.playerArea = new PlayerAreaView(playerArea, true);
 		PlayerArea opponentArea = gameState.getPlayerArea(playersRequest.getPlayer2());
-		this.opponentArea = new PlayerAreaView(opponentArea, showHand, playersRequest.getPlayer2());
+		this.opponentArea = new PlayerAreaView(opponentArea, false);
 		skillArea = new SkillAreaView(gameState);
 		this.playable = playableView;
 	}

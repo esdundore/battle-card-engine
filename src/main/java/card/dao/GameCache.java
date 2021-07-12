@@ -1,11 +1,9 @@
 package card.dao;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -115,6 +113,7 @@ public class GameCache {
 		deck.setSkillCards(new LinkedList<SkillCard>());
 		playerArea.setDeck(deck);
 		playerArea.setMonsters(new ArrayList<Monster>());
+		playerArea.setSubMonsters(new ArrayList<Monster>());
 		for (MonsterCard card : deckRecipe.getMonsterCards()) {
 			MonsterCard monsterCard = cardCache.getMonsterCard(card.getName()).copy();
 			deck.getMonsterCards().add(monsterCard);
@@ -127,15 +126,10 @@ public class GameCache {
 		for (MonsterCard monsterCard : deck.getMonsterCards()) {
 			playerArea.getMonsters().add(new Monster(monsterCard));
 		}
-		
-		Collection<MonsterBreed> monsterBreeds = playerArea.getMonsters().stream()
-				.map(Monster::getMainLineage)
-				.collect(Collectors.toCollection(ArrayList::new));
-		if (monsterBreeds.contains(MonsterBreed.Worm)) {
-			for (MonsterCard monsterCard : cardCache.getMonsterCards().values()) {
-				if (MonsterBreed.Worm == monsterCard.getSubLineage()) {
-					playerArea.getSubMonsters().add(new Monster(monsterCard));
-				}
+		for (MonsterCard monsterCard : cardCache.getMonsterCards().values()) {
+			if (MonsterBreed.Worm != monsterCard.getMainLineage() 
+					&& MonsterBreed.Worm == monsterCard.getSubLineage()) {
+				playerArea.getSubMonsters().add(new Monster(monsterCard));
 			}
 		}
 		return cardID;

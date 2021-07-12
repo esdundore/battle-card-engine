@@ -16,17 +16,18 @@ public class PlayerAreaView {
 	public ArrayList<SkillCardView> hand;
 	public LinkedList<String> discards;
 	public ArrayList<MonsterView> monsters = new ArrayList<>();
+	public ArrayList<MonsterView> subMonsters = new ArrayList<>();
 	public BreederView breeder = new BreederView();
 	
 	public PlayerAreaView() { }
-	public PlayerAreaView(PlayerArea playerArea, boolean showCards, String playerName) {
+	public PlayerAreaView(PlayerArea playerArea, Boolean youOwn) {
 		deck = new DeckView(playerArea.getDeck());
 		hand = new ArrayList<SkillCardView>();
 		for (SkillCard card : playerArea.getHand()) {
 			if (null == card) {
 				hand.add(null);
 			}
-			else if (showCards) {
+			else if (card.getRevealed() || youOwn) {
 				hand.add(new SkillCardView(card));
 			}
 			else {
@@ -35,6 +36,12 @@ public class PlayerAreaView {
 		}
 		for (Monster monster : playerArea.getMonsters()) {
 			 monsters.add(new MonsterView(monster));
+		}
+		if (playerArea.getSubMonsters() != null)
+		{
+			for (Monster monster : playerArea.getSubMonsters()) {
+				subMonsters.add(new MonsterView(monster));
+			}
 		}
 		discards = playerArea.getDiscards().stream()
 				.map(SkillCard::getName)
