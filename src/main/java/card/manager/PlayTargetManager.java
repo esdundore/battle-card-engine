@@ -104,7 +104,7 @@ public class PlayTargetManager {
 		ArrayList<SkillKeyword> attackKeywords = skillArea.allAttackKeywords();
 		ArrayList<SkillType> attackTypes = skillArea.allAttackTypes();
 		// combo on the stack is non-terminal
-		if (attackKeywords.contains(SkillKeyword.SUPPORT) && !skillArea.allAttackBreeds().contains(MonsterBreed.Breeder)) return playableTargets;
+		if (attackKeywords.contains(SkillKeyword.SUPPORT) && !attackKeywords.contains(SkillKeyword.HELP)) return playableTargets;
 		else if (!Collections.disjoint(attackKeywords, KeywordUtil.COMBO_POW) && !attackTypes.contains(SkillType.POW)) return playableTargets;
 		else if (!Collections.disjoint(attackKeywords, KeywordUtil.COMBO_POW_INT)) {
 			if (!attackTypes.contains(SkillType.POW) && !attackTypes.contains(SkillType.INT)) return playableTargets;

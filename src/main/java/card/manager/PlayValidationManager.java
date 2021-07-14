@@ -55,6 +55,9 @@ public class PlayValidationManager {
 				return true;
 			}
 		}
+		else {
+			isValidRequest = findPlayables(playersRequest, gameState).getPlayableContinue();
+		}
 		
 		return isValidRequest;
 	}
@@ -72,6 +75,10 @@ public class PlayValidationManager {
 		}
 		playableView.setPlayableCards(playableCards);
 		playableView.setPlayableTargets(playableTargets);
+		if (playableTargets.isEmpty() && 
+				(GamePhase.DEFENSE == gameState.getPhase() 
+				|| gameState.getSkillArea().isResolved())) playableView.setPlayableContinue(true);	
+		else playableView.setPlayableContinue(false);	
 		return playableView;
 	}
 	

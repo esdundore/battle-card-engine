@@ -1,9 +1,11 @@
 package card.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -99,7 +101,24 @@ public class GameCache {
 			testGameState.getPlayerArea(playersRequest.getPlayer2()).getHand().set(i, skillCard);
 		}
 
-		
+		return testGameState;
+	}
+	
+	public GameState startupRandom(PlayersRequest playersRequest) {
+		GameState testGameState = startup(playersRequest);
+		Random r = new Random();
+		Collection<MonsterCard> monsterCards = cardCache.getMonsterCards().values();
+		PlayerArea playerArea = testGameState.getPlayerArea(playersRequest.getPlayer1());
+		PlayerArea opponentArea = testGameState.getPlayerArea(playersRequest.getPlayer2());
+		for (Monster monster : playerArea.getMonsters()) {
+			MonsterCard monsterCard = monsterCards.stream().skip(r.nextInt(monsterCards.size())).findFirst().get();
+			monster = new Monster(monsterCard);
+		}
+		for (Monster monster : opponentArea.getMonsters()) {
+			MonsterCard monsterCard = monsterCards.stream().skip(r.nextInt(monsterCards.size())).findFirst().get();
+			monster = new Monster(monsterCard);
+		}
+
 		return testGameState;
 	}
 	
